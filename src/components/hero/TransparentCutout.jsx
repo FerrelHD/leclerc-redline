@@ -26,10 +26,14 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         const imgData = ctx.getImageData(0, 0, w, h);
         const data = imgData.data;
 
-        // BFS Flood fill from perimeter to remove background cleanly without touching hair
+        // Check if image is helmet or face
+        const isHelmet = src.includes('helmet');
+
+        // BFS Flood fill strictly from outer perimeter
         const visited = new Uint8Array(w * h);
         const queue = [];
 
+        // Seed 4 outer edges
         for (let x = 0; x < w; x++) {
           queue.push(x, 0);
           queue.push(x, h - 1);
@@ -40,11 +44,16 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         }
 
         const isBgPixel = (r, g, b) => {
-          // Standard clean threshold
-          const isNeutral = Math.abs(r - g) <= 22 && Math.abs(g - b) <= 22 && Math.abs(r - b) <= 22;
-          const isStudioBg = isNeutral && r >= 140;
-          const isWhite = r >= 210 && g >= 210 && b >= 210;
-          return isStudioBg || isWhite;
+          if (isHelmet) {
+            // For helmet: only remove the pure white background outside the helmet (r,g,b >= 246)
+            return r >= 246 && g >= 246 && b >= 246;
+          } else {
+            // For Charles face: remove studio background
+            const isNeutral = Math.abs(r - g) <= 22 && Math.abs(g - b) <= 22 && Math.abs(r - b) <= 22;
+            const isStudioBg = isNeutral && r >= 140;
+            const isWhite = r >= 215 && g >= 215 && b >= 215;
+            return isStudioBg || isWhite;
+          }
         };
 
         let head = 0;

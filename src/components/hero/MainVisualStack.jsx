@@ -126,7 +126,7 @@ export default function MainVisualStack({
           <TransparentCutout
             src={bottomImage}
             alt="Charles Leclerc Official Monaco GP Helmet Worn"
-            className="max-h-[102%] object-contain object-bottom filter brightness-[1.05] contrast-[1.12] drop-shadow-[0_20px_45px_rgba(225,6,0,0.4)] scale-[0.88] -translate-y-24"
+            className="max-h-[102%] object-contain object-bottom filter brightness-[1.05] contrast-[1.12] drop-shadow-[0_20px_45px_rgba(225,6,0,0.4)] scale-[0.74] -translate-y-44"
           />
         </div>
       </div>
