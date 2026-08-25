@@ -51,7 +51,7 @@ export default function FaceHelmetReveal() {
     blobRadius.set(0);
   };
 
-  // GSAP ScrollTrigger Sequence: Whole Hero Zoom-Out
+  // GSAP ScrollTrigger Sequence: Fullscreen to Portrait Card Crop + Overlapping Signature
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -67,29 +67,32 @@ export default function FaceHelmetReveal() {
         },
       });
 
-      // Stage A: Whole Hero Section Card zooms out & shrinks to center card
+      // Stage A: Whole Hero Section Card narrows width into a tight Portrait Frame (aspect 3:4 / 4:5)
       tl.to(
         heroCardRef.current,
         {
-          scale: 0.65,
+          maxWidth: '480px',
+          maxHeight: '600px',
+          width: '85vw',
+          height: '75vh',
           borderRadius: '24px',
-          boxShadow: '0 40px 100px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.15)',
+          boxShadow: '0 40px 120px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.15)',
           ease: 'power2.inOut',
         },
         0
       );
 
-      // Stage B: Smooth Monochrome Filter overlay inside the shrinking card
+      // Stage B: Smooth Monochrome Filter overlay inside the portrait frame
       tl.to(
         monochromeOverlayRef.current,
         {
-          opacity: 0.45,
+          opacity: 0.5,
           ease: 'power1.inOut',
         },
         0.1
       );
 
-      // Stage C: HUD Monza Race widget fades out as card zooms out
+      // Stage C: HUD Monza Race widget fades out
       tl.to(
         hudWidgetRef.current,
         {
@@ -190,111 +193,99 @@ export default function FaceHelmetReveal() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. FOREGROUND LAYER (HERO SECTION: CHALK WARM WHITE CARD WITH CONTOURS)   */}
+      {/* 2. FOREGROUND LAYER: CENTER STAGE WITH PORTRAIT CROP & OVERLAPPING SIGNATURE */}
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
-        <div
-          ref={heroCardRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          className="relative w-full h-full overflow-hidden bg-[#F7F7F5] flex flex-col justify-between origin-center cursor-crosshair"
-        >
-          {/* Topographic Contour Lines Background inside Hero Card */}
-          <div className="absolute inset-0 pointer-events-none z-0 opacity-70">
-            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="card-topo" width="1000" height="1000" patternUnits="userSpaceOnUse">
-                  <path
-                    d="M 50,500 Q 250,220 500,500 T 950,500"
-                    fill="none"
-                    stroke="rgba(10,10,11,0.08)"
-                    strokeWidth="1.4"
-                  />
-                  <path
-                    d="M 100,300 Q 300,100 550,300 T 980,300"
-                    fill="none"
-                    stroke="rgba(10,10,11,0.08)"
-                    strokeWidth="1.4"
-                  />
-                  <path
-                    d="M 0,650 Q 350,850 600,650 T 950,650"
-                    fill="none"
-                    stroke="rgba(10,10,11,0.08)"
-                    strokeWidth="1.4"
-                  />
-                  <path
-                    d="M 200,150 C 400,350 600,150 800,350"
-                    fill="none"
-                    stroke="rgba(10,10,11,0.06)"
-                    strokeWidth="1.2"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#card-topo)" />
-            </svg>
-          </div>
-
-          {/* FULL CARD SEAMLESS ORGANIC LIQUID PAINT BLOB (Champagne Tint #E5E3DB) */}
-          <motion.div
-            className="absolute z-[4] pointer-events-none rounded-full"
-            style={{
-              x: smoothBlobX,
-              y: smoothBlobY,
-              width: 360,
-              height: 300,
-              translateX: '-50%',
-              translateY: '-50%',
-              backgroundColor: '#E5E3DB',
-              opacity: isHovered && scrollProgress < 0.2 ? 0.9 : 0,
-              filter: 'blur(20px)',
-              transition: 'opacity 0.25s ease-out',
-            }}
-          />
-
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Size Portrait & Helmet Reveal) */}
-          <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
-            <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-[96vh] flex items-end justify-center origin-bottom">
-              
-              {/* Main Visual Stack Component */}
-              <MainVisualStack
-                topImage="/images/leclercface.jpe"
-                bottomImage="/images/charles-helmet-front.jpg"
-                className="w-full h-full"
-                globalMouse={mousePos}
-                isHovered={isHovered}
-              />
-
-              {/* Moody Monochrome Dark Tint Overlay for Zoomed-Out State */}
-              <div
-                ref={monochromeOverlayRef}
-                className="absolute inset-0 bg-[#101114] pointer-events-none mix-blend-multiply opacity-0 z-20 transition-opacity duration-300"
-              />
-
-              {/* Overlapping Authentic Signature - Extends majestically beyond card edges */}
-              <div
-                className="absolute -inset-x-16 inset-y-0 z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
-                style={{
-                  opacity: scrollProgress > 0.12 ? Math.min(1, (scrollProgress - 0.12) * 5) : 0,
-                }}
-              >
-                <AnimatedSignature
-                  progress={signatureProgress}
-                  color="#E10600"
-                />
-              </div>
-
-            </div>
-          </div>
-
-          {/* 1:1 AUTHENTIC MONZA GP HUD CARD (Exact Scooped Notch Shape) */}
+        
+        {/* RELATIVE WRAPPER FOR OVERLAPPING SIGNATURE (Allows signature to exceed card borders) */}
+        <div className="relative flex items-center justify-center">
+          
+          {/* A. CROPPED PORTRAIT CARD (Narrows into tight 3:4 portrait on scroll) */}
           <div
-            ref={hudWidgetRef}
-            className="absolute bottom-8 left-6 md:left-12 z-20 pointer-events-auto select-none"
+            ref={heroCardRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className="relative w-screen h-screen max-w-none max-h-none overflow-hidden bg-[#F7F7F5] flex flex-col justify-between origin-center cursor-crosshair transition-all"
           >
-            <MonzaHudCard />
+            {/* Topographic Contour Lines Background inside Hero Card */}
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-70">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="card-topo" width="1000" height="1000" patternUnits="userSpaceOnUse">
+                    <path d="M 50,500 Q 250,220 500,500 T 950,500" fill="none" stroke="rgba(10,10,11,0.08)" strokeWidth="1.4" />
+                    <path d="M 100,300 Q 300,100 550,300 T 980,300" fill="none" stroke="rgba(10,10,11,0.08)" strokeWidth="1.4" />
+                    <path d="M 0,650 Q 350,850 600,650 T 950,650" fill="none" stroke="rgba(10,10,11,0.08)" strokeWidth="1.4" />
+                    <path d="M 200,150 C 400,350 600,150 800,350" fill="none" stroke="rgba(10,10,11,0.06)" strokeWidth="1.2" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#card-topo)" />
+              </svg>
+            </div>
+
+            {/* FULL CARD SEAMLESS ORGANIC LIQUID PAINT BLOB */}
+            <motion.div
+              className="absolute z-[4] pointer-events-none rounded-full"
+              style={{
+                x: smoothBlobX,
+                y: smoothBlobY,
+                width: 360,
+                height: 300,
+                translateX: '-50%',
+                translateY: '-50%',
+                backgroundColor: '#E5E3DB',
+                opacity: isHovered && scrollProgress < 0.2 ? 0.9 : 0,
+                filter: 'blur(20px)',
+                transition: 'opacity 0.25s ease-out',
+              }}
+            />
+
+            {/* FRAMER MOTION: MAIN VISUAL STACK (Portrait Cutout) */}
+            <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
+              <div className="relative w-full h-full flex items-end justify-center origin-bottom">
+                
+                {/* Main Visual Stack Component */}
+                <MainVisualStack
+                  topImage="/images/leclercface.jpe"
+                  bottomImage="/images/charles-helmet-front.jpg"
+                  className="w-full h-full"
+                  globalMouse={mousePos}
+                  isHovered={isHovered}
+                />
+
+                {/* Moody Monochrome Dark Tint Overlay for Zoomed-Out State */}
+                <div
+                  ref={monochromeOverlayRef}
+                  className="absolute inset-0 bg-[#101114] pointer-events-none mix-blend-multiply opacity-0 z-20 transition-opacity duration-300"
+                />
+
+              </div>
+            </div>
+
+            {/* 1:1 AUTHENTIC MONZA GP HUD CARD (Exact Scooped Notch Shape) */}
+            <div
+              ref={hudWidgetRef}
+              className="absolute bottom-8 left-6 md:left-12 z-20 pointer-events-auto select-none"
+            >
+              <MonzaHudCard />
+            </div>
+
+          </div>
+
+          {/* B. MAJESTIC OVERLAPPING SIGNATURE (Positioned outside the cropped card bounds) */}
+          <div
+            className="absolute -inset-x-28 -inset-y-16 z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
+            style={{
+              opacity: scrollProgress > 0.12 ? Math.min(1, (scrollProgress - 0.12) * 5) : 0,
+            }}
+          >
+            <AnimatedSignature
+              progress={signatureProgress}
+              color="#E10600"
+            />
           </div>
 
         </div>
+
       </div>
     </div>
   );
