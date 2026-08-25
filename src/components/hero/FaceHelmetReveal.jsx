@@ -15,7 +15,6 @@ export default function FaceHelmetReveal() {
   const marqueeTrack2Ref = useRef(null);
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
-  const monochromeOverlayRef = useRef(null);
 
   const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
   const [isHovered, setIsHovered] = useState(false);
@@ -51,7 +50,7 @@ export default function FaceHelmetReveal() {
     blobRadius.set(0);
   };
 
-  // GSAP ScrollTrigger Sequence: Fullscreen to Portrait Card Crop + Overlapping Signature
+  // GSAP ScrollTrigger Sequence: Fullscreen to Seamless Portrait Box + Overlapping Signature
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -67,30 +66,20 @@ export default function FaceHelmetReveal() {
         },
       });
 
-      // Stage A: Whole Hero Card zooms out & crops horizontally into a Portrait Box
+      // Stage A: Whole Hero Card zooms out & crops horizontally into a tight Seamless Portrait Box
       tl.to(
         heroCardRef.current,
         {
           scale: 0.72,
-          clipPath: 'inset(0% 25% 0% 25% round 24px)',
-          backgroundColor: '#181A20',
+          clipPath: 'inset(0% 26% 0% 26% round 24px)',
+          backgroundColor: '#282B32',
           boxShadow: '0 40px 120px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.15)',
           ease: 'power2.inOut',
         },
         0
       );
 
-      // Stage B: Smooth Monochrome Filter overlay inside the portrait frame
-      tl.to(
-        monochromeOverlayRef.current,
-        {
-          opacity: 0.65,
-          ease: 'power1.inOut',
-        },
-        0.05
-      );
-
-      // Stage C: HUD Monza Race widget fades out
+      // Stage B: HUD Monza Race widget fades out
       tl.to(
         hudWidgetRef.current,
         {
@@ -101,7 +90,7 @@ export default function FaceHelmetReveal() {
         0
       );
 
-      // Stage D: Giant Dual-Track Background Marquee slides horizontally
+      // Stage C: Giant Dual-Track Background Marquee slides horizontally
       tl.fromTo(
         marqueeTrack1Ref.current,
         { x: '35vw' },
@@ -116,7 +105,7 @@ export default function FaceHelmetReveal() {
         0
       );
 
-      // Stage E: "Message from Charles" Badge appears below the Navbar
+      // Stage D: "Message from Charles" Badge appears below the Navbar
       tl.fromTo(
         messageBadgeRef.current,
         { opacity: 0, y: -15 },
@@ -172,7 +161,7 @@ export default function FaceHelmetReveal() {
           I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC •
         </div>
 
-        {/* Dynamic Badge below Navbar (Single CL handled by Navbar to avoid duplicate) */}
+        {/* Dynamic Badge below Navbar */}
         <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
           <div
             ref={messageBadgeRef}
@@ -186,11 +175,11 @@ export default function FaceHelmetReveal() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. FOREGROUND LAYER: CENTER STAGE WITH PORTRAIT CROP & OVERLAPPING SIGNATURE */}
+      {/* 2. FOREGROUND LAYER: CENTER STAGE WITH SEAMLESS PORTRAIT & OVERLAPPING SIGNATURE */}
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         
-        {/* A. HERO CARD (Smooth GPU Zoom & Portrait Crop on Scroll) */}
+        {/* A. HERO CARD (Seamless Studio Blend) */}
         <div
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
@@ -232,7 +221,7 @@ export default function FaceHelmetReveal() {
             }}
           />
 
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Portrait Cutout Filling 100% Height) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (100% Seamless Cutout) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
             <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-full flex items-end justify-center origin-bottom">
               
@@ -243,12 +232,6 @@ export default function FaceHelmetReveal() {
                 className="w-full h-full"
                 globalMouse={mousePos}
                 isHovered={isHovered}
-              />
-
-              {/* Moody Monochrome Dark Tint Overlay for Zoomed-Out State (No White Bars) */}
-              <div
-                ref={monochromeOverlayRef}
-                className="absolute inset-0 bg-[#101114] pointer-events-none mix-blend-multiply opacity-0 z-20 transition-opacity duration-300"
               />
 
             </div>
@@ -269,8 +252,8 @@ export default function FaceHelmetReveal() {
           className="absolute z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
           style={{
             opacity: scrollProgress > 0.1 ? Math.min(1, (scrollProgress - 0.1) * 5) : 0,
-            width: '900px',
-            maxWidth: '92vw',
+            width: '920px',
+            maxWidth: '94vw',
             transform: `scale(${0.9 + scrollProgress * 0.25}) translateY(20px)`,
           }}
         >

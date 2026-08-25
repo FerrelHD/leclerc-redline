@@ -26,7 +26,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         const imgData = ctx.getImageData(0, 0, w, h);
         const data = imgData.data;
 
-        // BFS Flood fill from perimeter to remove white / checkerboard backgrounds
+        // BFS Flood fill from perimeter to remove all grey studio / white backgrounds
         const visited = new Uint8Array(w * h);
         const queue = [];
 
@@ -40,9 +40,10 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         }
 
         const isBgPixel = (r, g, b) => {
-          const isGrey = r >= 165 && g >= 165 && b >= 165 && Math.abs(r - g) <= 20 && Math.abs(g - b) <= 20;
-          const isWhite = r >= 225 && g >= 225 && b >= 225;
-          return isGrey || isWhite;
+          // Neutral grey studio background detection (r, g, b close to each other)
+          const isNeutralGrey = Math.abs(r - g) <= 25 && Math.abs(g - b) <= 25 && Math.abs(r - b) <= 25 && r >= 75 && r <= 255;
+          const isWhite = r >= 215 && g >= 215 && b >= 215;
+          return isNeutralGrey || isWhite;
         };
 
         let head = 0;
@@ -60,7 +61,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           const b = data[pIdx + 2];
 
           if (isBgPixel(r, g, b)) {
-            data[pIdx + 3] = 0; // Make 100% transparent alpha
+            data[pIdx + 3] = 0; // 100% transparent alpha
 
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
