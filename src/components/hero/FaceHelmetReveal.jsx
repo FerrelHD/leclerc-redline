@@ -15,6 +15,7 @@ export default function FaceHelmetReveal() {
   const marqueeTrack2Ref = useRef(null);
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
+  const monochromeOverlayRef = useRef(null);
 
   const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
   const [isHovered, setIsHovered] = useState(false);
@@ -57,7 +58,7 @@ export default function FaceHelmetReveal() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: '+=2200',
+          end: '+=2400',
           pin: true,
           scrub: 0.8,
           onUpdate: (self) => {
@@ -70,46 +71,56 @@ export default function FaceHelmetReveal() {
       tl.to(
         heroCardRef.current,
         {
-          scale: 0.68,
-          borderRadius: '20px',
-          boxShadow: '0 35px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.1)',
+          scale: 0.65,
+          borderRadius: '24px',
+          boxShadow: '0 40px 100px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.15)',
           ease: 'power2.inOut',
         },
         0
       );
 
-      // Stage B: HUD Next Race widgets fade out as card turns into floating frame
+      // Stage B: Smooth Monochrome Filter overlay inside the shrinking card
+      tl.to(
+        monochromeOverlayRef.current,
+        {
+          opacity: 0.45,
+          ease: 'power1.inOut',
+        },
+        0.1
+      );
+
+      // Stage C: HUD Monza Race widget fades out as card zooms out
       tl.to(
         hudWidgetRef.current,
         {
           opacity: 0,
-          y: 20,
+          y: 25,
           ease: 'power1.out',
         },
         0
       );
 
-      // Stage C: Giant Background Marquee typography slides horizontally
+      // Stage D: Giant Dual-Track Background Marquee slides horizontally
       tl.fromTo(
         marqueeTrack1Ref.current,
-        { x: '40vw' },
-        { x: '-60vw', ease: 'none' },
+        { x: '35vw' },
+        { x: '-65vw', ease: 'none' },
         0
       );
 
       tl.fromTo(
         marqueeTrack2Ref.current,
-        { x: '-30vw' },
-        { x: '50vw', ease: 'none' },
+        { x: '-35vw' },
+        { x: '45vw', ease: 'none' },
         0
       );
 
-      // Stage D: "Message from Charles" Badge appears
+      // Stage E: "Message from Charles" Badge appears
       tl.fromTo(
         messageBadgeRef.current,
         { opacity: 0, y: -15 },
         { opacity: 1, y: 0, ease: 'power2.out' },
-        0.35
+        0.3
       );
     }, sectionRef);
 
@@ -125,33 +136,51 @@ export default function FaceHelmetReveal() {
       className="relative w-full h-screen overflow-hidden select-none bg-[#101114]"
     >
       {/* ========================================================================= */}
-      {/* 1. BACKGROUND LAYER (SECTION 2: DEEP INK OBSIDIAN WITH HIGH-CONTRAST TEXT)*/}
+      {/* 1. BACKGROUND LAYER (SECTION 2: DEEP INK OBSIDIAN WITH GIANT MARQUEE)    */}
       {/* ========================================================================= */}
       <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#101114]">
         
-        <div className="absolute inset-0 bg-radial-glow opacity-40 pointer-events-none" />
+        {/* Animated Background Topographic Contour Lines */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="dark-bg-topo" width="900" height="900" patternUnits="userSpaceOnUse">
+                <path d="M 50,450 Q 250,150 500,450 T 950,450" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
+                <path d="M 100,280 Q 300,50 550,280 T 980,280" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
+                <path d="M 0,650 Q 350,850 600,650 T 950,650" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
+                <path d="M 200,150 C 400,350 600,150 800,350" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#dark-bg-topo)" />
+          </svg>
+        </div>
 
-        {/* High-contrast Top Track */}
+        {/* Top Track: Editorial Serif Italic in Monaco Scarlet Red */}
         <div
           ref={marqueeTrack1Ref}
-          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-[#E10600]/40 drop-shadow-[0_0_20px_rgba(225,6,0,0.2)]"
+          className="whitespace-nowrap font-editorial italic font-bold text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#E10600]"
         >
           WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI •
         </div>
 
-        {/* High-contrast Bottom Track */}
+        {/* Bottom Track: Heavyweight Racing Sans in Chalk White */}
         <div
           ref={marqueeTrack2Ref}
-          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-white/35 -mt-8"
+          className="whitespace-nowrap font-racing font-black text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#F7F7F5] -mt-6 md:-mt-8"
         >
-          #16 CHARLES LECLERC • POLE POSITION KING • 2026 REDLINE •
+          I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC •
         </div>
 
-        {/* Dynamic Top Badge: Message from Charles */}
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
+        {/* Dynamic Top Center Badge: Message from Charles */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
+          <div className="font-racing font-black italic text-3xl md:text-4xl tracking-tighter text-white flex items-center leading-none">
+            <span>C</span>
+            <span className="-ml-0.5">L</span>
+          </div>
+
           <div
             ref={messageBadgeRef}
-            className="flex items-center gap-2 mt-2 px-4 py-1.5 rounded-full bg-[#181A20]/90 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-white uppercase tracking-widest shadow-xl"
+            className="flex items-center gap-2 mt-2 px-4 py-1.5 rounded-full bg-[#181A20]/95 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-white uppercase tracking-widest shadow-xl"
             style={{ opacity: 0 }}
           >
             <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
@@ -161,7 +190,7 @@ export default function FaceHelmetReveal() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. FOREGROUND LAYER (HERO SECTION: CHALK / WARM PURE WHITE #F7F7F5)       */}
+      {/* 2. FOREGROUND LAYER (HERO SECTION: CHALK WARM WHITE CARD WITH CONTOURS)   */}
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         <div
@@ -171,24 +200,30 @@ export default function FaceHelmetReveal() {
           className="relative w-full h-full overflow-hidden bg-[#F7F7F5] flex flex-col justify-between origin-center cursor-crosshair"
         >
           {/* Topographic Contour Lines Background inside Hero Card */}
-          <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-70">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="card-topo" width="1000" height="1000" patternUnits="userSpaceOnUse">
                   <path
                     d="M 50,500 Q 250,220 500,500 T 950,500"
                     fill="none"
-                    stroke="rgba(10,10,11,0.06)"
-                    strokeWidth="1.2"
+                    stroke="rgba(10,10,11,0.08)"
+                    strokeWidth="1.4"
                   />
                   <path
                     d="M 100,300 Q 300,100 550,300 T 980,300"
                     fill="none"
-                    stroke="rgba(10,10,11,0.06)"
-                    strokeWidth="1.2"
+                    stroke="rgba(10,10,11,0.08)"
+                    strokeWidth="1.4"
                   />
                   <path
                     d="M 0,650 Q 350,850 600,650 T 950,650"
+                    fill="none"
+                    stroke="rgba(10,10,11,0.08)"
+                    strokeWidth="1.4"
+                  />
+                  <path
+                    d="M 200,150 C 400,350 600,150 800,350"
                     fill="none"
                     stroke="rgba(10,10,11,0.06)"
                     strokeWidth="1.2"
@@ -210,13 +245,13 @@ export default function FaceHelmetReveal() {
               translateX: '-50%',
               translateY: '-50%',
               backgroundColor: '#E5E3DB',
-              opacity: isHovered && scrollProgress < 0.25 ? 0.9 : 0,
+              opacity: isHovered && scrollProgress < 0.2 ? 0.9 : 0,
               filter: 'blur(20px)',
               transition: 'opacity 0.25s ease-out',
             }}
           />
 
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Size Portrait with True Organic Liquid Blob Mask) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Size Portrait & Helmet Reveal) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
             <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-[96vh] flex items-end justify-center origin-bottom">
               
@@ -229,9 +264,15 @@ export default function FaceHelmetReveal() {
                 isHovered={isHovered}
               />
 
-              {/* Authentic Charles Leclerc Signature - Draws progressively DURING zoom-out */}
+              {/* Moody Monochrome Dark Tint Overlay for Zoomed-Out State */}
               <div
-                className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
+                ref={monochromeOverlayRef}
+                className="absolute inset-0 bg-[#101114] pointer-events-none mix-blend-multiply opacity-0 z-20 transition-opacity duration-300"
+              />
+
+              {/* Overlapping Authentic Signature - Extends majestically beyond card edges */}
+              <div
+                className="absolute -inset-x-16 inset-y-0 z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
                 style={{
                   opacity: scrollProgress > 0.12 ? Math.min(1, (scrollProgress - 0.12) * 5) : 0,
                 }}
