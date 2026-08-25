@@ -14,44 +14,40 @@ export default function FaceHelmetReveal() {
   const marqueeTextRef2 = useRef(null);
   const messageBadgeRef = useRef(null);
 
-  // Mouse & Hover Liquid states
-  const [mousePos, setMousePos] = useState({ x: 50, y: 38 });
-  const [isFaceHovered, setIsFaceHovered] = useState(false);
-  const [liquidExpand, setLiquidExpand] = useState(0); // 0 (hidden) to 1 (fully open)
+  // Global cursor position relative to the section (in percentage 0-100)
+  const [cursorPos, setCursorPos] = useState({ x: 50, y: 40 });
+  const [smoothY, setSmoothY] = useState(40);
+  const [isSectionHovered, setIsSectionHovered] = useState(false);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Smooth lerp / animation loop for liquid ink expansion
+  // Smooth lerp animation loop for the liquid brush Y position
   useEffect(() => {
     let animId;
-    const updateLiquid = () => {
-      setLiquidExpand((prev) => {
-        const target = isFaceHovered ? 1 : 0;
+    const lerpY = () => {
+      setSmoothY((prev) => {
+        const target = cursorPos.y;
         const diff = target - prev;
-        if (Math.abs(diff) < 0.01) return target;
-        return prev + diff * 0.14; // smooth fluid spring speed
+        if (Math.abs(diff) < 0.05) return target;
+        return prev + diff * 0.16; // Fluid spring lag
       });
-      animId = requestAnimationFrame(updateLiquid);
+      animId = requestAnimationFrame(lerpY);
     };
-    animId = requestAnimationFrame(updateLiquid);
+    animId = requestAnimationFrame(lerpY);
     return () => cancelAnimationFrame(animId);
-  }, [isFaceHovered]);
+  }, [cursorPos.y]);
 
-  // Mouse move handler for Parallax & Liquid Ink Center
+  // Track cursor anywhere in the hero section
   const handleMouseMove = (e) => {
-    if (!portraitHeroRef.current) return;
-    const rect = portraitHeroRef.current.getBoundingClientRect();
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
 
-    const relX = ((e.clientX - rect.left) / rect.width) * 100;
-    const relY = ((e.clientY - rect.top) / rect.height) * 100;
-
-    // Check if cursor is over the face / head area (Y between 12% and 65%, X between 20% and 80%)
-    const overFace = relY >= 12 && relY <= 65 && relX >= 20 && relX <= 80;
-    setIsFaceHovered(overFace);
-
-    setMousePos({
-      x: Math.max(10, Math.min(90, relX)),
-      y: Math.max(15, Math.min(60, relY)),
+    setIsSectionHovered(true);
+    setCursorPos({
+      x: Math.max(0, Math.min(100, xPct)),
+      y: Math.max(10, Math.min(90, yPct)),
     });
 
     const centerX = window.innerWidth / 2;
@@ -62,7 +58,7 @@ export default function FaceHelmetReveal() {
   };
 
   const handleMouseLeave = () => {
-    setIsFaceHovered(false);
+    setIsSectionHovered(false);
     setTilt({ rotateX: 0, rotateY: 0 });
   };
 
@@ -133,11 +129,10 @@ export default function FaceHelmetReveal() {
   const isDarkPhase = scrollProgress > 0.35;
   const topoStroke = isDarkPhase ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
-  // Calculate dynamic liquid ink clip path boundaries
-  const currentY = mousePos.y;
-  const halfSpan = 14 * liquidExpand;
-  const inkTop = Math.max(0, currentY - halfSpan);
-  const inkBottom = Math.min(100, currentY + halfSpan + (4 * liquidExpand));
+  // Calculate dynamic liquid brush stroke boundaries
+  const brushY = smoothY;
+  const brushTop = Math.max(0, brushY - 12);
+  const brushBottom = Math.min(100, brushY + 14);
 
   return (
     <div
@@ -182,19 +177,40 @@ export default function FaceHelmetReveal() {
         </svg>
       </div>
 
-      {/* Translucent Liquid Paint Splatter Trail extending horizontally across background on hover */}
+      {/* SECTION-WIDE LIQUID INK BRUSH STROKE (Spans across the entire background 100vw) */}
       <div
-        className="absolute left-0 right-0 pointer-events-none z-[4] transition-opacity duration-300 ease-out"
+        className="absolute left-0 right-0 pointer-events-none z-[4] transition-opacity duration-300"
         style={{
-          top: `${portraitHeroRef.current ? portraitHeroRef.current.offsetTop + (portraitHeroRef.current.offsetHeight * (currentY / 100)) - 55 : 260}px`,
-          opacity: liquidExpand * (isDarkPhase ? 0.08 : 0.05),
-          transform: `scaleY(${0.6 + liquidExpand * 0.4})`,
+          top: `${brushY}%`,
+          transform: 'translateY(-50%)',
+          opacity: isSectionHovered ? (isDarkPhase ? 0.25 : 0.85) : 0,
         }}
       >
-        <svg viewBox="0 0 1400 160" className="w-full h-28" preserveAspectRatio="none">
+        <svg
+          viewBox="0 0 1600 220"
+          className="w-full h-44 filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
+          preserveAspectRatio="none"
+        >
+          {/* Organic Liquid Ink Brush Splatter Shape (Matches the olive-tinted paint smear in reference) */}
           <path
-            d="M 0,80 Q 220,25 450,75 Q 700,125 950,65 Q 1180,35 1400,80 L 1400,105 Q 1150,140 900,95 Q 650,45 400,100 Q 180,135 0,100 Z"
-            fill={isDarkPhase ? '#ffffff' : '#000000'}
+            d="M 0,110 
+               C 180,45, 320,165, 520,110 
+               C 700,60, 900,160, 1100,105 
+               C 1280,55, 1440,150, 1600,110 
+               L 1600,145 
+               C 1420,195, 1260,85, 1080,140 
+               C 880,195, 720,80, 520,145 
+               C 340,200, 180,90, 0,145 Z"
+            fill={isDarkPhase ? 'rgba(255, 255, 255, 0.08)' : '#e2e4da'}
+          />
+          {/* Organic Tapered Driplet & Splash Accents */}
+          <path
+            d="M 220,95 Q 260,70 300,95 Q 260,115 220,95 Z"
+            fill={isDarkPhase ? 'rgba(255, 255, 255, 0.05)' : '#d8dbcf'}
+          />
+          <path
+            d="M 1320,120 Q 1360,95 1400,120 Q 1360,140 1320,120 Z"
+            fill={isDarkPhase ? 'rgba(255, 255, 255, 0.05)' : '#d8dbcf'}
           />
         </svg>
       </div>
@@ -239,17 +255,17 @@ export default function FaceHelmetReveal() {
         </div>
       </div>
 
-      {/* FULL BACKGROUND HERO PORTRAIT OF CHARLES LECLERC (Cropped Sebahu) */}
+      {/* FULL HERO PORTRAIT OF CHARLES LECLERC (Strictly Cropped Sebahu) */}
       <div className="absolute inset-0 z-[6] flex items-end justify-center pointer-events-auto">
         <div
           ref={portraitHeroRef}
-          className="relative w-full max-w-[620px] h-[90vh] flex items-end justify-center origin-bottom transition-transform duration-100 ease-out"
+          className="relative w-full max-w-[560px] h-[88vh] flex items-end justify-center origin-bottom transition-transform duration-100 ease-out"
           style={{
             transform: `perspective(1200px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
             transformStyle: 'preserve-3d',
           }}
         >
-          {/* BASE PORTRAIT LAYER: Clean Cutout Sebahu */}
+          {/* BASE PORTRAIT LAYER: Clean Sebahu Cutout */}
           <div className="relative w-full h-full flex items-end justify-center">
             <TransparentCutout
               src="/images/leclercface.jpe"
@@ -258,33 +274,33 @@ export default function FaceHelmetReveal() {
             />
           </div>
 
-          {/* DYNAMIC LIQUID INK BRUSH SLICE: 3D FRONT HELMET REVEAL ON HOVER */}
+          {/* DYNAMIC LIQUID INK BRUSH SLICE: 3D FRONT HELMET REVEAL INSIDE THE BRUSH BAND */}
           <div
             className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center transition-opacity duration-200"
             style={{
-              opacity: liquidExpand > 0.02 ? 1 : 0,
+              opacity: isSectionHovered && brushY >= 15 && brushY <= 65 ? 1 : 0,
               clipPath: `polygon(
-                0% ${inkTop}%, 
-                12% ${inkTop - (3 * liquidExpand)}%, 
-                30% ${inkTop + (1.5 * liquidExpand)}%, 
-                55% ${inkTop - (1.5 * liquidExpand)}%, 
-                80% ${inkTop + (2.5 * liquidExpand)}%, 
-                100% ${inkTop}%,
-                100% ${inkBottom}%, 
-                80% ${inkBottom + (2.5 * liquidExpand)}%, 
-                55% ${inkBottom - (1.5 * liquidExpand)}%, 
-                30% ${inkBottom + (3.5 * liquidExpand)}%, 
-                12% ${inkBottom - (2.5 * liquidExpand)}%, 
-                0% ${inkBottom}%
+                0% ${brushTop}%, 
+                15% ${brushTop - 3}%, 
+                35% ${brushTop + 2}%, 
+                60% ${brushTop - 2}%, 
+                85% ${brushTop + 3}%, 
+                100% ${brushTop}%,
+                100% ${brushBottom}%, 
+                85% ${brushBottom + 3}%, 
+                60% ${brushBottom - 2}%, 
+                35% ${brushBottom + 4}%, 
+                15% ${brushBottom - 3}%, 
+                0% ${brushBottom}%
               )`,
             }}
           >
-            {/* Front-Facing Helmet Layer */}
+            {/* Front-Facing 3D Helmet Layer */}
             <div className="relative w-full h-full flex items-end justify-center">
               <img
                 src="/images/charles-helmet-front.jpg"
                 alt="Front 3D Helmet"
-                className="max-h-[92%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.35)] scale-[1.03] -translate-y-4"
+                className="max-h-[92%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.35)] scale-[1.04] -translate-y-4"
               />
 
               {/* Visor Glare Specular Sheen Reflection */}
@@ -360,10 +376,10 @@ export default function FaceHelmetReveal() {
         >
           <div className="text-right">
             <span className="text-[10px] font-mono-telemetry uppercase tracking-wider block opacity-70">
-              HOVER FACE
+              MOVE CURSOR
             </span>
             <span className="text-xs font-racing font-bold text-[#E10600] block">
-              LIQUID HELMET SLICE ⚡
+              LIQUID INK SLICE ⚡
             </span>
           </div>
         </div>

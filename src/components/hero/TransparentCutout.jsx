@@ -13,15 +13,14 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
       if (!canvas) return;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-      // Crop Sebahu: take centered portrait bust
       const origW = img.naturalWidth;
       const origH = img.naturalHeight;
 
-      // Focus on head to collar sebahu (crop ~12% from left & right sides)
-      const cropX = origW * 0.10;
-      const cropY = origH * 0.02;
-      const cropW = origW * 0.80;
-      const cropH = origH * 0.96;
+      // Crop tightly to head and shoulders sebahu (removing the cut-off wide arms)
+      const cropX = origW * 0.16;
+      const cropY = origH * 0.01;
+      const cropW = origW * 0.68;
+      const cropH = origH * 0.98;
 
       canvas.width = cropW;
       canvas.height = cropH;
@@ -48,8 +47,8 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         }
 
         const isBgPixel = (r, g, b) => {
-          const isGrey = r >= 170 && g >= 170 && b >= 170 && Math.abs(r - g) <= 14 && Math.abs(g - b) <= 14 && Math.abs(r - b) <= 14;
-          const isWhite = r >= 240 && g >= 240 && b >= 240;
+          const isGrey = r >= 170 && g >= 170 && b >= 170 && Math.abs(r - g) <= 15 && Math.abs(g - b) <= 15 && Math.abs(r - b) <= 15;
+          const isWhite = r >= 238 && g >= 238 && b >= 238;
           return isGrey || isWhite;
         };
 
@@ -68,7 +67,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           const b = data[pIdx + 2];
 
           if (isBgPixel(r, g, b)) {
-            data[pIdx + 3] = 0; // Make transparent
+            data[pIdx + 3] = 0; // Transparent
 
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
@@ -80,7 +79,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         ctx.putImageData(imgData, 0, 0);
         setIsReady(true);
       } catch (err) {
-        console.warn("Canvas transparency fallback:", err);
+        console.warn("Canvas transparency error:", err);
         setIsReady(true);
       }
     };
