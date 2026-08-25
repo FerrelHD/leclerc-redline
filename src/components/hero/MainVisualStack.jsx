@@ -33,7 +33,7 @@ export default function MainVisualStack({
     maskY.set(relY);
 
     if (isHovered) {
-      maskRadius.set(175); // Liquid blob base radius
+      maskRadius.set(185); // Organic liquid puddle radius
     } else {
       maskRadius.set(0);
     }
@@ -105,7 +105,7 @@ export default function MainVisualStack({
         </defs>
       </svg>
 
-      {/* 1. TOP LAYER: Charles Leclerc Clean Cutout */}
+      {/* 1. TOP LAYER: Charles Leclerc Clean Portrait Cutout */}
       <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-4">
         <TransparentCutout
           src={topImage}
@@ -114,7 +114,7 @@ export default function MainVisualStack({
         />
       </div>
 
-      {/* 2. BOTTOM LAYER: Front 3D Helmet Cutout (Revealed via True Organic Wavy Liquid Blob) */}
+      {/* 2. BOTTOM LAYER: Official Monaco GP 2024 Special Helmet (Sharpened & High Definition) */}
       <div
         className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4 transition-opacity duration-150"
         style={{
@@ -125,8 +125,8 @@ export default function MainVisualStack({
         <div className="w-full h-full flex items-end justify-center">
           <TransparentCutout
             src={bottomImage}
-            alt="Charles Helmet Bottom Reveal"
-            className="max-h-[100%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.3)] scale-[1.03] -translate-y-6"
+            alt="Charles Leclerc Official Monaco GP 2024 Helmet"
+            className="max-h-[100%] object-contain object-bottom filter brightness-[1.05] contrast-[1.12] drop-shadow-[0_20px_45px_rgba(225,6,0,0.4)] scale-[1.04] -translate-y-6"
           />
         </div>
       </div>
