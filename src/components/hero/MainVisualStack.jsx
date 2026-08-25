@@ -6,73 +6,65 @@ export default function MainVisualStack({
   topImage = "/images/leclercface.jpe",
   bottomImage = "/images/charles-helmet-front.jpg",
   className = "",
+  globalMouse = { x: -500, y: -500 },
+  isHovered = false,
 }) {
   const containerRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [wobblePhase, setWobblePhase] = useState(0);
+  const [localMouse, setLocalMouse] = useState({ x: -500, y: -500 });
+  const [wobble, setWobble] = useState(0);
 
-  // Mouse position motion values
-  const mouseX = useMotionValue(-500);
-  const mouseY = useMotionValue(-500);
-
-  // Spring physics for ultra-smooth fluid response
-  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-
-  // Mask size spring (Smooth expansion on enter)
+  // Framer Motion values for local mask coordinates
+  const maskX = useMotionValue(-500);
+  const maskY = useMotionValue(-500);
   const maskRadius = useMotionValue(0);
+
+  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
+  const smoothX = useSpring(maskX, springConfig);
+  const smoothY = useSpring(maskY, springConfig);
   const smoothRadius = useSpring(maskRadius, { damping: 22, stiffness: 200 });
 
-  // Subtle organic fluid pulse/wobble
+  // Update mask relative to image bounds
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const relX = globalMouse.x - rect.left;
+    const relY = globalMouse.y - rect.top;
+
+    maskX.set(relX);
+    maskY.set(relY);
+
+    if (isHovered) {
+      maskRadius.set(155);
+    } else {
+      maskRadius.set(0);
+    }
+  }, [globalMouse, isHovered]);
+
+  // Subtle organic fluid pulse
   useEffect(() => {
     let animId;
     const loop = () => {
-      setWobblePhase((prev) => (prev + 0.04) % (Math.PI * 2));
+      setWobble((prev) => (prev + 0.04) % (Math.PI * 2));
       animId = requestAnimationFrame(loop);
     };
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Dynamic Liquid Radial Mask using clean high-performance CSS radial-gradient
+  // Smooth radial gradient mask
   const maskImage = useTransform(
     [smoothX, smoothY, smoothRadius],
     ([x, y, r]) => {
-      const rx = r * (1 + 0.05 * Math.sin(wobblePhase * 2));
-      const ry = r * (1 + 0.05 * Math.cos(wobblePhase * 2));
+      const rx = r * (1 + 0.05 * Math.sin(wobble * 2));
+      const ry = r * (1 + 0.05 * Math.cos(wobble * 2));
       return `radial-gradient(ellipse ${rx}px ${ry}px at ${x}px ${y}px, black 65%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.2) 92%, transparent 100%)`;
     }
   );
 
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    maskRadius.set(165); // Generous liquid aperture
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    maskRadius.set(0);
-  };
-
   return (
     <div
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`relative w-full h-full overflow-hidden select-none cursor-crosshair ${className}`}
-      style={{
-        WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 4%, black 100%)',
-        maskImage: 'linear-gradient(to top, transparent 0%, black 4%, black 100%)',
-      }}
+      className={`relative w-full h-full select-none pointer-events-none ${className}`}
     >
       {/* 1. TOP LAYER: Charles Leclerc Clean Bust Portrait */}
       <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-4">
@@ -100,23 +92,6 @@ export default function MainVisualStack({
         {/* Visor Glare Specular Sheen Reflection */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none mix-blend-overlay" />
       </motion.div>
-
-      {/* 3. ORGANIC LIQUID SPLASH BLOB (Soft background paint halo following cursor) */}
-      <motion.div
-        className="absolute z-0 pointer-events-none rounded-full"
-        style={{
-          x: smoothX,
-          y: smoothY,
-          width: useTransform(smoothRadius, (r) => r * 2.2),
-          height: useTransform(smoothRadius, (r) => r * 1.9),
-          translateX: '-50%',
-          translateY: '-50%',
-          backgroundColor: '#e6e8de',
-          opacity: isHovered ? 0.85 : 0,
-          filter: 'blur(4px)',
-          transition: 'opacity 0.2s ease-out',
-        }}
-      />
     </div>
   );
 }

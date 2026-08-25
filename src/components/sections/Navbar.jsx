@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, X } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import MenuOverlay from './MenuOverlay';
 
 export default function Navbar({ isAudioPlaying, toggleAudio }) {
@@ -7,11 +7,11 @@ export default function Navbar({ isAudioPlaying, toggleAudio }) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 pointer-events-none">
-        <div className="w-full max-w-[1500px] mx-auto px-6 md:px-12 h-24 flex items-center justify-between pointer-events-auto">
+      <header className="fixed top-0 left-0 right-0 z-50 select-none pointer-events-none">
+        <div className="w-full px-6 md:px-12 h-20 flex items-center justify-between pointer-events-auto">
           
           {/* Left: Editorial CHARLES LECLERC Brand Typography */}
-          <a href="#" className="flex flex-col group select-none">
+          <a href="#" className="flex flex-col group leading-tight">
             <span className="font-editorial text-2xl md:text-3xl tracking-tight leading-none text-black font-semibold">
               CHARLES
             </span>
@@ -21,7 +21,7 @@ export default function Navbar({ isAudioPlaying, toggleAudio }) {
           </a>
 
           {/* Center: Modern Slanted CL Monogram */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center select-none">
+          <div className="absolute left-1/2 -translate-x-1/2 top-5 flex items-center justify-center pointer-events-none">
             <div className="font-racing font-black italic text-3xl md:text-4xl tracking-tighter text-black flex items-center leading-none">
               <span>C</span>
               <span className="-ml-0.5">L</span>

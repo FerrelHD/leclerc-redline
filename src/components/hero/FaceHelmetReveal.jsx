@@ -1,6 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import MainVisualStack from './MainVisualStack';
 import AnimatedSignature from './AnimatedSignature';
 
@@ -14,7 +15,39 @@ export default function FaceHelmetReveal() {
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
 
+  const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
+  const [isHovered, setIsHovered] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Framer Motion spring for the full-screen liquid blob
+  const blobX = useMotionValue(-500);
+  const blobY = useMotionValue(-500);
+  const blobRadius = useMotionValue(0);
+
+  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
+  const smoothBlobX = useSpring(blobX, springConfig);
+  const smoothBlobY = useSpring(blobY, springConfig);
+  const smoothBlobRadius = useSpring(blobRadius, { damping: 22, stiffness: 200 });
+
+  const handleMouseMove = (e) => {
+    if (!heroCardRef.current) return;
+    const rect = heroCardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setIsHovered(true);
+    setMousePos({ x: e.clientX, y: e.clientY });
+
+    blobX.set(x);
+    blobY.set(y);
+    blobRadius.set(160);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setMousePos({ x: -500, y: -500 });
+    blobRadius.set(0);
+  };
 
   // GSAP ScrollTrigger Sequence: Whole Hero Zoom-Out
   useEffect(() => {
@@ -32,7 +65,7 @@ export default function FaceHelmetReveal() {
         },
       });
 
-      // Stage A: Whole Hero Section Card zooms out & shrinks cleanly to center card
+      // Stage A: Whole Hero Section Card zooms out & shrinks to center card
       tl.to(
         heroCardRef.current,
         {
@@ -92,10 +125,8 @@ export default function FaceHelmetReveal() {
       {/* ========================================================================= */}
       <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#09090b]">
         
-        {/* Subtle Background Radial Carbon Glow */}
         <div className="absolute inset-0 bg-radial-glow opacity-40 pointer-events-none" />
 
-        {/* Top Text Track */}
         <div
           ref={marqueeTrack1Ref}
           className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-[#FFE500]/15"
@@ -103,7 +134,6 @@ export default function FaceHelmetReveal() {
           WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI •
         </div>
 
-        {/* Bottom Text Track */}
         <div
           ref={marqueeTrack2Ref}
           className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-white/10 -mt-8"
@@ -111,7 +141,6 @@ export default function FaceHelmetReveal() {
           #16 CHARLES LECLERC • POLE POSITION KING • 2026 REDLINE •
         </div>
 
-        {/* Dynamic Top Badge: Message from Charles */}
         <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
           <div className="font-racing font-black italic text-3xl md:text-4xl tracking-tighter text-white flex items-center leading-none">
             <span>C</span>
@@ -135,7 +164,9 @@ export default function FaceHelmetReveal() {
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         <div
           ref={heroCardRef}
-          className="relative w-full h-full overflow-hidden bg-[#ffffff] flex flex-col justify-between origin-center"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          className="relative w-full h-full overflow-hidden bg-[#ffffff] flex flex-col justify-between origin-center cursor-crosshair"
         >
           {/* Topographic Contour Lines Background inside Hero Card */}
           <div className="absolute inset-0 pointer-events-none z-0">
@@ -160,20 +191,31 @@ export default function FaceHelmetReveal() {
                     stroke="rgba(0,0,0,0.06)"
                     strokeWidth="1.2"
                   />
-                  <path
-                    d="M 200,150 C 400,350 600,150 800,350"
-                    fill="none"
-                    stroke="rgba(0,0,0,0.04)"
-                    strokeWidth="1"
-                  />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#card-topo)" />
             </svg>
           </div>
 
+          {/* FULL CARD SEAMLESS LIQUID PAINT BLOB (Never clipped by inner containers) */}
+          <motion.div
+            className="absolute z-[4] pointer-events-none rounded-full"
+            style={{
+              x: smoothBlobX,
+              y: smoothBlobY,
+              width: 340,
+              height: 280,
+              translateX: '-50%',
+              translateY: '-50%',
+              backgroundColor: '#e6e8de',
+              opacity: isHovered && scrollProgress < 0.35 ? 0.8 : 0,
+              filter: 'blur(16px)',
+              transition: 'opacity 0.25s ease-out',
+            }}
+          />
+
           {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Size Portrait with Clean Liquid Mask) */}
-          <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0">
+          <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
             <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-[96vh] flex items-end justify-center origin-bottom">
               
               {/* Main Visual Stack Component */}
@@ -181,6 +223,8 @@ export default function FaceHelmetReveal() {
                 topImage="/images/leclercface.jpe"
                 bottomImage="/images/charles-helmet-front.jpg"
                 className="w-full h-full"
+                globalMouse={mousePos}
+                isHovered={isHovered}
               />
 
               {/* Dynamic Neon Autograph (Animated on Scroll across the Card) */}
@@ -214,7 +258,6 @@ export default function FaceHelmetReveal() {
               {/* Circuit Outline & Name */}
               <div className="flex flex-col items-center py-1 border-b border-neutral-200">
                 <svg viewBox="0 0 100 40" className="w-20 h-7" fill="none">
-                  {/* Monza Circuit Silhouette */}
                   <path
                     d="M 10,25 C 20,25 30,10 50,12 C 70,14 85,18 90,20 C 95,22 92,30 80,30 C 65,30 40,28 20,28 C 12,28 8,26 10,25 Z"
                     stroke="#111111"
@@ -232,11 +275,8 @@ export default function FaceHelmetReveal() {
               <div className="flex flex-col items-center pt-0.5 text-center">
                 <div className="flex items-center justify-center gap-1 text-neutral-800">
                   <svg viewBox="0 0 60 40" className="w-12 h-8" fill="none">
-                    {/* Laurel Wreath Left */}
                     <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#111111" strokeWidth="1.2" strokeLinecap="round" />
-                    {/* Laurel Wreath Right */}
                     <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#111111" strokeWidth="1.2" strokeLinecap="round" />
-                    {/* Center Helmet Icon */}
                     <ellipse cx="30" cy="18" rx="10" ry="9" stroke="#111111" strokeWidth="1.5" />
                     <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#111111" />
                     <line x1="20" y1="22" x2="40" y2="22" stroke="#111111" strokeWidth="1.2" />
