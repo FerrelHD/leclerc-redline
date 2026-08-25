@@ -6,12 +6,12 @@ import TechFrame from '../ui/TechFrame';
 export default function CareerMilestones() {
   return (
     <section id="milestones" className="relative w-full py-28 px-6 md:px-12 bg-[#080809] border-b border-white/[0.08] overflow-hidden">
-      
+
       {/* Background Glow */}
       <div className="absolute bottom-0 left-1/3 w-[600px] h-[600px] bg-[#E10600]/10 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>

@@ -64,12 +64,12 @@ export default function SoundOfSpeed({ isGlobalAudioPlaying, toggleGlobalAudio }
 
   return (
     <section id="sound-of-speed" className="relative w-full py-28 px-6 md:px-12 bg-[#080809] border-b border-white/[0.08] overflow-hidden">
-      
+
       {/* Radial Warm/Gold Glow for Piano Ambience */}
       <div className="absolute top-1/2 right-1/4 w-[500px] h-[500px] bg-[#FFE500]/5 rounded-full blur-[130px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
@@ -88,17 +88,17 @@ export default function SoundOfSpeed({ isGlobalAudioPlaying, toggleGlobalAudio }
 
         {/* Audio Studio Player */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          
+
           {/* Left Column: Visualizer & Cover */}
           <div className="lg:col-span-6 relative rounded-2xl overflow-hidden border border-white/10 bg-[#121316]/90 p-8">
             <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-6 border border-white/10">
-              <img 
-                src={activeTrack.cover} 
+              <img
+                src={activeTrack.cover}
                 alt={activeTrack.title}
                 className="w-full h-full object-cover filter contrast-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              
+
               {/* Spinning Disc Badge */}
               <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-xs font-mono-telemetry text-white">
                 <Disc className={`w-4 h-4 text-[#FFE500] ${isPlaying ? 'animate-spin' : ''}`} />

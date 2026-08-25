@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import MainVisualStack from './MainVisualStack';
 import AnimatedSignature from './AnimatedSignature';
 import MonzaHudCard from './MonzaHudCard';
@@ -12,8 +12,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function FaceHelmetReveal() {
   const sectionRef = useRef(null);
   const heroCardRef = useRef(null);
-  const marqueeTrack1Ref = useRef(null);
-  const marqueeTrack2Ref = useRef(null);
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
 
@@ -21,34 +19,15 @@ export default function FaceHelmetReveal() {
   const [isHovered, setIsHovered] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Framer Motion spring for the full-screen liquid blob
-  const blobX = useMotionValue(-500);
-  const blobY = useMotionValue(-500);
-  const blobRadius = useMotionValue(0);
-
-  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
-  const smoothBlobX = useSpring(blobX, springConfig);
-  const smoothBlobY = useSpring(blobY, springConfig);
-  const smoothBlobRadius = useSpring(blobRadius, { damping: 22, stiffness: 200 });
-
   const handleMouseMove = (e) => {
     if (!heroCardRef.current) return;
-    const rect = heroCardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
     setIsHovered(true);
     setMousePos({ x: e.clientX, y: e.clientY });
-
-    blobX.set(x);
-    blobY.set(y);
-    blobRadius.set(130);
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
     setMousePos({ x: -500, y: -500 });
-    blobRadius.set(0);
   };
 
   // GSAP ScrollTrigger Sequence: Fullscreen to Clean Portrait Crop + Overlapping Signature
@@ -58,8 +37,9 @@ export default function FaceHelmetReveal() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: '+=2400',
+          end: '+=1400',
           pin: true,
+          anticipatePin: 1,
           scrub: 0.6,
           onUpdate: (self) => {
             setScrollProgress(self.progress);
@@ -67,7 +47,7 @@ export default function FaceHelmetReveal() {
         },
       });
 
-      // Stage A: Whole Hero Card zooms out & crops horizontally into a clean Portrait Box
+      // Stage A: Whole Hero Card zooms out & crops horizontally into a Portrait Box
       tl.to(
         heroCardRef.current,
         {
@@ -103,8 +83,8 @@ export default function FaceHelmetReveal() {
     return () => ctx.revert();
   }, []);
 
-  // Signature calculation: animates progressively DURING zoom out (0.12 -> 0.70)
-  const signatureProgress = Math.min(1, Math.max(0, (scrollProgress - 0.12) / 0.58));
+  // Signature calculation: animates progressively throughout zoom out (0.12 -> 0.95)
+  const signatureProgress = Math.min(1, Math.max(0, (scrollProgress - 0.12) / 0.83));
 
   return (
     <div
@@ -115,7 +95,7 @@ export default function FaceHelmetReveal() {
       {/* 1. BACKGROUND LAYER: DEEP INK OBSIDIAN WITH INTERACTIVE WAVES & MARQUEE  */}
       {/* ========================================================================= */}
       <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#101114]">
-        
+
         {/* Interactive Fluid Waves Grid in Dark Background */}
         <div className="absolute inset-0 opacity-40 pointer-events-none">
           <WavesBackground
@@ -127,46 +107,47 @@ export default function FaceHelmetReveal() {
         </div>
 
         {/* TOP TRACK: Infinite Continuous Running Marquee (Editorial Italic Monaco Red) */}
-        <div className="w-full overflow-hidden whitespace-nowrap flex py-2 relative z-10">
+        <div className="w-full overflow-hidden whitespace-nowrap flex py-1 relative z-10 opacity-90">
           <motion.div
-            className="flex shrink-0 font-editorial italic font-bold text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#E10600]"
+            className="flex shrink-0 font-editorial italic font-bold text-[5vw] md:text-[3.8vw] leading-tight tracking-tight text-[#E10600]"
             animate={{ x: ['0%', '-50%'] }}
             transition={{
               repeat: Infinity,
               ease: 'linear',
-              duration: 25,
+              duration: 32,
             }}
           >
-            <span className="pr-12">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
-            <span className="pr-12">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
+            <span className="pr-16">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
+            <span className="pr-16">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
           </motion.div>
         </div>
 
         {/* BOTTOM TRACK: Infinite Continuous Running Marquee (Heavyweight Racing White) */}
-        <div className="w-full overflow-hidden whitespace-nowrap flex py-2 -mt-8 md:-mt-12 relative z-10">
+        <div className="w-full overflow-hidden whitespace-nowrap flex py-1 relative z-10 opacity-90">
           <motion.div
-            className="flex shrink-0 font-racing font-black text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#F7F7F5]"
+            className="flex shrink-0 font-racing font-black text-[5vw] md:text-[3.8vw] leading-tight tracking-tight text-[#F7F7F5]"
             animate={{ x: ['-50%', '0%'] }}
             transition={{
               repeat: Infinity,
               ease: 'linear',
-              duration: 25,
+              duration: 32,
             }}
           >
-            <span className="pr-12">I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC • </span>
-            <span className="pr-12">I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC • </span>
+            <span className="pr-16">I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC • </span>
+            <span className="pr-16">I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC • </span>
           </motion.div>
         </div>
 
-        {/* Dynamic Badge below Navbar */}
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
+        {/* Minimalist Editorial Badge below Navbar */}
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none overflow-hidden py-1">
           <div
             ref={messageBadgeRef}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#181A20]/95 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-white uppercase tracking-widest shadow-xl"
+            className="flex items-center gap-3 font-racing font-bold text-xs md:text-sm uppercase tracking-[0.28em] text-white/90 drop-shadow-md"
             style={{ opacity: 0 }}
           >
-            <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
             <span>MESSAGE FROM CHARLES</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
           </div>
         </div>
       </div>
@@ -175,7 +156,7 @@ export default function FaceHelmetReveal() {
       {/* 2. FOREGROUND LAYER: PURE WHITE CARD WITH INTERACTIVE WAVES BACKGROUND    */}
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
-        
+
         {/* A. HERO CARD (Interactive Fluid Waves Grid) */}
         <div
           ref={heroCardRef}
@@ -196,40 +177,23 @@ export default function FaceHelmetReveal() {
             />
           </div>
 
-          {/* FULL CARD SEAMLESS ELONGATED LIQUID PAINT BLOB */}
-          <motion.div
-            className="absolute z-[4] pointer-events-none rounded-full"
-            style={{
-              x: smoothBlobX,
-              y: smoothBlobY,
-              width: 320,
-              height: 175,
-              translateX: '-50%',
-              translateY: '-50%',
-              backgroundColor: '#E5E3DB',
-              opacity: isHovered && scrollProgress < 0.2 ? 0.9 : 0,
-              filter: 'blur(20px)',
-              transition: 'opacity 0.25s ease-out',
-            }}
-          />
-
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Clean Cutout) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Portrait + Monaco GP Helmet Reveal) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
-            <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-full flex items-end justify-center origin-bottom">
-              
+            <div className="relative w-full max-w-[960px] md:max-w-[1060px] lg:max-w-[1180px] h-full flex items-end justify-center origin-bottom">
+
               {/* Main Visual Stack Component */}
               <MainVisualStack
-                topImage="/images/leclercface.jpe"
-                bottomImage="/images/charles-helmet-front.jpg"
+                topImage="/images/leclercnewimage.png"
+                bottomImage="/images/charles-helmet-monaco.png"
                 className="w-full h-full"
                 globalMouse={mousePos}
-                isHovered={isHovered}
+                isHovered={isHovered && scrollProgress < 0.25}
               />
 
             </div>
           </div>
 
-          {/* 1:1 AUTHENTIC MONZA GP HUD CARD (Exact Scooped Notch Shape) */}
+          {/* 1:1 AUTHENTIC MONZA GP HUD CARD */}
           <div
             ref={hudWidgetRef}
             className="absolute bottom-8 left-6 md:left-12 z-20 pointer-events-auto select-none"
@@ -239,20 +203,17 @@ export default function FaceHelmetReveal() {
 
         </div>
 
-        {/* B. GRAND OVERLAPPING SIGNATURE (Stretches Wide Beyond the Cropped Card Bounds) */}
+        {/* B. GRAND OVERLAPPING SIGNATURE (Bold Prominent Breakout Beyond Card Box) */}
         <div
-          className="absolute z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
+          className="absolute z-30 pointer-events-none flex items-center justify-center transition-all duration-200 ease-out"
           style={{
             opacity: scrollProgress > 0.1 ? Math.min(1, (scrollProgress - 0.1) * 5) : 0,
-            width: '920px',
-            maxWidth: '94vw',
-            transform: `scale(${0.9 + scrollProgress * 0.25}) translateY(20px)`,
+            width: '860px',
+            maxWidth: '92vw',
+            transform: `scale(${0.92 + scrollProgress * 0.2}) translateY(16px)`,
           }}
         >
-          <AnimatedSignature
-            progress={signatureProgress}
-            color="#E10600"
-          />
+          <AnimatedSignature progress={signatureProgress} color="#E10600" />
         </div>
 
       </div>

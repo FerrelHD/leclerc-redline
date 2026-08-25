@@ -7,16 +7,16 @@ export default function OnTrackOffTrack() {
 
   return (
     <section id="ontrack-offtrack" className="relative w-full min-h-screen py-24 px-6 md:px-12 bg-[#080809] flex flex-col justify-center overflow-hidden border-t border-b border-white/[0.08]">
-      
+
       {/* Dynamic Background Image Cross-Fade */}
       <div className="absolute inset-0 z-0">
         {/* ON TRACK Background (Ferrari Cockpit / Racing Speed) */}
-        <div 
+        <div
           className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${activeSide === 'on' ? 'opacity-40 scale-100' : 'opacity-0 scale-105'} transition-transform duration-1000`}
         >
-          <img 
-            src="/images/charles-on-track.jpg" 
-            alt="Charles Leclerc On Track" 
+          <img
+            src="/images/charles-on-track.jpg"
+            alt="Charles Leclerc On Track"
             className="w-full h-full object-cover filter contrast-125 brightness-75"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#080809] via-[#080809]/60 to-[#080809]" />
@@ -24,12 +24,12 @@ export default function OnTrackOffTrack() {
         </div>
 
         {/* OFF TRACK Background (Piano / Armani Lifestyle) */}
-        <div 
+        <div
           className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${activeSide === 'off' ? 'opacity-40 scale-100' : 'opacity-0 scale-105'} transition-transform duration-1000`}
         >
-          <img 
-            src="/images/charles-off-track.jpg" 
-            alt="Charles Leclerc Off Track" 
+          <img
+            src="/images/charles-off-track.jpg"
+            alt="Charles Leclerc Off Track"
             className="w-full h-full object-cover filter contrast-110 brightness-75"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#080809] via-[#080809]/60 to-[#080809]" />
@@ -55,15 +55,15 @@ export default function OnTrackOffTrack() {
 
       {/* Interactive Dual Split Cards Grid */}
       <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-        
+
         {/* CARD 1: ON TRACK */}
-        <div 
+        <div
           onMouseEnter={() => setActiveSide('on')}
           className={`cursor-pointer transition-all duration-500 transform ${activeSide === 'on' ? 'scale-[1.02]' : 'opacity-70 scale-95'}`}
         >
           <TechFrame active={activeSide === 'on'} color="#E10600">
             <div className="p-8 md:p-12 min-h-[420px] flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-[#121316]/90 to-[#0c0d10]/95 backdrop-blur-xl">
-              
+
               {/* Card Top Pill */}
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded bg-[#E10600]/20 border border-[#E10600]/40 text-[#E10600] text-xs font-mono-telemetry font-bold tracking-wider uppercase flex items-center gap-1.5">
@@ -101,13 +101,13 @@ export default function OnTrackOffTrack() {
         </div>
 
         {/* CARD 2: OFF TRACK */}
-        <div 
+        <div
           onMouseEnter={() => setActiveSide('off')}
           className={`cursor-pointer transition-all duration-500 transform ${activeSide === 'off' ? 'scale-[1.02]' : 'opacity-70 scale-95'}`}
         >
           <TechFrame active={activeSide === 'off'} color="#FFE500">
             <div className="p-8 md:p-12 min-h-[420px] flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-[#121316]/90 to-[#0c0d10]/95 backdrop-blur-xl">
-              
+
               {/* Card Top Pill */}
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded bg-[#FFE500]/20 border border-[#FFE500]/40 text-[#FFE500] text-xs font-mono-telemetry font-bold tracking-wider uppercase flex items-center gap-1.5">

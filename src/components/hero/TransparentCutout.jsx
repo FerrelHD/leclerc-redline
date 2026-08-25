@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function TransparentCutout({ src = "/images/leclercface.jpe", alt = "Cutout", className = "" }) {
+export default function TransparentCutout({ src = "/images/leclercnewimage.png", alt = "Cutout", className = "" }) {
   const canvasRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
 

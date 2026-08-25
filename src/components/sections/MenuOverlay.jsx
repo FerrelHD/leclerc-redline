@@ -3,6 +3,94 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, X } from 'lucide-react';
 import TextBoxReveal from '../ui/TextBoxReveal';
 
+function MenuItemLink({ item, isActive, onSelect, onHover }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const letters = item.label.split('');
+
+  return (
+    <a
+      href={item.href}
+      onClick={onSelect}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        onHover();
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`relative font-racing font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[76px] tracking-tight leading-none uppercase block py-1 transition-colors duration-200 cursor-pointer ${
+        isActive ? 'text-white' : 'text-[#8E8E93] hover:text-white'
+      }`}
+    >
+      <div className="relative inline-flex overflow-hidden">
+        {/* Base Layer (Slides up and away on hover) */}
+        <div className="flex">
+          {letters.map((char, i) => (
+            <motion.span
+              key={`base-${i}`}
+              className="inline-block"
+              initial={false}
+              animate={{
+                y: isHovered ? '-115%' : '0%',
+                opacity: isHovered ? 0.4 : 1,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 260,
+                damping: 14,
+                bounce: 0.38,
+                delay: i * 0.022,
+              }}
+            >
+              {char === ' ' ? '\u00A0' : char}
+            </motion.span>
+          ))}
+        </div>
+
+        {/* Duplicate Layer (Bounces up from below with energetic spring overshoot) */}
+        <div className="absolute inset-0 flex" aria-hidden="true">
+          {letters.map((char, i) => (
+            <motion.span
+              key={`dup-${i}`}
+              className={`inline-block ${isActive ? 'text-white' : 'text-[#E10600]'}`}
+              initial={false}
+              animate={{
+                y: isHovered ? '0%' : '115%',
+                opacity: isHovered ? 1 : 0,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 260,
+                damping: 14,
+                bounce: 0.38,
+                delay: i * 0.022,
+              }}
+            >
+              {char === ' ' ? '\u00A0' : char}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+
+      {/* Monaco Scarlet Red Strike-through Wave on Active Item */}
+      {isActive && (
+        <motion.div
+          layoutId="menu-red-stroke"
+          className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 pointer-events-none flex items-center"
+        >
+          <svg viewBox="0 0 100 12" className="w-full h-full overflow-visible" preserveAspectRatio="none">
+            <path
+              d="M 0,6 Q 25,1 50,6 T 100,6"
+              stroke="#E10600"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
+        </motion.div>
+      )}
+    </a>
+  );
+}
+
 export default function MenuOverlay({ isOpen, onClose }) {
   const [activeItem, setActiveItem] = useState('HOME');
 
@@ -126,67 +214,97 @@ export default function MenuOverlay({ isOpen, onClose }) {
             {/* Center Stage: Masonry Photo Collage (Left) & Restored Racing Menu Navigation (Right) */}
             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center my-auto">
               
-              {/* LEFT COLUMN: 4 Staggered Photography Cards */}
-              <div className="hidden md:grid lg:col-span-6 grid-cols-2 gap-4 lg:gap-5 max-w-[540px] pointer-events-none">
+              {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Lando Norris Editorial Style) */}
+              <div className="hidden md:grid lg:col-span-6 grid-cols-2 gap-4 lg:gap-6 max-w-[560px]">
                 
-                {/* Card 1: Charles Helmet */}
+                {/* Column 1 (Cards 1 & 3): Drifting gently up & down */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.18 }}
-                  className="relative aspect-square rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg"
+                  className="flex flex-col gap-4 lg:gap-6"
+                  animate={{
+                    y: [-6, 6, -6],
+                  }}
+                  transition={{
+                    duration: 7.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
-                  <img
-                    src="/images/charles-helmet-front.jpg"
-                    alt="Charles Helmet"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-[#101114]/20" />
+                  {/* Card 1: Charles Helmet Detail (Tall Portrait) */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.18 }}
+                    whileHover={{ scale: 1.03, y: -4 }}
+                    className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                  >
+                    <img
+                      src="/images/leclerc1.jpg"
+                      alt="Charles Leclerc Helmet"
+                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                  </motion.div>
+
+                  {/* Card 3: Charles Cockpit Close-up (Square) */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                    whileHover={{ scale: 1.03, y: -4 }}
+                    className="relative aspect-square rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                  >
+                    <img
+                      src="/images/leclerc3.jpg"
+                      alt="Charles Leclerc Cockpit"
+                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                  </motion.div>
                 </motion.div>
 
-                {/* Card 2: Charles Podium Celebration */}
+                {/* Column 2 (Cards 2 & 4): Staggered Downward Offset & Reverse Drift */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.24 }}
-                  className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg -translate-y-4"
+                  className="flex flex-col gap-4 lg:gap-6 -translate-y-8"
+                  animate={{
+                    y: [6, -6, 6],
+                  }}
+                  transition={{
+                    duration: 8.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
-                  <img
-                    src="/images/charles-portrait.jpg"
-                    alt="Charles Podium"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-[#101114]/20" />
-                </motion.div>
+                  {/* Card 2: Charles On Track Stand (Square) */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.24 }}
+                    whileHover={{ scale: 1.03, y: -4 }}
+                    className="relative aspect-square rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                  >
+                    <img
+                      src="/images/leclerc2.jpg"
+                      alt="Charles Leclerc Cockpit Stand"
+                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                  </motion.div>
 
-                {/* Card 3: Charles Off Track / Piano */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.3 }}
-                  className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg -translate-y-4"
-                >
-                  <img
-                    src="/images/charles-off-track.jpg"
-                    alt="Charles Off Track"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-[#101114]/20" />
-                </motion.div>
-
-                {/* Card 4: Ferrari SF-25 F1 Car */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.36 }}
-                  className="relative aspect-square rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg"
-                >
-                  <img
-                    src="/images/charles-on-track.jpg"
-                    alt="Ferrari F1 On Track"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-[#101114]/20" />
+                  {/* Card 4: Charles Helmet Motion (Tall Portrait) */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.36 }}
+                    whileHover={{ scale: 1.03, y: -4 }}
+                    className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                  >
+                    <img
+                      src="/images/leclerc4.jpg"
+                      alt="Charles Leclerc Helmet Motion"
+                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                  </motion.div>
                 </motion.div>
 
               </div>
@@ -194,7 +312,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
               {/* RIGHT COLUMN: Restored Racing Typography Menu (HOME, ON TRACK, OFF TRACK, CALENDAR) */}
               <div className="lg:col-span-6 flex flex-col items-start lg:items-end justify-center text-left lg:text-right gap-6">
                 
-                {/* Menu Links */}
+                {/* Menu Links with Staggered Per-Character Bouncy Roll-Up Animation */}
                 <nav className="flex flex-col gap-2 md:gap-3">
                   {menuItems.map((item, index) => {
                     const isActive = activeItem === item.label;
@@ -204,37 +322,15 @@ export default function MenuOverlay({ isOpen, onClose }) {
                         className="relative inline-flex items-center justify-start lg:justify-end"
                       >
                         <TextBoxReveal delay={0.16 + index * 0.05} duration={0.35} boxColor="#E10600">
-                          <a
-                            href={item.href}
-                            onClick={() => {
+                          <MenuItemLink
+                            item={item}
+                            isActive={isActive}
+                            onSelect={() => {
                               setActiveItem(item.label);
                               onClose();
                             }}
-                            onMouseEnter={() => setActiveItem(item.label)}
-                            className={`relative font-racing font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[76px] tracking-tight leading-none uppercase transition-colors duration-150 block py-1 ${
-                              isActive ? 'text-white' : 'text-[#8E8E93] hover:text-white'
-                            }`}
-                          >
-                            <span>{item.label}</span>
-
-                            {/* Monaco Scarlet Red Strike-through Wave on Active Item */}
-                            {isActive && (
-                              <motion.div
-                                layoutId="menu-red-stroke"
-                                className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 pointer-events-none flex items-center"
-                              >
-                                <svg viewBox="0 0 100 12" className="w-full h-full overflow-visible" preserveAspectRatio="none">
-                                  <path
-                                    d="M 0,6 Q 25,1 50,6 T 100,6"
-                                    stroke="#E10600"
-                                    strokeWidth="4.5"
-                                    strokeLinecap="round"
-                                    fill="none"
-                                  />
-                                </svg>
-                              </motion.div>
-                            )}
-                          </a>
+                            onHover={() => setActiveItem(item.label)}
+                          />
                         </TextBoxReveal>
                       </div>
                     );

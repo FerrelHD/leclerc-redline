@@ -9,12 +9,12 @@ export default function HelmetVault() {
 
   return (
     <section id="helmet-vault" className="relative w-full py-28 px-6 md:px-12 bg-[#080809] border-b border-white/[0.08] overflow-hidden">
-      
+
       {/* Background Decorative Tech Lines */}
       <div className="absolute inset-0 bg-carbon-grid opacity-30 pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        
+
         {/* Header Layout (Matches Lando Norris Helmets Hall of Fame) */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
           <div>
@@ -34,7 +34,7 @@ export default function HelmetVault() {
 
         {/* Main Interactive Stage: 3D Viewer & Selected Specs */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-center">
-          
+
           {/* Left Column: 3D Interactive Canvas Box */}
           <div className="lg:col-span-7 bg-[#101114]/90 rounded-2xl p-8 border border-white/10 relative overflow-hidden backdrop-blur-xl">
             <div className="absolute top-4 left-4 flex items-center gap-2 text-xs font-mono-telemetry text-neutral-400">

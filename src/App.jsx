@@ -47,7 +47,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA] overflow-x-hidden">
-      
+
       {/* Noise Texture Overlay */}
       <div className="noise-overlay" />
 
@@ -59,7 +59,7 @@ export default function App() {
 
       {/* Main Experience Flow */}
       <main className="relative z-10">
-        
+
         {/* Section 1: Hero & Signature 3D Face-Helmet Slice Reveal */}
         <section id="hero">
           <FaceHelmetReveal />
