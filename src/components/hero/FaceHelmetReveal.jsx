@@ -118,18 +118,18 @@ export default function FaceHelmetReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative w-full h-screen overflow-hidden select-none bg-[#09090b]"
+      className="relative w-full h-screen overflow-hidden select-none bg-[#101114]"
     >
       {/* ========================================================================= */}
-      {/* 1. BACKGROUND LAYER (SECTION 2: DARK CARBON WITH GIANT MARQUEE TYPOGRAPHY) */}
+      {/* 1. BACKGROUND LAYER (SECTION 2: DEEP INK OBSIDIAN WITH GIANT MARQUEE)    */}
       {/* ========================================================================= */}
-      <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#09090b]">
+      <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#101114]">
         
         <div className="absolute inset-0 bg-radial-glow opacity-40 pointer-events-none" />
 
         <div
           ref={marqueeTrack1Ref}
-          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-[#FFE500]/15"
+          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-[#E10600]/20"
         >
           WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI •
         </div>
@@ -152,21 +152,21 @@ export default function FaceHelmetReveal() {
             className="flex items-center gap-2 mt-2 px-3.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-neutral-300 uppercase tracking-widest"
             style={{ opacity: 0 }}
           >
-            <span className="w-2 h-2 rounded-full bg-[#FFE500] animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
             <span>MESSAGE FROM CHARLES</span>
           </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. FOREGROUND LAYER (HERO SECTION: LIGHT TOPOGRAPHIC ZOOM-OUT CARD)       */}
+      {/* 2. FOREGROUND LAYER (HERO SECTION: CHALK / WARM PURE WHITE #F7F7F5)       */}
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         <div
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative w-full h-full overflow-hidden bg-[#ffffff] flex flex-col justify-between origin-center cursor-crosshair"
+          className="relative w-full h-full overflow-hidden bg-[#F7F7F5] flex flex-col justify-between origin-center cursor-crosshair"
         >
           {/* Topographic Contour Lines Background inside Hero Card */}
           <div className="absolute inset-0 pointer-events-none z-0">
@@ -176,19 +176,19 @@ export default function FaceHelmetReveal() {
                   <path
                     d="M 50,500 Q 250,220 500,500 T 950,500"
                     fill="none"
-                    stroke="rgba(0,0,0,0.06)"
+                    stroke="rgba(10,10,11,0.06)"
                     strokeWidth="1.2"
                   />
                   <path
                     d="M 100,300 Q 300,100 550,300 T 980,300"
                     fill="none"
-                    stroke="rgba(0,0,0,0.06)"
+                    stroke="rgba(10,10,11,0.06)"
                     strokeWidth="1.2"
                   />
                   <path
                     d="M 0,650 Q 350,850 600,650 T 950,650"
                     fill="none"
-                    stroke="rgba(0,0,0,0.06)"
+                    stroke="rgba(10,10,11,0.06)"
                     strokeWidth="1.2"
                   />
                 </pattern>
@@ -197,7 +197,7 @@ export default function FaceHelmetReveal() {
             </svg>
           </div>
 
-          {/* FULL CARD SEAMLESS LIQUID PAINT BLOB (Never clipped by inner containers) */}
+          {/* FULL CARD SEAMLESS LIQUID PAINT BLOB (Champagne Tint #E5E3DB) */}
           <motion.div
             className="absolute z-[4] pointer-events-none rounded-full"
             style={{
@@ -207,8 +207,8 @@ export default function FaceHelmetReveal() {
               height: 280,
               translateX: '-50%',
               translateY: '-50%',
-              backgroundColor: '#e6e8de',
-              opacity: isHovered && scrollProgress < 0.35 ? 0.8 : 0,
+              backgroundColor: '#E5E3DB',
+              opacity: isHovered && scrollProgress < 0.35 ? 0.85 : 0,
               filter: 'blur(16px)',
               transition: 'opacity 0.25s ease-out',
             }}
@@ -227,7 +227,7 @@ export default function FaceHelmetReveal() {
                 isHovered={isHovered}
               />
 
-              {/* Dynamic Neon Autograph (Animated on Scroll across the Card) */}
+              {/* Dynamic Monaco Red Autograph (Animated on Scroll across the Card) */}
               <div
                 className="absolute inset-0 z-30 pointer-events-none transition-opacity duration-300"
                 style={{
@@ -236,7 +236,7 @@ export default function FaceHelmetReveal() {
               >
                 <AnimatedSignature
                   progress={Math.min(1, Math.max(0, (scrollProgress - 0.4) / 0.5))}
-                  color="#FFE500"
+                  color="#E10600"
                 />
               </div>
 
@@ -248,25 +248,25 @@ export default function FaceHelmetReveal() {
             ref={hudWidgetRef}
             className="absolute bottom-8 left-6 md:left-12 z-20 pointer-events-auto select-none"
           >
-            <div className="w-36 bg-white/95 border border-neutral-300/80 rounded-2xl rounded-tl-[24px] p-3 shadow-lg backdrop-blur-md flex flex-col gap-2 relative">
+            <div className="w-36 bg-[#FFFFFF]/95 border border-[#E5E3DB] rounded-2xl rounded-tl-[24px] p-3 shadow-lg backdrop-blur-md flex flex-col gap-2 relative">
               {/* Top Chamfer Accent Notch */}
-              <div className="text-[9px] font-mono-telemetry uppercase tracking-wider text-neutral-500 font-bold border-b border-neutral-200 pb-1.5 flex items-center justify-between">
+              <div className="text-[9px] font-mono-telemetry uppercase tracking-wider text-neutral-500 font-bold border-b border-[#E5E3DB] pb-1.5 flex items-center justify-between">
                 <span>NEXT RACE</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-black/60" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
               </div>
 
               {/* Circuit Outline & Name */}
-              <div className="flex flex-col items-center py-1 border-b border-neutral-200">
+              <div className="flex flex-col items-center py-1 border-b border-[#E5E3DB]">
                 <svg viewBox="0 0 100 40" className="w-20 h-7" fill="none">
                   <path
                     d="M 10,25 C 20,25 30,10 50,12 C 70,14 85,18 90,20 C 95,22 92,30 80,30 C 65,30 40,28 20,28 C 12,28 8,26 10,25 Z"
-                    stroke="#111111"
+                    stroke="#0A0A0B"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className="text-[11px] font-racing font-black text-black tracking-tight mt-1 uppercase">
+                <span className="text-[11px] font-racing font-black text-[#0A0A0B] tracking-tight mt-1 uppercase">
                   MONZA GP
                 </span>
               </div>
@@ -275,14 +275,14 @@ export default function FaceHelmetReveal() {
               <div className="flex flex-col items-center pt-0.5 text-center">
                 <div className="flex items-center justify-center gap-1 text-neutral-800">
                   <svg viewBox="0 0 60 40" className="w-12 h-8" fill="none">
-                    <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#111111" strokeWidth="1.2" strokeLinecap="round" />
-                    <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#111111" strokeWidth="1.2" strokeLinecap="round" />
-                    <ellipse cx="30" cy="18" rx="10" ry="9" stroke="#111111" strokeWidth="1.5" />
-                    <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#111111" />
-                    <line x1="20" y1="22" x2="40" y2="22" stroke="#111111" strokeWidth="1.2" />
+                    <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#0A0A0B" strokeWidth="1.2" strokeLinecap="round" />
+                    <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#0A0A0B" strokeWidth="1.2" strokeLinecap="round" />
+                    <ellipse cx="30" cy="18" rx="10" ry="9" stroke="#0A0A0B" strokeWidth="1.5" />
+                    <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#0A0A0B" />
+                    <line x1="20" y1="22" x2="40" y2="22" stroke="#0A0A0B" strokeWidth="1.2" />
                   </svg>
                 </div>
-                <div className="text-[8px] font-mono-telemetry font-bold text-neutral-700 tracking-wider uppercase leading-tight -mt-1">
+                <div className="text-[8px] font-mono-telemetry font-bold text-[#0A0A0B] tracking-wider uppercase leading-tight -mt-1">
                   <div>FORMULA 1</div>
                   <div className="text-neutral-400 font-normal">SINCE 2018</div>
                 </div>

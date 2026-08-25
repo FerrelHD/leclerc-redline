@@ -63,9 +63,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
       {isOpen && (
         <div className="fixed inset-0 z-[9999] select-none">
           
-          {/* 1. SOLID FERRARI RED CURTAIN */}
+          {/* 1. DEEP INK OBSIDIAN (#101114) CURTAIN */}
           <svg
-            className="fixed inset-0 w-full h-full pointer-events-none fill-[#E10600] z-[9998]"
+            className="fixed inset-0 w-full h-full pointer-events-none fill-[#101114] z-[9998]"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
           >
@@ -77,7 +77,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
             />
           </svg>
 
-          {/* 2. MENU CONTENT CONTAINER (Full Height Flex Layout) */}
+          {/* 2. MENU CONTENT CONTAINER (Monaco Riviera Palette) */}
           <motion.div
             variants={contentVariants}
             initial="initial"
@@ -87,27 +87,27 @@ export default function MenuOverlay({ isOpen, onClose }) {
           >
             {/* Top Bar: Brand Typography & Close Button */}
             <div className="w-full flex items-center justify-between z-10">
-              {/* Left: Brand Monogram */}
+              {/* Left: Brand Monogram with Monaco Scarlet Red Reveal */}
               <div className="flex flex-col">
-                <TextBoxReveal delay={0.15} duration={0.35} boxColor="#000000">
+                <TextBoxReveal delay={0.15} duration={0.35} boxColor="#E10600">
                   <span className="font-editorial text-2xl md:text-3xl tracking-tight leading-none text-white font-medium">
                     CHARLES
                   </span>
                 </TextBoxReveal>
-                <TextBoxReveal delay={0.2} duration={0.35} boxColor="#000000">
+                <TextBoxReveal delay={0.2} duration={0.35} boxColor="#E10600">
                   <span className="font-sans font-black text-2xl md:text-3xl tracking-tight leading-none text-white uppercase">
                     LECLERC
                   </span>
                 </TextBoxReveal>
               </div>
 
-              {/* Right: Black Store Button & Close X Button */}
+              {/* Right: Monaco Scarlet Red Store Button & Close Button */}
               <div className="flex items-center gap-3">
                 <a
                   href="https://store.ferrari.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-900 text-white font-sans font-bold text-xs uppercase tracking-wider transition-all hover:scale-105"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-[#E10600]/30"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>STORE</span>
@@ -115,7 +115,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
                 <button
                   onClick={onClose}
-                  className="w-10 h-10 rounded-xl bg-white text-black hover:bg-black hover:text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                  className="w-10 h-10 rounded-xl bg-[#1E2026] text-white hover:bg-[#E10600] border border-white/10 flex items-center justify-center transition-all active:scale-95 cursor-pointer"
                   title="Close Menu"
                 >
                   <X className="w-5 h-5 stroke-[2.5]" />
@@ -123,7 +123,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Center Stage: Masonry Photo Collage (Left) & Tall Bold Menu Navigation (Right) */}
+            {/* Center Stage: Masonry Photo Collage (Left) & Menu Navigation (Right) */}
             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center my-auto">
               
               {/* LEFT COLUMN: 4 Staggered Photography Cards */}
@@ -134,13 +134,14 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   initial={{ opacity: 0, scale: 0.95, y: 15 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.18 }}
-                  className="relative aspect-square rounded-2xl overflow-hidden bg-black/40 border border-white/20 shadow-lg"
+                  className="relative aspect-square rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg"
                 >
                   <img
                     src="/images/charles-helmet-front.jpg"
                     alt="Charles Helmet"
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-[#101114]/20" />
                 </motion.div>
 
                 {/* Card 2: Charles Podium Celebration */}
@@ -148,13 +149,14 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   initial={{ opacity: 0, scale: 0.95, y: 15 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.24 }}
-                  className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-black/40 border border-white/20 shadow-lg -translate-y-4"
+                  className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg -translate-y-4"
                 >
                   <img
                     src="/images/charles-portrait.jpg"
                     alt="Charles Podium"
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-[#101114]/20" />
                 </motion.div>
 
                 {/* Card 3: Charles Off Track / Piano */}
@@ -162,13 +164,14 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   initial={{ opacity: 0, scale: 0.95, y: 15 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 }}
-                  className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-black/40 border border-white/20 shadow-lg -translate-y-4"
+                  className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg -translate-y-4"
                 >
                   <img
                     src="/images/charles-off-track.jpg"
                     alt="Charles Off Track"
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-[#101114]/20" />
                 </motion.div>
 
                 {/* Card 4: Ferrari SF-25 F1 Car */}
@@ -176,13 +179,14 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   initial={{ opacity: 0, scale: 0.95, y: 15 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.36 }}
-                  className="relative aspect-square rounded-2xl overflow-hidden bg-black/40 border border-white/20 shadow-lg"
+                  className="relative aspect-square rounded-2xl overflow-hidden bg-[#181A20] border border-white/10 shadow-lg"
                 >
                   <img
                     src="/images/charles-on-track.jpg"
                     alt="Ferrari F1 On Track"
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-[#101114]/20" />
                 </motion.div>
 
               </div>
@@ -199,7 +203,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                         key={item.label}
                         className="relative inline-flex items-center justify-start lg:justify-end"
                       >
-                        <TextBoxReveal delay={0.16 + index * 0.05} duration={0.35} boxColor="#000000">
+                        <TextBoxReveal delay={0.16 + index * 0.05} duration={0.35} boxColor="#E10600">
                           <a
                             href={item.href}
                             onClick={() => {
@@ -208,21 +212,21 @@ export default function MenuOverlay({ isOpen, onClose }) {
                             }}
                             onMouseEnter={() => setActiveItem(item.label)}
                             className={`relative font-sans font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[0.95] uppercase transition-colors duration-150 block py-0.5 ${
-                              isActive ? 'text-white' : 'text-white/60 hover:text-white'
+                              isActive ? 'text-white' : 'text-neutral-400 hover:text-white'
                             }`}
                           >
                             <span>{item.label}</span>
 
-                            {/* Crisp Solid White Wave Slash on Active Item */}
+                            {/* Monaco Scarlet Red Wave Slash on Active Item */}
                             {isActive && (
                               <motion.div
-                                layoutId="menu-white-stroke"
+                                layoutId="menu-red-stroke"
                                 className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-2.5 pointer-events-none flex items-center"
                               >
                                 <svg viewBox="0 0 100 12" className="w-full h-full overflow-visible" preserveAspectRatio="none">
                                   <path
                                     d="M 0,6 Q 25,1 50,6 T 100,6"
-                                    stroke="#FFFFFF"
+                                    stroke="#E10600"
                                     strokeWidth="4.5"
                                     strokeLinecap="round"
                                     fill="none"
@@ -239,16 +243,16 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
                 {/* Scuderia Ferrari Laurel Wreath + Helmet Badge */}
                 <div className="flex flex-col items-start lg:items-end mt-2 text-left lg:text-right">
-                  <TextBoxReveal delay={0.42} duration={0.35} boxColor="#000000">
-                    <div className="flex items-center gap-2 text-white">
+                  <TextBoxReveal delay={0.42} duration={0.35} boxColor="#E10600">
+                    <div className="flex items-center gap-2 text-neutral-300">
                       <svg viewBox="0 0 60 40" className="w-11 h-7" fill="none">
-                        <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                        <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                        <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#E10600" strokeWidth="1.5" strokeLinecap="round" />
+                        <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#E10600" strokeWidth="1.5" strokeLinecap="round" />
                         <ellipse cx="30" cy="18" rx="10" ry="9" stroke="#FFFFFF" strokeWidth="1.5" />
-                        <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#FFFFFF" />
+                        <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#E10600" />
                         <line x1="20" y1="22" x2="40" y2="22" stroke="#FFFFFF" strokeWidth="1.4" />
                       </svg>
-                      <span className="text-[10px] font-mono-telemetry uppercase tracking-wider text-white font-bold">
+                      <span className="text-[10px] font-mono-telemetry uppercase tracking-wider text-neutral-300 font-bold">
                         SCUDERIA FERRARI SINCE 2019
                       </span>
                     </div>
@@ -260,8 +264,8 @@ export default function MenuOverlay({ isOpen, onClose }) {
             </div>
 
             {/* Bottom Bar: Business Enquiries & Social Media Links */}
-            <div className="w-full flex flex-col md:flex-row items-center justify-between pt-4 border-t border-white/20 gap-3 text-xs font-sans font-bold uppercase tracking-wider text-white/80 z-10">
-              <TextBoxReveal delay={0.46} duration={0.35} boxColor="#000000">
+            <div className="w-full flex flex-col md:flex-row items-center justify-between pt-4 border-t border-white/10 gap-3 text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 z-10">
+              <TextBoxReveal delay={0.46} duration={0.35} boxColor="#E10600">
                 <a
                   href="mailto:contact@charlesleclerc.com"
                   className="hover:text-white transition-colors"
@@ -271,16 +275,16 @@ export default function MenuOverlay({ isOpen, onClose }) {
               </TextBoxReveal>
 
               <div className="flex items-center gap-6">
-                <TextBoxReveal delay={0.5} duration={0.35} boxColor="#000000">
+                <TextBoxReveal delay={0.5} duration={0.35} boxColor="#E10600">
                   <a href="https://www.tiktok.com/@charlesleclerc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TIKTOK</a>
                 </TextBoxReveal>
-                <TextBoxReveal delay={0.54} duration={0.35} boxColor="#000000">
+                <TextBoxReveal delay={0.54} duration={0.35} boxColor="#E10600">
                   <a href="https://www.instagram.com/charles_leclerc/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">INSTAGRAM</a>
                 </TextBoxReveal>
-                <TextBoxReveal delay={0.58} duration={0.35} boxColor="#000000">
+                <TextBoxReveal delay={0.58} duration={0.35} boxColor="#E10600">
                   <a href="https://www.youtube.com/@charlesleclerc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YOUTUBE</a>
                 </TextBoxReveal>
-                <TextBoxReveal delay={0.62} duration={0.35} boxColor="#000000">
+                <TextBoxReveal delay={0.62} duration={0.35} boxColor="#E10600">
                   <a href="https://www.twitch.tv/charlesleclerc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TWITCH</a>
                 </TextBoxReveal>
               </div>
