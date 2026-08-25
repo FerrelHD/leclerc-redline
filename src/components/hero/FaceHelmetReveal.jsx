@@ -5,6 +5,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 import MainVisualStack from './MainVisualStack';
 import AnimatedSignature from './AnimatedSignature';
 import MonzaHudCard from './MonzaHudCard';
+import WavesBackground from '../ui/WavesBackground';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -111,27 +112,22 @@ export default function FaceHelmetReveal() {
       className="relative w-full h-screen overflow-hidden select-none bg-[#101114]"
     >
       {/* ========================================================================= */}
-      {/* 1. BACKGROUND LAYER: DEEP INK OBSIDIAN WITH INFINITE RUNNING MARQUEE     */}
+      {/* 1. BACKGROUND LAYER: DEEP INK OBSIDIAN WITH INTERACTIVE WAVES & MARQUEE  */}
       {/* ========================================================================= */}
       <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#101114]">
         
-        {/* Animated Background Topographic Contour Lines */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="dark-bg-topo" width="900" height="900" patternUnits="userSpaceOnUse">
-                <path d="M 50,450 Q 250,150 500,450 T 950,450" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
-                <path d="M 100,280 Q 300,50 550,280 T 980,280" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
-                <path d="M 0,650 Q 350,850 600,650 T 950,650" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
-                <path d="M 200,150 C 400,350 600,150 800,350" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dark-bg-topo)" />
-          </svg>
+        {/* Interactive Fluid Waves Grid in Dark Background */}
+        <div className="absolute inset-0 opacity-40 pointer-events-none">
+          <WavesBackground
+            strokeColor="rgba(225, 6, 0, 0.18)"
+            spacing={24}
+            strokeWidth={1.2}
+            globalMouse={mousePos}
+          />
         </div>
 
         {/* TOP TRACK: Infinite Continuous Running Marquee (Editorial Italic Monaco Red) */}
-        <div className="w-full overflow-hidden whitespace-nowrap flex py-2">
+        <div className="w-full overflow-hidden whitespace-nowrap flex py-2 relative z-10">
           <motion.div
             className="flex shrink-0 font-editorial italic font-bold text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#E10600]"
             animate={{ x: ['0%', '-50%'] }}
@@ -147,7 +143,7 @@ export default function FaceHelmetReveal() {
         </div>
 
         {/* BOTTOM TRACK: Infinite Continuous Running Marquee (Heavyweight Racing White) */}
-        <div className="w-full overflow-hidden whitespace-nowrap flex py-2 -mt-8 md:-mt-12">
+        <div className="w-full overflow-hidden whitespace-nowrap flex py-2 -mt-8 md:-mt-12 relative z-10">
           <motion.div
             className="flex shrink-0 font-racing font-black text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#F7F7F5]"
             animate={{ x: ['-50%', '0%'] }}
@@ -163,7 +159,7 @@ export default function FaceHelmetReveal() {
         </div>
 
         {/* Dynamic Badge below Navbar */}
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
           <div
             ref={messageBadgeRef}
             className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#181A20]/95 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-white uppercase tracking-widest shadow-xl"
@@ -176,11 +172,11 @@ export default function FaceHelmetReveal() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. FOREGROUND LAYER: PURE WHITE CARD WITH OVERLAPPING SIGNATURE          */}
+      {/* 2. FOREGROUND LAYER: PURE WHITE CARD WITH INTERACTIVE WAVES BACKGROUND    */}
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         
-        {/* A. HERO CARD (Clean Crisp White Canvas) */}
+        {/* A. HERO CARD (Interactive Fluid Waves Grid) */}
         <div
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
@@ -190,19 +186,14 @@ export default function FaceHelmetReveal() {
             clipPath: 'inset(0% 0% 0% 0% round 0px)',
           }}
         >
-          {/* Topographic Contour Lines Background inside Hero Card */}
-          <div className="absolute inset-0 pointer-events-none z-0 opacity-70">
-            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="card-topo" width="1000" height="1000" patternUnits="userSpaceOnUse">
-                  <path d="M 50,500 Q 250,220 500,500 T 950,500" fill="none" stroke="rgba(10,10,11,0.08)" strokeWidth="1.4" />
-                  <path d="M 100,300 Q 300,100 550,300 T 980,300" fill="none" stroke="rgba(10,10,11,0.08)" strokeWidth="1.4" />
-                  <path d="M 0,650 Q 350,850 600,650 T 950,650" fill="none" stroke="rgba(10,10,11,0.08)" strokeWidth="1.4" />
-                  <path d="M 200,150 C 400,350 600,150 800,350" fill="none" stroke="rgba(10,10,11,0.06)" strokeWidth="1.2" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#card-topo)" />
-            </svg>
+          {/* Interactive Simplex-Noise Fluid Wave Grid inside Hero Card */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-80">
+            <WavesBackground
+              strokeColor="rgba(10, 10, 11, 0.08)"
+              spacing={20}
+              strokeWidth={1.2}
+              globalMouse={mousePos}
+            />
           </div>
 
           {/* FULL CARD SEAMLESS ELONGATED LIQUID PAINT BLOB */}
