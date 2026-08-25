@@ -28,47 +28,31 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
 
         const isHelmet = src.includes('helmet');
 
-        // BFS Flood fill strictly for external background
+        // BFS Flood fill from all outer borders (top, left, right)
         const visited = new Uint8Array(w * h);
         const queue = [];
 
-        if (isHelmet) {
-          // Helmet: seed all 4 outer edges
-          for (let x = 0; x < w; x++) {
-            queue.push(x, 0);
-            queue.push(x, h - 1);
-          }
-          for (let y = 0; y < h; y++) {
-            queue.push(0, y);
-            queue.push(w - 1, y);
-          }
-        } else {
-          // Charles Portrait: ONLY seed top edge and upper side edges (NEVER bottom or lower jacket)
-          for (let x = 0; x < w; x++) {
-            queue.push(x, 0);
-          }
-          for (let y = 0; y < Math.round(h * 0.6); y++) {
-            queue.push(0, y);
-            queue.push(w - 1, y);
-          }
+        for (let x = 0; x < w; x++) {
+          queue.push(x, 0);
+          if (isHelmet) queue.push(x, h - 1);
+        }
+        for (let y = 0; y < h; y++) {
+          queue.push(0, y);
+          queue.push(w - 1, y);
         }
 
-        const isBgPixel = (px, py, r, g, b) => {
+        const isBgPixel = (r, g, b) => {
           if (isHelmet) {
-            // Only pure white outer background
+            // Helmet: only remove pure white outer background
             return r >= 246 && g >= 246 && b >= 246;
           } else {
-            // Protect jacket: NEVER mask pixels in the lower jacket region (py > 65% height)
-            if (py > h * 0.62) {
-              return false;
-            }
+            // Fake checkerboard pixels: neutral grey squares (e.g. 204, 238) or white (255)
+            const isNeutral = Math.abs(r - g) <= 15 && Math.abs(g - b) <= 15 && Math.abs(r - b) <= 15;
+            const isCheckerboard = isNeutral && r >= 170;
+            const isPureWhite = r >= 235 && g >= 235 && b >= 235;
 
-            // Studio neutral background detection around head & upper shoulders
-            const isNeutral = Math.abs(r - g) <= 22 && Math.abs(g - b) <= 22 && Math.abs(r - b) <= 22;
-            const isStudioBg = isNeutral && r >= 135 && r <= 245;
-            const isPureWhite = r >= 225 && g >= 225 && b >= 225;
-
-            return isStudioBg || isPureWhite;
+            // Stop immediately at dark boundaries (hair & dark fleece jacket outline: r,g,b < 100)
+            return isCheckerboard || isPureWhite;
           }
         };
 
@@ -86,16 +70,13 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           const g = data[pIdx + 1];
           const b = data[pIdx + 2];
 
-          if (isBgPixel(px, py, r, g, b)) {
-            data[pIdx + 3] = 0; // 100% transparent background
+          if (isBgPixel(r, g, b)) {
+            data[pIdx + 3] = 0; // Make 100% transparent alpha
 
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
             if (py > 0 && !visited[idx - w]) queue.push(px, py - 1);
-            // Do not let flood fill expand deep down into the jacket
-            if (py < h - 1 && !visited[idx + w] && (isHelmet || py < h * 0.65)) {
-              queue.push(px, py + 1);
-            }
+            if (py < h - 1 && !visited[idx + w]) queue.push(px, py + 1);
           }
         }
 
