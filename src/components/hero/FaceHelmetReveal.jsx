@@ -198,7 +198,7 @@ export default function FaceHelmetReveal() {
           </div>
 
           {/* Ghost Wireframe CAD Helmet Mesh Outline (Behind Charles' Head) */}
-          <div className="absolute top-[8%] left-1/2 -translate-x-1/2 w-[340px] h-[340px] pointer-events-none opacity-25 z-[3]">
+          <div className="absolute top-[8%] left-1/2 -translate-x-1/2 w-[440px] h-[440px] pointer-events-none opacity-25 z-[3]">
             <svg viewBox="0 0 200 200" className="w-full h-full" fill="none">
               <ellipse cx="100" cy="95" rx="72" ry="65" stroke="rgba(0,0,0,0.4)" strokeWidth="0.8" strokeDasharray="3 2" />
               <path d="M 35,95 C 35,45 165,45 165,95" stroke="rgba(0,0,0,0.5)" strokeWidth="0.8" />
@@ -208,9 +208,9 @@ export default function FaceHelmetReveal() {
             </svg>
           </div>
 
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Two Stacked Cover Images with Liquid Circular Mask) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Sized Portrait & Helmet Reveal) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0">
-            <div className="relative w-full max-w-[620px] h-[92vh] flex items-end justify-center origin-bottom">
+            <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-[96vh] flex items-end justify-center origin-bottom">
               
               {/* Main Visual Stack Component */}
               <MainVisualStack
