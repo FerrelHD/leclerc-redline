@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import MainVisualStack from './MainVisualStack';
@@ -14,26 +14,7 @@ export default function FaceHelmetReveal() {
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
 
-  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  // 3D Parallax Tilt calculation
-  const handleMouseMove = (e) => {
-    if (!heroCardRef.current) return;
-    const rect = heroCardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateY = ((x - centerX) / centerX) * 3;
-    const rotateX = -((y - centerY) / centerY) * 3;
-    setTilt({ rotateX, rotateY });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ rotateX: 0, rotateY: 0 });
-  };
 
   // GSAP ScrollTrigger Sequence: Whole Hero Zoom-Out
   useEffect(() => {
@@ -51,12 +32,12 @@ export default function FaceHelmetReveal() {
         },
       });
 
-      // Stage A: Whole Hero Section Card zooms out & shrinks to center card
+      // Stage A: Whole Hero Section Card zooms out & shrinks cleanly to center card
       tl.to(
         heroCardRef.current,
         {
           scale: 0.68,
-          borderRadius: '18px',
+          borderRadius: '20px',
           boxShadow: '0 35px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.1)',
           ease: 'power2.inOut',
         },
@@ -154,13 +135,7 @@ export default function FaceHelmetReveal() {
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         <div
           ref={heroCardRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          className="relative w-full h-full overflow-hidden bg-[#ffffff] flex flex-col justify-between origin-center transition-transform duration-75 ease-out"
-          style={{
-            transform: `perspective(1200px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
-            transformStyle: 'preserve-3d',
-          }}
+          className="relative w-full h-full overflow-hidden bg-[#ffffff] flex flex-col justify-between origin-center"
         >
           {/* Topographic Contour Lines Background inside Hero Card */}
           <div className="absolute inset-0 pointer-events-none z-0">
@@ -197,18 +172,7 @@ export default function FaceHelmetReveal() {
             </svg>
           </div>
 
-          {/* Ghost Wireframe CAD Helmet Mesh Outline (Behind Charles' Head) */}
-          <div className="absolute top-[8%] left-1/2 -translate-x-1/2 w-[440px] h-[440px] pointer-events-none opacity-25 z-[3]">
-            <svg viewBox="0 0 200 200" className="w-full h-full" fill="none">
-              <ellipse cx="100" cy="95" rx="72" ry="65" stroke="rgba(0,0,0,0.4)" strokeWidth="0.8" strokeDasharray="3 2" />
-              <path d="M 35,95 C 35,45 165,45 165,95" stroke="rgba(0,0,0,0.5)" strokeWidth="0.8" />
-              <path d="M 45,120 C 45,75 155,75 155,120" stroke="rgba(0,0,0,0.4)" strokeWidth="0.7" />
-              <line x1="100" y1="30" x2="100" y2="160" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8" strokeDasharray="4 2" />
-              <ellipse cx="100" cy="55" rx="40" ry="20" stroke="rgba(0,0,0,0.3)" strokeWidth="0.6" />
-            </svg>
-          </div>
-
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Sized Portrait & Helmet Reveal) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Size Portrait with Clean Liquid Mask) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0">
             <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-[96vh] flex items-end justify-center origin-bottom">
               
