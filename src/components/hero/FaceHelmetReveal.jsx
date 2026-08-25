@@ -14,51 +14,52 @@ export default function FaceHelmetReveal() {
   const marqueeTextRef2 = useRef(null);
   const messageBadgeRef = useRef(null);
 
-  // Global cursor position relative to the section (in percentage 0-100)
-  const [cursorPos, setCursorPos] = useState({ x: 50, y: 40 });
-  const [smoothY, setSmoothY] = useState(40);
-  const [isSectionHovered, setIsSectionHovered] = useState(false);
+  // Mouse pixel coordinates inside section
+  const [mouseCoord, setMouseCoord] = useState({ x: -500, y: -500 });
+  const [smoothMouse, setSmoothMouse] = useState({ x: -500, y: -500 });
+  const [isHovered, setIsHovered] = useState(false);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Smooth lerp animation loop for the liquid brush Y position
+  // Smooth fluid spring lerp for the liquid wave position
   useEffect(() => {
     let animId;
-    const lerpY = () => {
-      setSmoothY((prev) => {
-        const target = cursorPos.y;
-        const diff = target - prev;
-        if (Math.abs(diff) < 0.05) return target;
-        return prev + diff * 0.16; // Fluid spring lag
+    const lerpLoop = () => {
+      setSmoothMouse((prev) => {
+        const dx = mouseCoord.x - prev.x;
+        const dy = mouseCoord.y - prev.y;
+        if (Math.abs(dx) < 0.2 && Math.abs(dy) < 0.2) return mouseCoord;
+        return {
+          x: prev.x + dx * 0.18,
+          y: prev.y + dy * 0.18,
+        };
       });
-      animId = requestAnimationFrame(lerpY);
+      animId = requestAnimationFrame(lerpLoop);
     };
-    animId = requestAnimationFrame(lerpY);
+    animId = requestAnimationFrame(lerpLoop);
     return () => cancelAnimationFrame(animId);
-  }, [cursorPos.y]);
+  }, [mouseCoord]);
 
   // Track cursor anywhere in the hero section
   const handleMouseMove = (e) => {
     if (!sectionRef.current) return;
     const rect = sectionRef.current.getBoundingClientRect();
-    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    setIsSectionHovered(true);
-    setCursorPos({
-      x: Math.max(0, Math.min(100, xPct)),
-      y: Math.max(10, Math.min(90, yPct)),
-    });
+    setIsHovered(true);
+    setMouseCoord({ x, y });
 
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    const rotateY = ((e.clientX - centerX) / centerX) * 4;
-    const rotateX = -((e.clientY - centerY) / centerY) * 4;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateY = ((x - centerX) / centerX) * 4;
+    const rotateX = -((y - centerY) / centerY) * 4;
     setTilt({ rotateX, rotateY });
   };
 
   const handleMouseLeave = () => {
-    setIsSectionHovered(false);
+    setIsHovered(false);
+    setMouseCoord({ x: -500, y: -500 });
     setTilt({ rotateX: 0, rotateY: 0 });
   };
 
@@ -129,10 +130,23 @@ export default function FaceHelmetReveal() {
   const isDarkPhase = scrollProgress > 0.35;
   const topoStroke = isDarkPhase ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
-  // Calculate dynamic liquid brush stroke boundaries
-  const brushY = smoothY;
-  const brushTop = Math.max(0, brushY - 12);
-  const brushBottom = Math.min(100, brushY + 14);
+  // Calculate mouse position relative to portrait container for helmet masking
+  const getPortraitRelativeMouse = () => {
+    if (!portraitHeroRef.current) return { x: -500, y: -500 };
+    const pRect = portraitHeroRef.current.getBoundingClientRect();
+    const sRect = sectionRef.current ? sectionRef.current.getBoundingClientRect() : { left: 0, top: 0 };
+    
+    // Position of portrait relative to section
+    const pLeft = pRect.left - sRect.left;
+    const pTop = pRect.top - sRect.top;
+
+    return {
+      x: smoothMouse.x - pLeft,
+      y: smoothMouse.y - pTop,
+    };
+  };
+
+  const portraitMouse = getPortraitRelativeMouse();
 
   return (
     <div
@@ -141,6 +155,25 @@ export default function FaceHelmetReveal() {
       onMouseLeave={handleMouseLeave}
       className="relative w-full h-screen overflow-hidden select-none flex flex-col justify-between"
     >
+      {/* SVG Mask Definition for Localized Liquid Wave Reveal */}
+      <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="liquid-cursor-mask" clipPathUnits="userSpaceOnUse">
+            {/* Localized organic liquid wave shape centered at portraitMouse */}
+            <path
+              d={`
+                M ${portraitMouse.x - 170} ${portraitMouse.y}
+                C ${portraitMouse.x - 110} ${portraitMouse.y - 45}, ${portraitMouse.x - 40} ${portraitMouse.y - 35}, ${portraitMouse.x} ${portraitMouse.y - 40}
+                C ${portraitMouse.x + 50} ${portraitMouse.y - 45}, ${portraitMouse.x + 110} ${portraitMouse.y - 25}, ${portraitMouse.x + 180} ${portraitMouse.y}
+                C ${portraitMouse.x + 120} ${portraitMouse.y + 45}, ${portraitMouse.x + 50} ${portraitMouse.y + 40}, ${portraitMouse.x} ${portraitMouse.y + 45}
+                C ${portraitMouse.x - 50} ${portraitMouse.y + 50}, ${portraitMouse.x - 110} ${portraitMouse.y + 35}, ${portraitMouse.x - 170} ${portraitMouse.y}
+                Z
+              `}
+            />
+          </clipPath>
+        </defs>
+      </svg>
+
       {/* Dynamic Background Base */}
       <div
         ref={bgRef}
@@ -177,40 +210,39 @@ export default function FaceHelmetReveal() {
         </svg>
       </div>
 
-      {/* SECTION-WIDE LIQUID INK BRUSH STROKE (Spans across the entire background 100vw) */}
+      {/* LOCALIZED LIQUID INK WAVE (Renders around the cursor on the background) */}
       <div
-        className="absolute left-0 right-0 pointer-events-none z-[4] transition-opacity duration-300"
+        className="absolute inset-0 pointer-events-none z-[4] transition-opacity duration-200"
         style={{
-          top: `${brushY}%`,
-          transform: 'translateY(-50%)',
-          opacity: isSectionHovered ? (isDarkPhase ? 0.25 : 0.85) : 0,
+          opacity: isHovered ? (isDarkPhase ? 0.25 : 0.9) : 0,
         }}
       >
-        <svg
-          viewBox="0 0 1600 220"
-          className="w-full h-44 filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
-          preserveAspectRatio="none"
-        >
-          {/* Organic Liquid Ink Brush Splatter Shape (Matches the olive-tinted paint smear in reference) */}
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          {/* Main organic liquid wave blob around the cursor */}
           <path
-            d="M 0,110 
-               C 180,45, 320,165, 520,110 
-               C 700,60, 900,160, 1100,105 
-               C 1280,55, 1440,150, 1600,110 
-               L 1600,145 
-               C 1420,195, 1260,85, 1080,140 
-               C 880,195, 720,80, 520,145 
-               C 340,200, 180,90, 0,145 Z"
+            d={`
+              M ${smoothMouse.x - 170} ${smoothMouse.y}
+              C ${smoothMouse.x - 110} ${smoothMouse.y - 45}, ${smoothMouse.x - 40} ${smoothMouse.y - 35}, ${smoothMouse.x} ${smoothMouse.y - 40}
+              C ${smoothMouse.x + 50} ${smoothMouse.y - 45}, ${smoothMouse.x + 110} ${smoothMouse.y - 25}, ${smoothMouse.x + 180} ${smoothMouse.y}
+              C ${smoothMouse.x + 120} ${smoothMouse.y + 45}, ${smoothMouse.x + 50} ${smoothMouse.y + 40}, ${smoothMouse.x} ${smoothMouse.y + 45}
+              C ${smoothMouse.x - 50} ${smoothMouse.y + 50}, ${smoothMouse.x - 110} ${smoothMouse.y + 35}, ${smoothMouse.x - 170} ${smoothMouse.y}
+              Z
+            `}
             fill={isDarkPhase ? 'rgba(255, 255, 255, 0.08)' : '#e2e4da'}
           />
-          {/* Organic Tapered Driplet & Splash Accents */}
-          <path
-            d="M 220,95 Q 260,70 300,95 Q 260,115 220,95 Z"
-            fill={isDarkPhase ? 'rgba(255, 255, 255, 0.05)' : '#d8dbcf'}
+
+          {/* Organic satellite droplets / liquid splash accents */}
+          <circle
+            cx={smoothMouse.x - 195}
+            cy={smoothMouse.y - 10}
+            r="8"
+            fill={isDarkPhase ? 'rgba(255, 255, 255, 0.06)' : '#dcdfd4'}
           />
-          <path
-            d="M 1320,120 Q 1360,95 1400,120 Q 1360,140 1320,120 Z"
-            fill={isDarkPhase ? 'rgba(255, 255, 255, 0.05)' : '#d8dbcf'}
+          <circle
+            cx={smoothMouse.x + 205}
+            cy={smoothMouse.y + 8}
+            r="10"
+            fill={isDarkPhase ? 'rgba(255, 255, 255, 0.06)' : '#dcdfd4'}
           />
         </svg>
       </div>
@@ -274,25 +306,12 @@ export default function FaceHelmetReveal() {
             />
           </div>
 
-          {/* DYNAMIC LIQUID INK BRUSH SLICE: 3D FRONT HELMET REVEAL INSIDE THE BRUSH BAND */}
+          {/* DYNAMIC LIQUID INK WAVE: 3D FRONT HELMET REVEAL AROUND THE CURSOR */}
           <div
-            className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center transition-opacity duration-200"
+            className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center transition-opacity duration-150"
             style={{
-              opacity: isSectionHovered && brushY >= 15 && brushY <= 65 ? 1 : 0,
-              clipPath: `polygon(
-                0% ${brushTop}%, 
-                15% ${brushTop - 3}%, 
-                35% ${brushTop + 2}%, 
-                60% ${brushTop - 2}%, 
-                85% ${brushTop + 3}%, 
-                100% ${brushTop}%,
-                100% ${brushBottom}%, 
-                85% ${brushBottom + 3}%, 
-                60% ${brushBottom - 2}%, 
-                35% ${brushBottom + 4}%, 
-                15% ${brushBottom - 3}%, 
-                0% ${brushBottom}%
-              )`,
+              opacity: isHovered ? 1 : 0,
+              clipPath: 'url(#liquid-cursor-mask)',
             }}
           >
             {/* Front-Facing 3D Helmet Layer */}
@@ -379,7 +398,7 @@ export default function FaceHelmetReveal() {
               MOVE CURSOR
             </span>
             <span className="text-xs font-racing font-bold text-[#E10600] block">
-              LIQUID INK SLICE ⚡
+              LIQUID WAVE SLICE ⚡
             </span>
           </div>
         </div>
