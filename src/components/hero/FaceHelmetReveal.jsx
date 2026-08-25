@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import WireframeHelmetDome from '../3d/WireframeHelmetDome';
 import TransparentCutout from './TransparentCutout';
 import AnimatedSignature from './AnimatedSignature';
 
@@ -10,23 +9,21 @@ gsap.registerPlugin(ScrollTrigger);
 export default function FaceHelmetReveal() {
   const sectionRef = useRef(null);
   const bgRef = useRef(null);
-  const portraitWrapperRef = useRef(null);
+  const portraitHeroRef = useRef(null);
   const marqueeTextRef1 = useRef(null);
   const marqueeTextRef2 = useRef(null);
   const messageBadgeRef = useRef(null);
 
-  const [mousePos, setMousePos] = useState({ x: 50, y: 38 }); // percentage relative to portrait
-  const [screenMouse, setScreenMouse] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 50, y: 38 });
   const [isHovered, setIsHovered] = useState(false);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Mouse move handler for Parallax 3D & Liquid Ink Band tracking
   const handleMouseMove = (e) => {
-    if (!portraitWrapperRef.current) return;
-    const rect = portraitWrapperRef.current.getBoundingClientRect();
+    if (!portraitHeroRef.current) return;
+    const rect = portraitHeroRef.current.getBoundingClientRect();
 
-    // Normalized coordinates inside portrait
     const relX = ((e.clientX - rect.left) / rect.width) * 100;
     const relY = ((e.clientY - rect.top) / rect.height) * 100;
 
@@ -35,13 +32,10 @@ export default function FaceHelmetReveal() {
       y: Math.max(10, Math.min(85, relY)),
     });
 
-    setScreenMouse({ x: e.clientX, y: e.clientY });
-
-    // 3D Parallax tilt
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    const rotateY = ((e.clientX - centerX) / centerX) * 5;
-    const rotateX = -((e.clientY - centerY) / centerY) * 5;
+    const rotateY = ((e.clientX - centerX) / centerX) * 4;
+    const rotateX = -((e.clientY - centerY) / centerY) * 4;
     setTilt({ rotateX, rotateY });
   };
 
@@ -73,9 +67,9 @@ export default function FaceHelmetReveal() {
 
       // Stage B: Portrait scales down smoothly
       tl.to(
-        portraitWrapperRef.current,
+        portraitHeroRef.current,
         {
-          scale: 0.75,
+          scale: 0.82,
           y: 20,
           ease: 'power2.inOut',
         },
@@ -113,7 +107,7 @@ export default function FaceHelmetReveal() {
   const topoStroke = isDarkPhase ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
   // Calculate dynamic liquid ink clip path position
-  const inkY = isHovered ? mousePos.y : 38; // Default over eye level when not hovered
+  const inkY = isHovered ? mousePos.y : 38;
   const inkTop = Math.max(0, inkY - 14);
   const inkBottom = Math.min(100, inkY + 16);
 
@@ -128,7 +122,7 @@ export default function FaceHelmetReveal() {
       }}
       className="relative w-full h-screen overflow-hidden select-none flex flex-col justify-between"
     >
-      {/* Dynamic Background */}
+      {/* Dynamic Background Base */}
       <div
         ref={bgRef}
         className="absolute inset-0 transition-colors duration-200 pointer-events-none"
@@ -164,11 +158,11 @@ export default function FaceHelmetReveal() {
         </svg>
       </div>
 
-      {/* Translucent Liquid Paint Splatter Trail extending horizontally across the screen */}
+      {/* Translucent Liquid Paint Splatter Trail extending horizontally across the background */}
       <div
         className="absolute left-0 right-0 pointer-events-none z-[4] transition-all duration-150 ease-out"
         style={{
-          top: `${portraitWrapperRef.current ? portraitWrapperRef.current.offsetTop + (portraitWrapperRef.current.offsetHeight * (inkY / 100)) - 60 : 260}px`,
+          top: `${portraitHeroRef.current ? portraitHeroRef.current.offsetTop + (portraitHeroRef.current.offsetHeight * (inkY / 100)) - 60 : 260}px`,
           opacity: isHovered || !isDarkPhase ? 0.6 : 0,
         }}
       >
@@ -220,28 +214,18 @@ export default function FaceHelmetReveal() {
         </div>
       </div>
 
-      {/* MAIN SEAMLESS CENTERPIECE (No Card, 100% Integrated) */}
-      <div className="relative z-10 w-full h-full flex items-end justify-center pointer-events-none pb-0">
+      {/* FULL BACKGROUND HERO PORTRAIT OF CHARLES LECLERC */}
+      <div className="absolute inset-0 z-[6] flex items-end justify-center pointer-events-auto">
         <div
-          ref={portraitWrapperRef}
-          className="relative w-[90vw] max-w-[560px] h-[82vh] max-h-[720px] flex items-end justify-center origin-bottom pointer-events-auto"
+          ref={portraitHeroRef}
+          className="relative w-full max-w-[700px] h-[92vh] flex items-end justify-center origin-bottom transition-transform duration-100 ease-out"
           style={{
             transform: `perspective(1200px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
             transformStyle: 'preserve-3d',
           }}
         >
-          {/* 1. THREE.JS 3D WIREFRAME DOME OVER HAIR */}
-          <div
-            className="absolute top-[2%] left-1/2 -translate-x-1/2 w-[72%] h-[32%] z-20 pointer-events-none"
-            style={{
-              transform: 'translateZ(30px)',
-            }}
-          >
-            <WireframeHelmetDome mouseTilt={tilt} />
-          </div>
-
-          {/* 2. BASE SEAMLESS PORTRAIT (Charles Leclerc Cutout) */}
-          <div className="relative w-full h-full flex items-end justify-center z-10">
+          {/* BASE PORTRAIT LAYER */}
+          <div className="relative w-full h-full flex items-end justify-center">
             <TransparentCutout
               src="/images/leclercface.jpe"
               alt="Charles Leclerc"
@@ -249,9 +233,9 @@ export default function FaceHelmetReveal() {
             />
           </div>
 
-          {/* 3. DYNAMIC LIQUID INK BRUSH SLICE: FRONT-FACING 3D HELMET REVEAL */}
+          {/* DYNAMIC LIQUID INK BRUSH SLICE: FRONT-FACING 3D HELMET REVEAL */}
           <div
-            className="absolute inset-0 z-30 pointer-events-none flex items-end justify-center transition-all duration-150 ease-out"
+            className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center transition-all duration-150 ease-out"
             style={{
               clipPath: `polygon(
                 0% ${inkTop}%, 
@@ -282,9 +266,9 @@ export default function FaceHelmetReveal() {
             </div>
           </div>
 
-          {/* 4. DYNAMIC NEON AUTOGRAPH (Animated on Scroll) */}
+          {/* DYNAMIC NEON AUTOGRAPH (Animated on Scroll) */}
           <div
-            className="absolute inset-0 z-40 pointer-events-none transition-opacity duration-300"
+            className="absolute inset-0 z-30 pointer-events-none transition-opacity duration-300"
             style={{
               opacity: scrollProgress > 0.4 ? Math.min(1, (scrollProgress - 0.4) * 3) : 0,
             }}
@@ -294,7 +278,6 @@ export default function FaceHelmetReveal() {
               color="#FFE500"
             />
           </div>
-
         </div>
       </div>
 
