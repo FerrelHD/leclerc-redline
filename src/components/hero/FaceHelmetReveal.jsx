@@ -67,12 +67,13 @@ export default function FaceHelmetReveal() {
         },
       });
 
-      // Stage A: Whole Hero Section Card zooms out & crops horizontally into a Portrait Box (3:4 aspect)
+      // Stage A: Whole Hero Card zooms out & crops horizontally into a Portrait Box
       tl.to(
         heroCardRef.current,
         {
           scale: 0.72,
-          clipPath: 'inset(0% 24% 0% 24% round 24px)',
+          clipPath: 'inset(0% 25% 0% 25% round 24px)',
+          backgroundColor: '#181A20',
           boxShadow: '0 40px 120px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.15)',
           ease: 'power2.inOut',
         },
@@ -83,10 +84,10 @@ export default function FaceHelmetReveal() {
       tl.to(
         monochromeOverlayRef.current,
         {
-          opacity: 0.5,
+          opacity: 0.65,
           ease: 'power1.inOut',
         },
-        0.1
+        0.05
       );
 
       // Stage C: HUD Monza Race widget fades out
@@ -115,20 +116,20 @@ export default function FaceHelmetReveal() {
         0
       );
 
-      // Stage E: "Message from Charles" Badge appears
+      // Stage E: "Message from Charles" Badge appears below the Navbar
       tl.fromTo(
         messageBadgeRef.current,
         { opacity: 0, y: -15 },
         { opacity: 1, y: 0, ease: 'power2.out' },
-        0.3
+        0.25
       );
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  // Signature calculation: animates progressively DURING zoom out (0.15 -> 0.70)
-  const signatureProgress = Math.min(1, Math.max(0, (scrollProgress - 0.15) / 0.55));
+  // Signature calculation: animates progressively DURING zoom out (0.12 -> 0.70)
+  const signatureProgress = Math.min(1, Math.max(0, (scrollProgress - 0.12) / 0.58));
 
   return (
     <div
@@ -171,16 +172,11 @@ export default function FaceHelmetReveal() {
           I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC •
         </div>
 
-        {/* Dynamic Top Center Badge: Message from Charles */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
-          <div className="font-racing font-black italic text-3xl md:text-4xl tracking-tighter text-white flex items-center leading-none">
-            <span>C</span>
-            <span className="-ml-0.5">L</span>
-          </div>
-
+        {/* Dynamic Badge below Navbar (Single CL handled by Navbar to avoid duplicate) */}
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
           <div
             ref={messageBadgeRef}
-            className="flex items-center gap-2 mt-2 px-4 py-1.5 rounded-full bg-[#181A20]/95 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-white uppercase tracking-widest shadow-xl"
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#181A20]/95 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-white uppercase tracking-widest shadow-xl"
             style={{ opacity: 0 }}
           >
             <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
@@ -194,7 +190,7 @@ export default function FaceHelmetReveal() {
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         
-        {/* A. HERO CARD (Smooth GPU-accelerated Zoom & Portrait Crop on Scroll) */}
+        {/* A. HERO CARD (Smooth GPU Zoom & Portrait Crop on Scroll) */}
         <div
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
@@ -236,9 +232,9 @@ export default function FaceHelmetReveal() {
             }}
           />
 
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Portrait Cutout) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Portrait Cutout Filling 100% Height) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
-            <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-[96vh] flex items-end justify-center origin-bottom">
+            <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-full flex items-end justify-center origin-bottom">
               
               {/* Main Visual Stack Component */}
               <MainVisualStack
@@ -249,7 +245,7 @@ export default function FaceHelmetReveal() {
                 isHovered={isHovered}
               />
 
-              {/* Moody Monochrome Dark Tint Overlay for Zoomed-Out State */}
+              {/* Moody Monochrome Dark Tint Overlay for Zoomed-Out State (No White Bars) */}
               <div
                 ref={monochromeOverlayRef}
                 className="absolute inset-0 bg-[#101114] pointer-events-none mix-blend-multiply opacity-0 z-20 transition-opacity duration-300"
@@ -268,12 +264,14 @@ export default function FaceHelmetReveal() {
 
         </div>
 
-        {/* B. MAJESTIC OVERLAPPING SIGNATURE (Anchored across Center Stage) */}
+        {/* B. GRAND OVERLAPPING SIGNATURE (Stretches Wide Beyond the Cropped Card Bounds) */}
         <div
           className="absolute z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
           style={{
-            opacity: scrollProgress > 0.12 ? Math.min(1, (scrollProgress - 0.12) * 5) : 0,
-            transform: `scale(${0.75 + scrollProgress * 0.25})`,
+            opacity: scrollProgress > 0.1 ? Math.min(1, (scrollProgress - 0.1) * 5) : 0,
+            width: '900px',
+            maxWidth: '92vw',
+            transform: `scale(${0.9 + scrollProgress * 0.25}) translateY(20px)`,
           }}
         >
           <AnimatedSignature

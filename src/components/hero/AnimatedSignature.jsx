@@ -19,10 +19,10 @@ export default function AnimatedSignature({ progress = 0, color = "#E10600" }) {
   const currentOffset = totalLength * (1 - clampedProgress);
 
   return (
-    <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center p-6">
+    <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center">
       <svg
         viewBox="0 0 850 450"
-        className="w-full max-w-[620px] h-auto overflow-visible"
+        className="w-full h-auto overflow-visible filter drop-shadow-[0_4px_16px_rgba(225,6,0,0.5)]"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -60,7 +60,7 @@ export default function AnimatedSignature({ progress = 0, color = "#E10600" }) {
             C 320 360 160 385 30 405
           `}
           stroke={color}
-          strokeWidth="6"
+          strokeWidth="6.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
