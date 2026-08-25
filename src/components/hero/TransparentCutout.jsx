@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function TransparentCutout({ src = "/images/leclercface.jpe", alt = "Charles Leclerc", className = "" }) {
+export default function TransparentCutout({ src = "/images/leclercface.jpe", alt = "Cutout", className = "" }) {
   const canvasRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    let isCancelled = false;
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = src;
     img.onload = () => {
+      if (isCancelled) return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -24,7 +26,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         const imgData = ctx.getImageData(0, 0, w, h);
         const data = imgData.data;
 
-        // Flood fill from perimeter to remove checkerboard
+        // BFS Flood fill from perimeter to remove white / checkerboard backgrounds
         const visited = new Uint8Array(w * h);
         const queue = [];
 
@@ -38,8 +40,8 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         }
 
         const isBgPixel = (r, g, b) => {
-          const isGrey = r >= 170 && g >= 170 && b >= 170 && Math.abs(r - g) <= 15 && Math.abs(g - b) <= 15 && Math.abs(r - b) <= 15;
-          const isWhite = r >= 238 && g >= 238 && b >= 238;
+          const isGrey = r >= 165 && g >= 165 && b >= 165 && Math.abs(r - g) <= 20 && Math.abs(g - b) <= 20;
+          const isWhite = r >= 225 && g >= 225 && b >= 225;
           return isGrey || isWhite;
         };
 
@@ -58,7 +60,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           const b = data[pIdx + 2];
 
           if (isBgPixel(r, g, b)) {
-            data[pIdx + 3] = 0; // Make transparent
+            data[pIdx + 3] = 0; // Make 100% transparent alpha
 
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
@@ -74,13 +76,17 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         setIsReady(true);
       }
     };
+
+    return () => {
+      isCancelled = true;
+    };
   }, [src]);
 
   return (
     <canvas
       ref={canvasRef}
       className={`w-full h-full object-contain ${className}`}
-      style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.2s ease-in' }}
+      style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.15s ease-in' }}
     />
   );
 }

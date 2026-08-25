@@ -10,10 +10,9 @@ export default function MainVisualStack({
   isHovered = false,
 }) {
   const containerRef = useRef(null);
-  const [localMouse, setLocalMouse] = useState({ x: -500, y: -500 });
   const [wobble, setWobble] = useState(0);
 
-  // Framer Motion values for local mask coordinates
+  // Motion values for mask coordinates relative to image container
   const maskX = useMotionValue(-500);
   const maskY = useMotionValue(-500);
   const maskRadius = useMotionValue(0);
@@ -23,7 +22,6 @@ export default function MainVisualStack({
   const smoothY = useSpring(maskY, springConfig);
   const smoothRadius = useSpring(maskRadius, { damping: 22, stiffness: 200 });
 
-  // Update mask relative to image bounds
   useEffect(() => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -34,7 +32,7 @@ export default function MainVisualStack({
     maskY.set(relY);
 
     if (isHovered) {
-      maskRadius.set(155);
+      maskRadius.set(160);
     } else {
       maskRadius.set(0);
     }
@@ -55,9 +53,9 @@ export default function MainVisualStack({
   const maskImage = useTransform(
     [smoothX, smoothY, smoothRadius],
     ([x, y, r]) => {
-      const rx = r * (1 + 0.05 * Math.sin(wobble * 2));
-      const ry = r * (1 + 0.05 * Math.cos(wobble * 2));
-      return `radial-gradient(ellipse ${rx}px ${ry}px at ${x}px ${y}px, black 65%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.2) 92%, transparent 100%)`;
+      const rx = r * (1 + 0.04 * Math.sin(wobble * 2));
+      const ry = r * (1 + 0.04 * Math.cos(wobble * 2));
+      return `radial-gradient(ellipse ${rx}px ${ry}px at ${x}px ${y}px, black 65%, rgba(0,0,0,0.75) 82%, transparent 100%)`;
     }
   );
 
@@ -66,7 +64,7 @@ export default function MainVisualStack({
       ref={containerRef}
       className={`relative w-full h-full select-none pointer-events-none ${className}`}
     >
-      {/* 1. TOP LAYER: Charles Leclerc Clean Bust Portrait */}
+      {/* 1. TOP LAYER: Charles Leclerc Clean Cutout */}
       <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-4">
         <TransparentCutout
           src={topImage}
@@ -75,7 +73,7 @@ export default function MainVisualStack({
         />
       </div>
 
-      {/* 2. BOTTOM LAYER: Front 3D Helmet (Revealed smoothly through organic liquid aperture) */}
+      {/* 2. BOTTOM LAYER: Front 3D Helmet Cutout (Alpha transparent without any rectangular border) */}
       <motion.div
         className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4"
         style={{
@@ -83,14 +81,13 @@ export default function MainVisualStack({
           maskImage: maskImage,
         }}
       >
-        <img
-          src={bottomImage}
-          alt="Charles Helmet Bottom Reveal"
-          className="max-h-[95%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.35)] scale-[1.04] -translate-y-4"
-        />
-
-        {/* Visor Glare Specular Sheen Reflection */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none mix-blend-overlay" />
+        <div className="w-full h-full flex items-end justify-center">
+          <TransparentCutout
+            src={bottomImage}
+            alt="Charles Helmet Bottom Reveal"
+            className="max-h-[100%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.3)] scale-[1.03] -translate-y-6"
+          />
+        </div>
       </motion.div>
     </div>
   );
