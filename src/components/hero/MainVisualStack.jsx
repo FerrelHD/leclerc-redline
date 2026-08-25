@@ -114,7 +114,7 @@ export default function MainVisualStack({
         />
       </div>
 
-      {/* 2. BOTTOM LAYER: Official Monaco GP 2024 Special Helmet (Sharpened & High Definition) */}
+      {/* 2. BOTTOM LAYER: Official Monaco GP Helmet Fitted Perfectly on Charles' Head Anatomy */}
       <div
         className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4 transition-opacity duration-150"
         style={{
@@ -125,8 +125,8 @@ export default function MainVisualStack({
         <div className="w-full h-full flex items-end justify-center">
           <TransparentCutout
             src={bottomImage}
-            alt="Charles Leclerc Official Monaco GP 2024 Helmet"
-            className="max-h-[100%] object-contain object-bottom filter brightness-[1.05] contrast-[1.12] drop-shadow-[0_20px_45px_rgba(225,6,0,0.4)] scale-[1.04] -translate-y-6"
+            alt="Charles Leclerc Official Monaco GP Helmet Worn"
+            className="max-h-[102%] object-contain object-bottom filter brightness-[1.05] contrast-[1.12] drop-shadow-[0_20px_45px_rgba(225,6,0,0.4)] scale-[0.88] -translate-y-24"
           />
         </div>
       </div>
