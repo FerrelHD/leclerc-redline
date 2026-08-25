@@ -33,7 +33,7 @@ export default function MainVisualStack({
     maskY.set(relY);
 
     if (isHovered) {
-      maskRadius.set(130); // More compact, sleek base radius
+      maskRadius.set(130); // Compact elongated liquid droplet
     } else {
       maskRadius.set(0);
     }
@@ -63,7 +63,7 @@ export default function MainVisualStack({
     const points = 16;
     const pathCoords = [];
 
-    // Aspect ratio: stretched horizontally (1.6x width, 0.85x height)
+    // Aspect ratio: stretched horizontally (1.62x width, 0.82x height)
     const stretchX = 1.62;
     const stretchY = 0.82;
 
@@ -111,18 +111,18 @@ export default function MainVisualStack({
         </defs>
       </svg>
 
-      {/* 1. TOP LAYER: Charles Leclerc Clean Portrait Cutout */}
-      <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-4">
+      {/* 1. TOP LAYER: Charles Leclerc Clean Cutout (Submerged Lower Floor with Zero Cut-Off Line) */}
+      <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-8">
         <TransparentCutout
           src={topImage}
           alt="Charles Leclerc Top Face"
-          className="max-h-[102%] object-contain object-bottom filter brightness-[1.02] contrast-[1.04]"
+          className="max-h-[105%] object-contain object-bottom filter brightness-[1.02] contrast-[1.04]"
         />
       </div>
 
       {/* 2. BOTTOM LAYER: Official Monaco GP Helmet (Revealed via Elongated Liquid Mask) */}
       <div
-        className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4 transition-opacity duration-150"
+        className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-8 transition-opacity duration-150"
         style={{
           clipPath: blobPath ? 'url(#organic-liquid-mask)' : 'none',
           opacity: blobPath ? 1 : 0,
@@ -132,7 +132,7 @@ export default function MainVisualStack({
           <TransparentCutout
             src={bottomImage}
             alt="Charles Leclerc Official Monaco GP Helmet Worn"
-            className="max-h-[102%] object-contain object-bottom filter brightness-[1.05] contrast-[1.12] drop-shadow-[0_20px_45px_rgba(225,6,0,0.4)] scale-[0.80] -translate-y-16"
+            className="max-h-[105%] object-contain object-bottom filter brightness-[1.05] contrast-[1.12] drop-shadow-[0_20px_45px_rgba(225,6,0,0.4)] scale-[0.80] -translate-y-16"
           />
         </div>
       </div>
