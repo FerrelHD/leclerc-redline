@@ -28,14 +28,14 @@ export default function Navbar({ isAudioPlaying, toggleAudio }) {
             </div>
           </div>
 
-          {/* Right: Neon Lime Store Button & Dual-Bar Menu */}
+          {/* Right: Ferrari Red Store Button & Dual-Bar Menu */}
           <div className="flex items-center gap-3">
-            {/* Official Store Neon Button */}
+            {/* Official Store Ferrari Red Button */}
             <a
               href="https://store.ferrari.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#ccff00] hover:bg-[#d8ff1a] text-black font-racing font-bold text-xs uppercase tracking-wider shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-xs uppercase tracking-wider shadow-md shadow-[#E10600]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>STORE</span>
@@ -44,7 +44,7 @@ export default function Navbar({ isAudioPlaying, toggleAudio }) {
             {/* Minimalist Dual-Bar Hamburger Button */}
             <button
               onClick={() => setMenuOpen(true)}
-              className="w-10 h-10 rounded-xl bg-white border border-neutral-300 hover:border-black flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-white border border-neutral-300 hover:border-[#E10600] hover:shadow-md flex flex-col items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
               title="Open Navigation Menu"
             >
               <span className="w-4 h-[2px] bg-black rounded-full" />
