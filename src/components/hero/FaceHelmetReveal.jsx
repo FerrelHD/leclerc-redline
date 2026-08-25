@@ -25,10 +25,10 @@ export default function FaceHelmetReveal() {
   const blobY = useMotionValue(-500);
   const blobRadius = useMotionValue(0);
 
-  const springConfig = { damping: 26, stiffness: 240, mass: 0.5 };
+  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
   const smoothBlobX = useSpring(blobX, springConfig);
   const smoothBlobY = useSpring(blobY, springConfig);
-  const smoothBlobRadius = useSpring(blobRadius, { damping: 20, stiffness: 180 });
+  const smoothBlobRadius = useSpring(blobRadius, { damping: 22, stiffness: 200 });
 
   const handleMouseMove = (e) => {
     if (!heroCardRef.current) return;
@@ -41,7 +41,7 @@ export default function FaceHelmetReveal() {
 
     blobX.set(x);
     blobY.set(y);
-    blobRadius.set(175);
+    blobRadius.set(130);
   };
 
   const handleMouseLeave = () => {
@@ -205,14 +205,14 @@ export default function FaceHelmetReveal() {
             </svg>
           </div>
 
-          {/* FULL CARD SEAMLESS ORGANIC LIQUID PAINT BLOB */}
+          {/* FULL CARD SEAMLESS ELONGATED LIQUID PAINT BLOB */}
           <motion.div
             className="absolute z-[4] pointer-events-none rounded-full"
             style={{
               x: smoothBlobX,
               y: smoothBlobY,
-              width: 360,
-              height: 300,
+              width: 320,
+              height: 175,
               translateX: '-50%',
               translateY: '-50%',
               backgroundColor: '#E5E3DB',

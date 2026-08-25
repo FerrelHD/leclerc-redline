@@ -18,10 +18,10 @@ export default function MainVisualStack({
   const maskY = useMotionValue(-500);
   const maskRadius = useMotionValue(0);
 
-  const springConfig = { damping: 26, stiffness: 240, mass: 0.5 };
+  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
   const smoothX = useSpring(maskX, springConfig);
   const smoothY = useSpring(maskY, springConfig);
-  const smoothRadius = useSpring(maskRadius, { damping: 20, stiffness: 180 });
+  const smoothRadius = useSpring(maskRadius, { damping: 22, stiffness: 200 });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -33,7 +33,7 @@ export default function MainVisualStack({
     maskY.set(relY);
 
     if (isHovered) {
-      maskRadius.set(185); // Organic liquid puddle radius
+      maskRadius.set(130); // More compact, sleek base radius
     } else {
       maskRadius.set(0);
     }
@@ -43,14 +43,14 @@ export default function MainVisualStack({
   useEffect(() => {
     let animId;
     const loop = () => {
-      setTime((prev) => prev + 0.05);
+      setTime((prev) => prev + 0.06);
       animId = requestAnimationFrame(loop);
     };
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Generate 12-point Organic Wavy Liquid Blob SVG Path
+  // Generate Elongated / Stretched Wavy Liquid Blob SVG Path (Memanjang Horizontal)
   useEffect(() => {
     const r = smoothRadius.get();
     if (r <= 5) {
@@ -60,21 +60,27 @@ export default function MainVisualStack({
 
     const cx = smoothX.get();
     const cy = smoothY.get();
-    const points = 12;
+    const points = 16;
     const pathCoords = [];
+
+    // Aspect ratio: stretched horizontally (1.6x width, 0.85x height)
+    const stretchX = 1.62;
+    const stretchY = 0.82;
 
     for (let i = 0; i <= points; i++) {
       const angle = (i / points) * Math.PI * 2;
-      // Multi-harmonic fluid wave deformers
+      // Multi-harmonic fluid wave ripples along elongated contour
       const wave =
         1 +
-        0.13 * Math.sin(3 * angle + time) +
-        0.08 * Math.cos(5 * angle - time * 1.3) +
-        0.05 * Math.sin(7 * angle + time * 0.7);
+        0.12 * Math.sin(3 * angle + time) +
+        0.09 * Math.cos(4 * angle - time * 1.2) +
+        0.05 * Math.sin(6 * angle + time * 0.8);
 
-      const rad = r * wave;
-      const x = cx + Math.cos(angle) * rad;
-      const y = cy + Math.sin(angle) * rad;
+      const radX = r * stretchX * wave;
+      const radY = r * stretchY * wave;
+
+      const x = cx + Math.cos(angle) * radX;
+      const y = cy + Math.sin(angle) * radY;
       pathCoords.push({ x, y });
     }
 
@@ -96,7 +102,7 @@ export default function MainVisualStack({
       ref={containerRef}
       className={`relative w-full h-full select-none pointer-events-none ${className}`}
     >
-      {/* Dynamic SVG ClipPath Definition for Organic Liquid Blob */}
+      {/* Dynamic SVG ClipPath Definition for Elongated Liquid Blob */}
       <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <clipPath id="organic-liquid-mask">
@@ -114,7 +120,7 @@ export default function MainVisualStack({
         />
       </div>
 
-      {/* 2. BOTTOM LAYER: Official Monaco GP Helmet Covering Chin Completely */}
+      {/* 2. BOTTOM LAYER: Official Monaco GP Helmet (Revealed via Elongated Liquid Mask) */}
       <div
         className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4 transition-opacity duration-150"
         style={{
