@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import TransparentCutout from './TransparentCutout';
 
 export default function MainVisualStack({
@@ -10,17 +10,18 @@ export default function MainVisualStack({
   isHovered = false,
 }) {
   const containerRef = useRef(null);
-  const [wobble, setWobble] = useState(0);
+  const [blobPath, setBlobPath] = useState("");
+  const [time, setTime] = useState(0);
 
   // Motion values for mask coordinates relative to image container
   const maskX = useMotionValue(-500);
   const maskY = useMotionValue(-500);
   const maskRadius = useMotionValue(0);
 
-  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
+  const springConfig = { damping: 26, stiffness: 240, mass: 0.5 };
   const smoothX = useSpring(maskX, springConfig);
   const smoothY = useSpring(maskY, springConfig);
-  const smoothRadius = useSpring(maskRadius, { damping: 22, stiffness: 200 });
+  const smoothRadius = useSpring(maskRadius, { damping: 20, stiffness: 180 });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -32,38 +33,78 @@ export default function MainVisualStack({
     maskY.set(relY);
 
     if (isHovered) {
-      maskRadius.set(160);
+      maskRadius.set(175); // Liquid blob base radius
     } else {
       maskRadius.set(0);
     }
   }, [globalMouse, isHovered]);
 
-  // Subtle organic fluid pulse
+  // Organic fluid oscillation loop
   useEffect(() => {
     let animId;
     const loop = () => {
-      setWobble((prev) => (prev + 0.04) % (Math.PI * 2));
+      setTime((prev) => prev + 0.05);
       animId = requestAnimationFrame(loop);
     };
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Smooth radial gradient mask
-  const maskImage = useTransform(
-    [smoothX, smoothY, smoothRadius],
-    ([x, y, r]) => {
-      const rx = r * (1 + 0.04 * Math.sin(wobble * 2));
-      const ry = r * (1 + 0.04 * Math.cos(wobble * 2));
-      return `radial-gradient(ellipse ${rx}px ${ry}px at ${x}px ${y}px, black 65%, rgba(0,0,0,0.75) 82%, transparent 100%)`;
+  // Generate 12-point Organic Wavy Liquid Blob SVG Path
+  useEffect(() => {
+    const r = smoothRadius.get();
+    if (r <= 5) {
+      setBlobPath("");
+      return;
     }
-  );
+
+    const cx = smoothX.get();
+    const cy = smoothY.get();
+    const points = 12;
+    const pathCoords = [];
+
+    for (let i = 0; i <= points; i++) {
+      const angle = (i / points) * Math.PI * 2;
+      // Multi-harmonic fluid wave deformers
+      const wave =
+        1 +
+        0.13 * Math.sin(3 * angle + time) +
+        0.08 * Math.cos(5 * angle - time * 1.3) +
+        0.05 * Math.sin(7 * angle + time * 0.7);
+
+      const rad = r * wave;
+      const x = cx + Math.cos(angle) * rad;
+      const y = cy + Math.sin(angle) * rad;
+      pathCoords.push({ x, y });
+    }
+
+    // Build smooth cubic bezier closed path
+    let d = `M ${pathCoords[0].x} ${pathCoords[0].y}`;
+    for (let i = 0; i < points; i++) {
+      const curr = pathCoords[i];
+      const next = pathCoords[i + 1];
+      const midX = (curr.x + next.x) / 2;
+      const midY = (curr.y + next.y) / 2;
+      d += ` Q ${curr.x} ${curr.y}, ${midX} ${midY}`;
+    }
+    d += " Z";
+    setBlobPath(d);
+  }, [time, smoothX, smoothY, smoothRadius]);
 
   return (
     <div
       ref={containerRef}
       className={`relative w-full h-full select-none pointer-events-none ${className}`}
     >
+      {/* Dynamic SVG ClipPath Definition for Organic Liquid Blob */}
+      <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="organic-liquid-mask">
+            {blobPath && <path d={blobPath} />}
+          </clipPath>
+        </defs>
+      </svg>
+
       {/* 1. TOP LAYER: Charles Leclerc Clean Cutout */}
       <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-4">
         <TransparentCutout
@@ -73,12 +114,12 @@ export default function MainVisualStack({
         />
       </div>
 
-      {/* 2. BOTTOM LAYER: Front 3D Helmet Cutout (Alpha transparent without any rectangular border) */}
-      <motion.div
-        className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4"
+      {/* 2. BOTTOM LAYER: Front 3D Helmet Cutout (Revealed via True Organic Wavy Liquid Blob) */}
+      <div
+        className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4 transition-opacity duration-150"
         style={{
-          WebkitMaskImage: maskImage,
-          maskImage: maskImage,
+          clipPath: blobPath ? 'url(#organic-liquid-mask)' : 'none',
+          opacity: blobPath ? 1 : 0,
         }}
       >
         <div className="w-full h-full flex items-end justify-center">
@@ -88,7 +129,7 @@ export default function MainVisualStack({
             className="max-h-[100%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.3)] scale-[1.03] -translate-y-6"
           />
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

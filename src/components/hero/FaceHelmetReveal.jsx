@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import MainVisualStack from './MainVisualStack';
 import AnimatedSignature from './AnimatedSignature';
+import MonzaHudCard from './MonzaHudCard';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,10 +25,10 @@ export default function FaceHelmetReveal() {
   const blobY = useMotionValue(-500);
   const blobRadius = useMotionValue(0);
 
-  const springConfig = { damping: 28, stiffness: 260, mass: 0.5 };
+  const springConfig = { damping: 26, stiffness: 240, mass: 0.5 };
   const smoothBlobX = useSpring(blobX, springConfig);
   const smoothBlobY = useSpring(blobY, springConfig);
-  const smoothBlobRadius = useSpring(blobRadius, { damping: 22, stiffness: 200 });
+  const smoothBlobRadius = useSpring(blobRadius, { damping: 20, stiffness: 180 });
 
   const handleMouseMove = (e) => {
     if (!heroCardRef.current) return;
@@ -40,7 +41,7 @@ export default function FaceHelmetReveal() {
 
     blobX.set(x);
     blobY.set(y);
-    blobRadius.set(160);
+    blobRadius.set(175);
   };
 
   const handleMouseLeave = () => {
@@ -124,35 +125,33 @@ export default function FaceHelmetReveal() {
       className="relative w-full h-screen overflow-hidden select-none bg-[#101114]"
     >
       {/* ========================================================================= */}
-      {/* 1. BACKGROUND LAYER (SECTION 2: DEEP INK OBSIDIAN WITH GIANT MARQUEE)    */}
+      {/* 1. BACKGROUND LAYER (SECTION 2: DEEP INK OBSIDIAN WITH HIGH-CONTRAST TEXT)*/}
       {/* ========================================================================= */}
       <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#101114]">
         
         <div className="absolute inset-0 bg-radial-glow opacity-40 pointer-events-none" />
 
+        {/* High-contrast Top Track */}
         <div
           ref={marqueeTrack1Ref}
-          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-[#E10600]/20"
+          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-[#E10600]/40 drop-shadow-[0_0_20px_rgba(225,6,0,0.2)]"
         >
           WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI •
         </div>
 
+        {/* High-contrast Bottom Track */}
         <div
           ref={marqueeTrack2Ref}
-          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-white/10 -mt-8"
+          className="whitespace-nowrap font-racing font-black text-[17vw] md:text-[14vw] leading-none tracking-tighter text-white/35 -mt-8"
         >
           #16 CHARLES LECLERC • POLE POSITION KING • 2026 REDLINE •
         </div>
 
+        {/* Dynamic Top Badge: Message from Charles */}
         <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
-          <div className="font-racing font-black italic text-3xl md:text-4xl tracking-tighter text-white flex items-center leading-none">
-            <span>C</span>
-            <span className="-ml-0.5">L</span>
-          </div>
-
           <div
             ref={messageBadgeRef}
-            className="flex items-center gap-2 mt-2 px-3.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-neutral-300 uppercase tracking-widest"
+            className="flex items-center gap-2 mt-2 px-4 py-1.5 rounded-full bg-[#181A20]/90 backdrop-blur-md border border-white/20 text-[10px] font-mono-telemetry text-white uppercase tracking-widest shadow-xl"
             style={{ opacity: 0 }}
           >
             <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
@@ -200,24 +199,24 @@ export default function FaceHelmetReveal() {
             </svg>
           </div>
 
-          {/* FULL CARD SEAMLESS LIQUID PAINT BLOB (Champagne Tint #E5E3DB) */}
+          {/* FULL CARD SEAMLESS ORGANIC LIQUID PAINT BLOB (Champagne Tint #E5E3DB) */}
           <motion.div
             className="absolute z-[4] pointer-events-none rounded-full"
             style={{
               x: smoothBlobX,
               y: smoothBlobY,
-              width: 340,
-              height: 280,
+              width: 360,
+              height: 300,
               translateX: '-50%',
               translateY: '-50%',
               backgroundColor: '#E5E3DB',
-              opacity: isHovered && scrollProgress < 0.25 ? 0.85 : 0,
-              filter: 'blur(16px)',
+              opacity: isHovered && scrollProgress < 0.25 ? 0.9 : 0,
+              filter: 'blur(20px)',
               transition: 'opacity 0.25s ease-out',
             }}
           />
 
-          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Size Portrait with Clean Liquid Mask) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Grand Size Portrait with True Organic Liquid Blob Mask) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
             <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-[96vh] flex items-end justify-center origin-bottom">
               
@@ -246,51 +245,12 @@ export default function FaceHelmetReveal() {
             </div>
           </div>
 
-          {/* Exact HUD Widget (Next Race - Monza GP with Chamfered Corner) */}
+          {/* 1:1 AUTHENTIC MONZA GP HUD CARD (Exact Scooped Notch Shape) */}
           <div
             ref={hudWidgetRef}
             className="absolute bottom-8 left-6 md:left-12 z-20 pointer-events-auto select-none"
           >
-            <div className="w-36 bg-[#FFFFFF]/95 border border-[#E5E3DB] rounded-2xl rounded-tl-[24px] p-3 shadow-lg backdrop-blur-md flex flex-col gap-2 relative">
-              {/* Top Chamfer Accent Notch */}
-              <div className="text-[9px] font-mono-telemetry uppercase tracking-wider text-neutral-500 font-bold border-b border-[#E5E3DB] pb-1.5 flex items-center justify-between">
-                <span>NEXT RACE</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
-              </div>
-
-              {/* Circuit Outline & Name */}
-              <div className="flex flex-col items-center py-1 border-b border-[#E5E3DB]">
-                <svg viewBox="0 0 100 40" className="w-20 h-7" fill="none">
-                  <path
-                    d="M 10,25 C 20,25 30,10 50,12 C 70,14 85,18 90,20 C 95,22 92,30 80,30 C 65,30 40,28 20,28 C 12,28 8,26 10,25 Z"
-                    stroke="#0A0A0B"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span className="text-[11px] font-racing font-black text-[#0A0A0B] tracking-tight mt-1 uppercase">
-                  MONZA GP
-                </span>
-              </div>
-
-              {/* Formula 1 Laurel Wreath + Helmet */}
-              <div className="flex flex-col items-center pt-0.5 text-center">
-                <div className="flex items-center justify-center gap-1 text-neutral-800">
-                  <svg viewBox="0 0 60 40" className="w-12 h-8" fill="none">
-                    <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#0A0A0B" strokeWidth="1.2" strokeLinecap="round" />
-                    <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#0A0A0B" strokeWidth="1.2" strokeLinecap="round" />
-                    <ellipse cx="30" cy="18" rx="10" ry="9" stroke="#0A0A0B" strokeWidth="1.5" />
-                    <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#0A0A0B" />
-                    <line x1="20" y1="22" x2="40" y2="22" stroke="#0A0A0B" strokeWidth="1.2" />
-                  </svg>
-                </div>
-                <div className="text-[8px] font-mono-telemetry font-bold text-[#0A0A0B] tracking-wider uppercase leading-tight -mt-1">
-                  <div>FORMULA 1</div>
-                  <div className="text-neutral-400 font-normal">SINCE 2018</div>
-                </div>
-              </div>
-            </div>
+            <MonzaHudCard />
           </div>
 
         </div>
