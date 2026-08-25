@@ -13,25 +13,16 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
       if (!canvas) return;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-      const origW = img.naturalWidth;
-      const origH = img.naturalHeight;
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      canvas.width = w;
+      canvas.height = h;
 
-      // Crop tightly to head and shoulders sebahu (removing the cut-off wide arms)
-      const cropX = origW * 0.16;
-      const cropY = origH * 0.01;
-      const cropW = origW * 0.68;
-      const cropH = origH * 0.98;
-
-      canvas.width = cropW;
-      canvas.height = cropH;
-
-      ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+      ctx.drawImage(img, 0, 0, w, h);
 
       try {
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const imgData = ctx.getImageData(0, 0, w, h);
         const data = imgData.data;
-        const w = canvas.width;
-        const h = canvas.height;
 
         // Flood fill from perimeter to remove checkerboard
         const visited = new Uint8Array(w * h);
@@ -67,7 +58,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           const b = data[pIdx + 2];
 
           if (isBgPixel(r, g, b)) {
-            data[pIdx + 3] = 0; // Transparent
+            data[pIdx + 3] = 0; // Make transparent
 
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
@@ -79,7 +70,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         ctx.putImageData(imgData, 0, 0);
         setIsReady(true);
       } catch (err) {
-        console.warn("Canvas transparency error:", err);
+        console.warn("Canvas transparency processing:", err);
         setIsReady(true);
       }
     };
