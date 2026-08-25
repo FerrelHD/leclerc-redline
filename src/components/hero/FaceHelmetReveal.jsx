@@ -115,6 +115,9 @@ export default function FaceHelmetReveal() {
     return () => ctx.revert();
   }, []);
 
+  // Signature calculation: animates progressively DURING zoom out (0.15 -> 0.70)
+  const signatureProgress = Math.min(1, Math.max(0, (scrollProgress - 0.15) / 0.55));
+
   return (
     <div
       ref={sectionRef}
@@ -208,7 +211,7 @@ export default function FaceHelmetReveal() {
               translateX: '-50%',
               translateY: '-50%',
               backgroundColor: '#E5E3DB',
-              opacity: isHovered && scrollProgress < 0.35 ? 0.85 : 0,
+              opacity: isHovered && scrollProgress < 0.25 ? 0.85 : 0,
               filter: 'blur(16px)',
               transition: 'opacity 0.25s ease-out',
             }}
@@ -227,15 +230,15 @@ export default function FaceHelmetReveal() {
                 isHovered={isHovered}
               />
 
-              {/* Dynamic Monaco Red Autograph (Animated on Scroll across the Card) */}
+              {/* Authentic Charles Leclerc Signature - Draws progressively DURING zoom-out */}
               <div
-                className="absolute inset-0 z-30 pointer-events-none transition-opacity duration-300"
+                className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center transition-opacity duration-200"
                 style={{
-                  opacity: scrollProgress > 0.4 ? Math.min(1, (scrollProgress - 0.4) * 3) : 0,
+                  opacity: scrollProgress > 0.12 ? Math.min(1, (scrollProgress - 0.12) * 5) : 0,
                 }}
               >
                 <AnimatedSignature
-                  progress={Math.min(1, Math.max(0, (scrollProgress - 0.4) / 0.5))}
+                  progress={signatureProgress}
                   color="#E10600"
                 />
               </div>

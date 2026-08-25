@@ -1,66 +1,83 @@
-import React, { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useEffect, useRef, useState } from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+export default function AnimatedSignature({ progress = 0, color = "#E10600" }) {
+  const canvasRef = useRef(null);
+  const [isProcessed, setIsProcessed] = useState(false);
 
-export default function AnimatedSignature({ progress = 1, color = "#FFE500" }) {
-  const pathRef1 = useRef(null);
-  const pathRef2 = useRef(null);
-  const pathRef3 = useRef(null);
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = '/images/leclerc-signature.png';
+    img.onload = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      canvas.width = w;
+      canvas.height = h;
+
+      ctx.drawImage(img, 0, 0, w, h);
+
+      try {
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+
+        // Parse hex color into RGB
+        const hex = color.replace('#', '');
+        const rTarget = parseInt(hex.substring(0, 2), 16) || 225;
+        const gTarget = parseInt(hex.substring(2, 4), 16) || 6;
+        const bTarget = parseInt(hex.substring(4, 6), 16) || 0;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const brightness = (r + g + b) / 3;
+
+          // If pixel is dark ink (stroke of signature)
+          if (brightness < 180) {
+            const opacity = 1 - (brightness / 180);
+            data[i] = rTarget;
+            data[i + 1] = gTarget;
+            data[i + 2] = bTarget;
+            data[i + 3] = Math.min(255, opacity * 255 * 1.5);
+          } else {
+            // Checkerboard/white background -> 100% transparent
+            data[i + 3] = 0;
+          }
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+        setIsProcessed(true);
+      } catch (err) {
+        console.warn("Signature canvas processing:", err);
+        setIsProcessed(true);
+      }
+    };
+  }, [color]);
+
+  // Clamp progress between 0 and 1
+  const clampedProgress = Math.min(1, Math.max(0, progress));
+  // Reveal percentage from left to right (0% to 100%)
+  const clipPercentage = (1 - clampedProgress) * 100;
 
   return (
-    <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center">
-      <svg
-        viewBox="0 0 500 350"
-        className="w-full h-full filter drop-shadow-[0_0_15px_rgba(255,229,0,0.8)]"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+    <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center p-8">
+      <div
+        className="w-full max-w-[480px] aspect-[2/1] relative flex items-center justify-center transition-all duration-75"
+        style={{
+          clipPath: `inset(0 ${clipPercentage}% 0 0)`,
+          opacity: clampedProgress > 0.02 ? 1 : 0,
+        }}
       >
-        {/* Main Autograph Stroke: "Charles Leclerc" cursive flourish */}
-        <path
-          ref={pathRef1}
-          d="M 120 220 C 100 160, 140 100, 220 80 C 310 60, 360 140, 290 200 C 230 250, 160 260, 110 240 C 70 220, 150 140, 250 120 C 350 100, 420 180, 370 240 C 320 300, 260 270, 280 210 C 300 150, 390 130, 440 160"
-          stroke={color}
-          strokeWidth="6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            strokeDasharray: 1200,
-            strokeDashoffset: Math.max(0, 1200 * (1 - progress)),
-            transition: 'stroke-dashoffset 0.1s linear'
-          }}
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(225,6,0,0.4)]"
+          style={{ opacity: isProcessed ? 1 : 0 }}
         />
-
-        {/* Slanted Bold "16" Racing Tag */}
-        <path
-          ref={pathRef2}
-          d="M 230 60 L 250 40 L 250 110 M 270 50 C 290 40, 310 50, 310 70 C 310 90, 280 105, 270 105 L 320 105"
-          stroke={color}
-          strokeWidth="7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            strokeDasharray: 500,
-            strokeDashoffset: Math.max(0, 500 * (1 - Math.max(0, (progress - 0.3) / 0.7))),
-            transition: 'stroke-dashoffset 0.1s linear'
-          }}
-        />
-
-        {/* Dynamic Underline Slash */}
-        <path
-          ref={pathRef3}
-          d="M 90 270 Q 260 310 430 250"
-          stroke={color}
-          strokeWidth="5"
-          strokeLinecap="round"
-          style={{
-            strokeDasharray: 400,
-            strokeDashoffset: Math.max(0, 400 * (1 - Math.max(0, (progress - 0.5) / 0.5))),
-            transition: 'stroke-dashoffset 0.1s linear'
-          }}
-        />
-      </svg>
+      </div>
     </div>
   );
 }

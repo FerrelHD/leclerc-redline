@@ -77,7 +77,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
             />
           </svg>
 
-          {/* 2. MENU CONTENT CONTAINER (Monaco Riviera Palette) */}
+          {/* 2. MENU CONTENT CONTAINER (Monaco Riviera Palette with Restored Racing Font) */}
           <motion.div
             variants={contentVariants}
             initial="initial"
@@ -87,7 +87,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
           >
             {/* Top Bar: Brand Typography & Close Button */}
             <div className="w-full flex items-center justify-between z-10">
-              {/* Left: Brand Monogram with Monaco Scarlet Red Reveal */}
+              {/* Left: Brand Monogram */}
               <div className="flex flex-col">
                 <TextBoxReveal delay={0.15} duration={0.35} boxColor="#E10600">
                   <span className="font-editorial text-2xl md:text-3xl tracking-tight leading-none text-white font-medium">
@@ -95,7 +95,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   </span>
                 </TextBoxReveal>
                 <TextBoxReveal delay={0.2} duration={0.35} boxColor="#E10600">
-                  <span className="font-sans font-black text-2xl md:text-3xl tracking-tight leading-none text-white uppercase">
+                  <span className="font-racing font-black text-2xl md:text-3xl tracking-tight leading-none text-white uppercase">
                     LECLERC
                   </span>
                 </TextBoxReveal>
@@ -107,7 +107,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   href="https://store.ferrari.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-[#E10600]/30"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-[#E10600]/30"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>STORE</span>
@@ -123,7 +123,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Center Stage: Masonry Photo Collage (Left) & Menu Navigation (Right) */}
+            {/* Center Stage: Masonry Photo Collage (Left) & Restored Racing Menu Navigation (Right) */}
             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center my-auto">
               
               {/* LEFT COLUMN: 4 Staggered Photography Cards */}
@@ -191,7 +191,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
               </div>
 
-              {/* RIGHT COLUMN: Clean Tall Editorial Sans Typography Menu */}
+              {/* RIGHT COLUMN: Restored Racing Typography Menu (HOME, ON TRACK, OFF TRACK, CALENDAR) */}
               <div className="lg:col-span-6 flex flex-col items-start lg:items-end justify-center text-left lg:text-right gap-6">
                 
                 {/* Menu Links */}
@@ -211,17 +211,17 @@ export default function MenuOverlay({ isOpen, onClose }) {
                               onClose();
                             }}
                             onMouseEnter={() => setActiveItem(item.label)}
-                            className={`relative font-sans font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[0.95] uppercase transition-colors duration-150 block py-0.5 ${
-                              isActive ? 'text-white' : 'text-neutral-400 hover:text-white'
+                            className={`relative font-racing font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[76px] tracking-tight leading-none uppercase transition-colors duration-150 block py-1 ${
+                              isActive ? 'text-white' : 'text-[#8E8E93] hover:text-white'
                             }`}
                           >
                             <span>{item.label}</span>
 
-                            {/* Monaco Scarlet Red Wave Slash on Active Item */}
+                            {/* Monaco Scarlet Red Strike-through Wave on Active Item */}
                             {isActive && (
                               <motion.div
                                 layoutId="menu-red-stroke"
-                                className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-2.5 pointer-events-none flex items-center"
+                                className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 pointer-events-none flex items-center"
                               >
                                 <svg viewBox="0 0 100 12" className="w-full h-full overflow-visible" preserveAspectRatio="none">
                                   <path
@@ -264,7 +264,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
             </div>
 
             {/* Bottom Bar: Business Enquiries & Social Media Links */}
-            <div className="w-full flex flex-col md:flex-row items-center justify-between pt-4 border-t border-white/10 gap-3 text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 z-10">
+            <div className="w-full flex flex-col md:flex-row items-center justify-between pt-4 border-t border-white/10 gap-3 text-xs font-racing uppercase tracking-wider text-neutral-400 z-10">
               <TextBoxReveal delay={0.46} duration={0.35} boxColor="#E10600">
                 <a
                   href="mailto:contact@charlesleclerc.com"
