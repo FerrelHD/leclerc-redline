@@ -1,97 +1,79 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
 export default function AnimatedSignature({ progress = 0, color = "#E10600" }) {
-  const canvasRef = useRef(null);
-  const [isProcessed, setIsProcessed] = useState(false);
-
-  useEffect(() => {
-    let isCancelled = false;
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = '/images/leclerc-signature.png';
-    img.onload = () => {
-      if (isCancelled) return;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-      const w = img.naturalWidth;
-      const h = img.naturalHeight;
-      canvas.width = w;
-      canvas.height = h;
-
-      ctx.drawImage(img, 0, 0, w, h);
-
-      try {
-        const imgData = ctx.getImageData(0, 0, w, h);
-        const data = imgData.data;
-
-        // Parse hex color to target RGB
-        const hex = color.replace('#', '');
-        const rTarget = parseInt(hex.substring(0, 2), 16) || 225;
-        const gTarget = parseInt(hex.substring(2, 4), 16) || 6;
-        const bTarget = parseInt(hex.substring(4, 6), 16) || 0;
-
-        for (let y = 0; y < h; y++) {
-          for (let x = 0; x < w; x++) {
-            const idx = (y * w + x) * 4;
-
-            // Remove bottom-left Google Lens watermark badge if present
-            if (x < w * 0.15 && y > h * 0.75) {
-              data[idx + 3] = 0;
-              continue;
-            }
-
-            const r = data[idx];
-            const g = data[idx + 1];
-            const b = data[idx + 2];
-            const brightness = (r + g + b) / 3;
-
-            // Detect signature ink stroke (dark pixels < 160)
-            if (brightness < 160) {
-              const inkStrength = Math.min(1, (160 - brightness) / 120);
-              data[idx] = rTarget;
-              data[idx + 1] = gTarget;
-              data[idx + 2] = bTarget;
-              data[idx + 3] = Math.min(255, inkStrength * 255 * 1.8);
-            } else {
-              // Checkerboard / white background -> 100% transparent
-              data[idx + 3] = 0;
-            }
-          }
-        }
-
-        ctx.putImageData(imgData, 0, 0);
-        setIsProcessed(true);
-      } catch (err) {
-        console.warn("Signature canvas processing:", err);
-        setIsProcessed(true);
-      }
-    };
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [color]);
-
   const clampedProgress = Math.min(1, Math.max(0, progress));
-  const clipPercentage = (1 - clampedProgress) * 100;
+
+  // Stroke 1: Sharp rising diagonal loop & high apex (Charles signature start)
+  const stroke1Progress = Math.min(1, Math.max(0, clampedProgress / 0.4));
+  const dash1 = 1200;
+  const offset1 = dash1 * (1 - stroke1Progress);
+
+  // Stroke 2: Cursive text loops and middle flourishes
+  const stroke2Progress = Math.min(1, Math.max(0, (clampedProgress - 0.25) / 0.45));
+  const dash2 = 1400;
+  const offset2 = dash2 * (1 - stroke2Progress);
+
+  // Stroke 3: Wide sweeping lower bowl loop and horizontal underline slash
+  const stroke3Progress = Math.min(1, Math.max(0, (clampedProgress - 0.5) / 0.5));
+  const dash3 = 1000;
+  const offset3 = dash3 * (1 - stroke3Progress);
 
   return (
-    <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center">
-      <div
-        className="w-full max-w-[560px] aspect-[2/1] relative flex items-center justify-center transition-all duration-75 translate-y-12"
-        style={{
-          clipPath: `inset(0 ${clipPercentage}% 0 0)`,
-          opacity: clampedProgress > 0.02 ? 1 : 0,
-        }}
+    <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center p-6">
+      <svg
+        viewBox="0 0 700 380"
+        className="w-full max-w-[580px] h-auto overflow-visible filter drop-shadow-[0_2px_12px_rgba(225,6,0,0.4)]"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <canvas
-          ref={canvasRef}
-          className="w-full h-full object-contain filter drop-shadow-[0_4px_20px_rgba(225,6,0,0.55)]"
-          style={{ opacity: isProcessed ? 1 : 0 }}
+        {/* ========================================================================= */}
+        {/* 1. INITIAL RISING STROKE & SHARP APEX LOOP (Charles Leclerc 'C' & 'L' Slant) */}
+        {/* ========================================================================= */}
+        <path
+          d="M 50 280 C 15 295 10 320 35 325 C 75 330 180 260 260 210 C 340 160 480 80 540 40 C 570 20 590 30 560 70 C 510 130 420 180 340 210 C 260 240 160 270 80 290 C 30 305 20 285 55 260 C 120 215 230 170 340 140 C 440 110 520 100 570 120"
+          stroke={color}
+          strokeWidth="5.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: dash1,
+            strokeDashoffset: offset1,
+            transition: 'stroke-dashoffset 0.08s linear',
+          }}
         />
-      </div>
+
+        {/* ========================================================================= */}
+        {/* 2. CURSIVE LETTER FLOURISHES ("e-c-l-e-r-c" loops in the middle)          */}
+        {/* ========================================================================= */}
+        <path
+          d="M 320 180 C 350 160 380 150 400 160 C 420 170 410 195 380 205 C 345 215 365 185 410 175 C 445 165 470 150 485 130 C 500 110 520 80 545 60 C 555 50 565 60 550 85 C 525 130 480 175 435 205 C 390 235 440 205 490 185 C 530 170 560 175 580 195 C 600 215 570 235 520 240"
+          stroke={color}
+          strokeWidth="4.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: dash2,
+            strokeDashoffset: offset2,
+            transition: 'stroke-dashoffset 0.08s linear',
+          }}
+        />
+
+        {/* ========================================================================= */}
+        {/* 3. WIDE LOWER LOOP & SHARP HORIZONTAL UNDERLINE SLASH                      */}
+        {/* ========================================================================= */}
+        <path
+          d="M 520 240 C 450 250 340 265 240 280 C 140 295 90 310 110 330 C 135 350 220 340 310 300 C 400 260 490 220 580 190 C 640 170 670 180 650 205 C 610 240 500 265 380 280 C 260 295 120 315 25 330"
+          stroke={color}
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: dash3,
+            strokeDashoffset: offset3,
+            transition: 'stroke-dashoffset 0.08s linear',
+          }}
+        />
+      </svg>
     </div>
   );
 }
