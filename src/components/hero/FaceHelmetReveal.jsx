@@ -50,7 +50,7 @@ export default function FaceHelmetReveal() {
     blobRadius.set(0);
   };
 
-  // GSAP ScrollTrigger Sequence: Fullscreen to Seamless Portrait Box + Overlapping Signature
+  // GSAP ScrollTrigger Sequence: Fullscreen to Clean Portrait Crop + Overlapping Signature
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -66,13 +66,13 @@ export default function FaceHelmetReveal() {
         },
       });
 
-      // Stage A: Whole Hero Card zooms out & crops horizontally into a tight Seamless Portrait Box
+      // Stage A: Whole Hero Card zooms out & crops horizontally into a clean Portrait Box
       tl.to(
         heroCardRef.current,
         {
           scale: 0.72,
           clipPath: 'inset(0% 26% 0% 26% round 24px)',
-          backgroundColor: '#282B32',
+          backgroundColor: '#FFFFFF',
           boxShadow: '0 40px 120px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.15)',
           ease: 'power2.inOut',
         },
@@ -90,22 +90,7 @@ export default function FaceHelmetReveal() {
         0
       );
 
-      // Stage C: Giant Dual-Track Background Marquee slides horizontally
-      tl.fromTo(
-        marqueeTrack1Ref.current,
-        { x: '35vw' },
-        { x: '-65vw', ease: 'none' },
-        0
-      );
-
-      tl.fromTo(
-        marqueeTrack2Ref.current,
-        { x: '-35vw' },
-        { x: '45vw', ease: 'none' },
-        0
-      );
-
-      // Stage D: "Message from Charles" Badge appears below the Navbar
+      // Stage C: "Message from Charles" Badge appears
       tl.fromTo(
         messageBadgeRef.current,
         { opacity: 0, y: -15 },
@@ -126,7 +111,7 @@ export default function FaceHelmetReveal() {
       className="relative w-full h-screen overflow-hidden select-none bg-[#101114]"
     >
       {/* ========================================================================= */}
-      {/* 1. BACKGROUND LAYER (SECTION 2: DEEP INK OBSIDIAN WITH GIANT MARQUEE)    */}
+      {/* 1. BACKGROUND LAYER: DEEP INK OBSIDIAN WITH INFINITE RUNNING MARQUEE     */}
       {/* ========================================================================= */}
       <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#101114]">
         
@@ -145,20 +130,36 @@ export default function FaceHelmetReveal() {
           </svg>
         </div>
 
-        {/* Top Track: Editorial Serif Italic in Monaco Scarlet Red */}
-        <div
-          ref={marqueeTrack1Ref}
-          className="whitespace-nowrap font-editorial italic font-bold text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#E10600]"
-        >
-          WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI •
+        {/* TOP TRACK: Infinite Continuous Running Marquee (Editorial Italic Monaco Red) */}
+        <div className="w-full overflow-hidden whitespace-nowrap flex py-2">
+          <motion.div
+            className="flex shrink-0 font-editorial italic font-bold text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#E10600]"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{
+              repeat: Infinity,
+              ease: 'linear',
+              duration: 25,
+            }}
+          >
+            <span className="pr-12">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
+            <span className="pr-12">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
+          </motion.div>
         </div>
 
-        {/* Bottom Track: Heavyweight Racing Sans in Chalk White */}
-        <div
-          ref={marqueeTrack2Ref}
-          className="whitespace-nowrap font-racing font-black text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#F7F7F5] -mt-6 md:-mt-8"
-        >
-          I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC •
+        {/* BOTTOM TRACK: Infinite Continuous Running Marquee (Heavyweight Racing White) */}
+        <div className="w-full overflow-hidden whitespace-nowrap flex py-2 -mt-8 md:-mt-12">
+          <motion.div
+            className="flex shrink-0 font-racing font-black text-[16vw] md:text-[14vw] leading-none tracking-tight text-[#F7F7F5]"
+            animate={{ x: ['-50%', '0%'] }}
+            transition={{
+              repeat: Infinity,
+              ease: 'linear',
+              duration: 25,
+            }}
+          >
+            <span className="pr-12">I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC • </span>
+            <span className="pr-12">I WILL REMEMBER THIS FOREVER • #16 CHARLES LECLERC • </span>
+          </motion.div>
         </div>
 
         {/* Dynamic Badge below Navbar */}
@@ -175,16 +176,16 @@ export default function FaceHelmetReveal() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. FOREGROUND LAYER: CENTER STAGE WITH SEAMLESS PORTRAIT & OVERLAPPING SIGNATURE */}
+      {/* 2. FOREGROUND LAYER: PURE WHITE CARD WITH OVERLAPPING SIGNATURE          */}
       {/* ========================================================================= */}
       <div className="relative z-10 w-full h-full flex items-center justify-center pointer-events-auto">
         
-        {/* A. HERO CARD (Seamless Studio Blend) */}
+        {/* A. HERO CARD (Clean Crisp White Canvas) */}
         <div
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative w-full h-full overflow-hidden bg-[#F7F7F5] flex flex-col justify-between origin-center cursor-crosshair"
+          className="relative w-full h-full overflow-hidden bg-[#FFFFFF] flex flex-col justify-between origin-center cursor-crosshair"
           style={{
             clipPath: 'inset(0% 0% 0% 0% round 0px)',
           }}
@@ -221,7 +222,7 @@ export default function FaceHelmetReveal() {
             }}
           />
 
-          {/* FRAMER MOTION: MAIN VISUAL STACK (100% Seamless Cutout) */}
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Clean Cutout) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0 pointer-events-none">
             <div className="relative w-full max-w-[880px] md:max-w-[940px] lg:max-w-[1020px] h-full flex items-end justify-center origin-bottom">
               

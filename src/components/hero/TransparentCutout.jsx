@@ -26,11 +26,10 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         const imgData = ctx.getImageData(0, 0, w, h);
         const data = imgData.data;
 
-        // BFS Flood fill to detect background
+        // 1. BFS Flood fill from outer perimeter
         const visited = new Uint8Array(w * h);
         const queue = [];
 
-        // Seed all four borders
         for (let x = 0; x < w; x++) {
           queue.push(x, 0);
           queue.push(x, h - 1);
@@ -41,11 +40,10 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         }
 
         const isBgPixel = (r, g, b) => {
-          // Studio background: neutral grey or white
-          const isNeutral = Math.abs(r - g) <= 28 && Math.abs(g - b) <= 28 && Math.abs(r - b) <= 28;
-          const isStudioBg = isNeutral && r >= 65;
-          const isWhite = r >= 195 && g >= 195 && b >= 195;
-          return isStudioBg || isWhite;
+          const isNeutral = Math.abs(r - g) <= 30 && Math.abs(g - b) <= 30 && Math.abs(r - b) <= 30;
+          const isStudioBg = isNeutral && r >= 55;
+          const isWhiteOrLight = r >= 175 && g >= 175 && b >= 175;
+          return isStudioBg || isWhiteOrLight;
         };
 
         let head = 0;
@@ -63,7 +61,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           const b = data[pIdx + 2];
 
           if (isBgPixel(r, g, b)) {
-            data[pIdx + 3] = 0; // 100% transparent alpha
+            data[pIdx + 3] = 0; // 100% transparent
 
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
@@ -72,35 +70,27 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           }
         }
 
-        // Second Pass: De-fringing Hair Edge Matting & Feathering
-        // Cleans up any leftover white/grey halos around hair strands and blends softly
-        for (let y = 1; y < h - 1; y++) {
-          for (let x = 1; x < w - 1; x++) {
+        // 2. Strict Top Hair Halo Cleanup (Zero stray white specks above hair)
+        for (let y = 0; y < Math.round(h * 0.4); y++) {
+          for (let x = 0; x < w; x++) {
             const idx = y * w + x;
             const pIdx = idx * 4;
 
-            // Only check non-transparent pixels that border transparent background
             if (data[pIdx + 3] > 0) {
-              const neighborTransparent =
-                data[((y - 1) * w + x) * 4 + 3] === 0 ||
-                data[((y + 1) * w + x) * 4 + 3] === 0 ||
-                data[(y * w + (x - 1)) * 4 + 3] === 0 ||
-                data[(y * w + (x + 1)) * 4 + 3] === 0;
+              const r = data[pIdx];
+              const g = data[pIdx + 1];
+              const b = data[pIdx + 2];
+              const brightness = (r + g + b) / 3;
 
-              if (neighborTransparent) {
-                const r = data[pIdx];
-                const g = data[pIdx + 1];
-                const b = data[pIdx + 2];
-                const brightness = (r + g + b) / 3;
+              // Any light speck bordering transparent space in top 40% height is completely cleared
+              if (brightness > 60) {
+                const isNearTransparent =
+                  (y > 0 && data[((y - 1) * w + x) * 4 + 3] === 0) ||
+                  (x > 0 && data[(y * w + (x - 1)) * 4 + 3] === 0) ||
+                  (x < w - 1 && data[(y * w + (x + 1)) * 4 + 3] === 0);
 
-                // If edge pixel has light grey/white halo artifact (brightness > 80 near top hair area)
-                if (brightness > 80 && y < h * 0.55) {
-                  // Suppress white halo to natural dark hair tone and smooth alpha
-                  const factor = Math.max(0, (brightness - 80) / 120);
-                  data[pIdx] = Math.round(r * (1 - factor * 0.8) + 20 * factor * 0.8);
-                  data[pIdx + 1] = Math.round(g * (1 - factor * 0.8) + 16 * factor * 0.8);
-                  data[pIdx + 2] = Math.round(b * (1 - factor * 0.8) + 14 * factor * 0.8);
-                  data[pIdx + 3] = Math.round(data[pIdx + 3] * (1 - factor * 0.5));
+                if (isNearTransparent) {
+                  data[pIdx + 3] = 0;
                 }
               }
             }
