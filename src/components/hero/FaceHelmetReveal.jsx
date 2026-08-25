@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import TransparentCutout from './TransparentCutout';
+import MainVisualStack from './MainVisualStack';
 import AnimatedSignature from './AnimatedSignature';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -14,41 +14,15 @@ export default function FaceHelmetReveal() {
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
 
-  // Mouse coordinate inside Hero Card for liquid wave hover
-  const [cardMouse, setCardMouse] = useState({ x: -500, y: -500 });
-  const [smoothMouse, setSmoothMouse] = useState({ x: -500, y: -500 });
-  const [isCardHovered, setIsCardHovered] = useState(false);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Smooth lerp loop for the liquid wave
-  useEffect(() => {
-    let animId;
-    const lerpLoop = () => {
-      setSmoothMouse((prev) => {
-        const dx = cardMouse.x - prev.x;
-        const dy = cardMouse.y - prev.y;
-        if (Math.abs(dx) < 0.2 && Math.abs(dy) < 0.2) return cardMouse;
-        return {
-          x: prev.x + dx * 0.18,
-          y: prev.y + dy * 0.18,
-        };
-      });
-      animId = requestAnimationFrame(lerpLoop);
-    };
-    animId = requestAnimationFrame(lerpLoop);
-    return () => cancelAnimationFrame(animId);
-  }, [cardMouse]);
-
-  // Track mouse inside the Hero card
+  // 3D Parallax Tilt calculation
   const handleMouseMove = (e) => {
     if (!heroCardRef.current) return;
     const rect = heroCardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
-    setIsCardHovered(true);
-    setCardMouse({ x, y });
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
@@ -58,8 +32,6 @@ export default function FaceHelmetReveal() {
   };
 
   const handleMouseLeave = () => {
-    setIsCardHovered(false);
-    setCardMouse({ x: -500, y: -500 });
     setTilt({ rotateX: 0, rotateY: 0 });
   };
 
@@ -214,51 +186,14 @@ export default function FaceHelmetReveal() {
                     strokeWidth="1.5"
                   />
                 </pattern>
-
-                {/* Localized Liquid Wave ClipPath for Helmet Reveal */}
-                <clipPath id="hero-card-liquid-mask" clipPathUnits="userSpaceOnUse">
-                  <path
-                    d={`
-                      M ${smoothMouse.x - 170} ${smoothMouse.y}
-                      C ${smoothMouse.x - 110} ${smoothMouse.y - 45}, ${smoothMouse.x - 40} ${smoothMouse.y - 35}, ${smoothMouse.x} ${smoothMouse.y - 40}
-                      C ${smoothMouse.x + 50} ${smoothMouse.y - 45}, ${smoothMouse.x + 110} ${smoothMouse.y - 25}, ${smoothMouse.x + 180} ${smoothMouse.y}
-                      C ${smoothMouse.x + 120} ${smoothMouse.y + 45}, ${smoothMouse.x + 50} ${smoothMouse.y + 40}, ${smoothMouse.x} ${smoothMouse.y + 45}
-                      C ${smoothMouse.x - 50} ${smoothMouse.y + 50}, ${smoothMouse.x - 110} ${smoothMouse.y + 35}, ${smoothMouse.x - 170} ${smoothMouse.y}
-                      Z
-                    `}
-                  />
-                </clipPath>
               </defs>
               <rect width="100%" height="100%" fill="url(#card-topo)" />
             </svg>
           </div>
 
-          {/* Localized Liquid Ink Wave Paint Blob (Renders on Background inside Card) */}
-          <div
-            className="absolute inset-0 pointer-events-none z-[4] transition-opacity duration-200"
-            style={{
-              opacity: isCardHovered && scrollProgress < 0.4 ? 0.9 : 0,
-            }}
-          >
-            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d={`
-                  M ${smoothMouse.x - 170} ${smoothMouse.y}
-                  C ${smoothMouse.x - 110} ${smoothMouse.y - 45}, ${smoothMouse.x - 40} ${smoothMouse.y - 35}, ${smoothMouse.x} ${smoothMouse.y - 40}
-                  C ${smoothMouse.x + 50} ${smoothMouse.y - 45}, ${smoothMouse.x + 110} ${smoothMouse.y - 25}, ${smoothMouse.x + 180} ${smoothMouse.y}
-                  C ${smoothMouse.x + 120} ${smoothMouse.y + 45}, ${smoothMouse.x + 50} ${smoothMouse.y + 40}, ${smoothMouse.x} ${smoothMouse.y + 45}
-                  C ${smoothMouse.x - 50} ${smoothMouse.y + 50}, ${smoothMouse.x - 110} ${smoothMouse.y + 35}, ${smoothMouse.x - 170} ${smoothMouse.y}
-                  Z
-                `}
-                fill="#e2e4da"
-              />
-              <circle cx={smoothMouse.x - 195} cy={smoothMouse.y - 10} r="8" fill="#dcdfd4" />
-              <circle cx={smoothMouse.x + 205} cy={smoothMouse.y + 8} r="10" fill="#dcdfd4" />
-            </svg>
-          </div>
-
           {/* Center Monogram Logo (Hero state) */}
-          <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none transition-opacity duration-300"
+          <div
+            className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none transition-opacity duration-300"
             style={{ opacity: scrollProgress < 0.2 ? 1 : 0 }}
           >
             <div className="font-racing font-black text-2xl tracking-tighter text-neutral-900 flex items-center gap-1">
@@ -267,38 +202,18 @@ export default function FaceHelmetReveal() {
             </div>
           </div>
 
-          {/* Centerpiece: Portrait of Charles Leclerc (Sebahu Cutout) */}
-          <div className="relative w-full h-full flex items-end justify-center z-[6] pointer-events-none pb-0">
+          {/* FRAMER MOTION: MAIN VISUAL STACK (Two Stacked Cover Images with Liquid Circular Mask) */}
+          <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0">
             <div className="relative w-full max-w-[560px] h-[88vh] flex items-end justify-center origin-bottom">
               
-              {/* BASE LAYER: Transparent Cutout Sebahu */}
-              <div className="relative w-full h-full flex items-end justify-center">
-                <TransparentCutout
-                  src="/images/leclercface.jpe"
-                  alt="Charles Leclerc"
-                  className="max-h-full object-contain object-bottom filter brightness-[1.02] contrast-[1.04]"
-                />
-              </div>
+              {/* Main Visual Stack Component */}
+              <MainVisualStack
+                topImage="/images/leclercface.jpe"
+                bottomImage="/images/charles-helmet-front.jpg"
+                className="w-full h-full"
+              />
 
-              {/* DYNAMIC LIQUID INK WAVE HELMET REVEAL ON HOVER */}
-              <div
-                className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center transition-opacity duration-150"
-                style={{
-                  opacity: isCardHovered && scrollProgress < 0.4 ? 1 : 0,
-                  clipPath: 'url(#hero-card-liquid-mask)',
-                }}
-              >
-                <div className="relative w-full h-full flex items-end justify-center">
-                  <img
-                    src="/images/charles-helmet-front.jpg"
-                    alt="Front 3D Helmet"
-                    className="max-h-[92%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.35)] scale-[1.04] -translate-y-4"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none mix-blend-overlay" />
-                </div>
-              </div>
-
-              {/* DYNAMIC NEON AUTOGRAPH (Animated on Scroll across the Card) */}
+              {/* Dynamic Neon Autograph (Animated on Scroll across the Card) */}
               <div
                 className="absolute inset-0 z-30 pointer-events-none transition-opacity duration-300"
                 style={{
@@ -358,10 +273,10 @@ export default function FaceHelmetReveal() {
             <div className="hidden sm:flex items-center gap-3 p-3 rounded-xl border bg-white/90 border-black/10 text-neutral-900 shadow-xl backdrop-blur-xl pointer-events-auto">
               <div className="text-right">
                 <span className="text-[10px] font-mono-telemetry uppercase tracking-wider block opacity-70">
-                  MOVE CURSOR
+                  HOVER CURSOR
                 </span>
                 <span className="text-xs font-racing font-bold text-[#E10600] block">
-                  LIQUID WAVE SLICE ⚡
+                  LIQUID MASK REVEAL ⚡
                 </span>
               </div>
             </div>
