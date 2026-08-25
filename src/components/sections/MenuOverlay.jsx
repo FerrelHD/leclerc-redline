@@ -12,16 +12,71 @@ export default function MenuOverlay({ isOpen, onClose }) {
     { label: 'CALENDAR', href: '#milestones' },
   ];
 
+  // Overlapping menu slide down transition variants
+  const menuVariants = {
+    initial: {
+      y: '-100%',
+    },
+    animate: {
+      y: '0%',
+      transition: {
+        duration: 0.8,
+        ease: [0.76, 0, 0.24, 1],
+      },
+    },
+    exit: {
+      y: '-100%',
+      transition: {
+        duration: 0.7,
+        ease: [0.76, 0, 0.24, 1],
+      },
+    },
+  };
+
+  // SVG curved bottom bulge morphing animation
+  const initialCurve = `M0 0 L${typeof window !== 'undefined' ? window.innerWidth : 1920} 0 L${typeof window !== 'undefined' ? window.innerWidth : 1920} 0 Q${typeof window !== 'undefined' ? window.innerWidth / 2 : 960} 300 0 0 Z`;
+  const targetCurve = `M0 0 L${typeof window !== 'undefined' ? window.innerWidth : 1920} 0 L${typeof window !== 'undefined' ? window.innerWidth : 1920} 0 Q${typeof window !== 'undefined' ? window.innerWidth / 2 : 960} 0 0 0 Z`;
+
+  const curveVariants = {
+    initial: {
+      d: initialCurve,
+    },
+    animate: {
+      d: targetCurve,
+      transition: {
+        duration: 0.85,
+        ease: [0.76, 0, 0.24, 1],
+      },
+    },
+    exit: {
+      d: initialCurve,
+      transition: {
+        duration: 0.7,
+        ease: [0.76, 0, 0.24, 1],
+      },
+    },
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="fixed inset-0 z-[9999] bg-[#1a1e16] text-[#f8f9fa] overflow-y-auto overflow-x-hidden flex flex-col justify-between p-6 md:p-12 select-none"
+          variants={menuVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="fixed inset-0 z-[9999] bg-[#1a1e16] text-[#f8f9fa] overflow-y-auto overflow-x-hidden flex flex-col justify-between p-6 md:p-12 select-none shadow-[0_25px_100px_rgba(0,0,0,0.9)]"
         >
+          {/* Animated SVG Morphing Curved Bottom Arch */}
+          <svg className="absolute top-[99.5%] left-0 w-full h-[180px] pointer-events-none fill-[#1a1e16] z-[9999] overflow-visible">
+            <motion.path
+              variants={curveVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            />
+          </svg>
+
           {/* Background Topographic Contour Lines */}
           <div className="absolute inset-0 pointer-events-none opacity-25 z-0">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -78,9 +133,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
               
               {/* Card 1: Charles in #16 Helmet */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
                 className="relative aspect-square rounded-2xl overflow-hidden bg-black/40 border border-white/10 filter grayscale contrast-[1.08] brightness-90"
               >
                 <img
@@ -93,9 +148,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
               {/* Card 2: Charles Podium Celebration */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.18 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.32 }}
                 className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-black/40 border border-white/10 filter grayscale contrast-[1.08] brightness-90 -translate-y-4"
               >
                 <img
@@ -108,9 +163,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
               {/* Card 3: Charles Off Track / Piano */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.26 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.39 }}
                 className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-black/40 border border-white/10 filter grayscale contrast-[1.08] brightness-90 -translate-y-4"
               >
                 <img
@@ -123,9 +178,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
               {/* Card 4: Ferrari SF-25 F1 Car On-Track Mist */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.34 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.46 }}
                 className="relative aspect-square rounded-2xl overflow-hidden bg-black/40 border border-white/10 filter grayscale contrast-[1.08] brightness-90"
               >
                 <img
@@ -148,9 +203,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   return (
                     <motion.div
                       key={item.label}
-                      initial={{ opacity: 0, x: 25 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.35, delay: 0.12 + index * 0.06 }}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.25 + index * 0.08 }}
                       className="relative inline-flex items-center justify-center lg:justify-end"
                     >
                       <a
@@ -191,9 +246,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
               {/* Formula 1 Laurel Wreath + Helmet Badge */}
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
                 className="flex flex-col items-center lg:items-end mt-4 text-center lg:text-right"
               >
                 <svg viewBox="0 0 60 40" className="w-14 h-9" fill="none">
