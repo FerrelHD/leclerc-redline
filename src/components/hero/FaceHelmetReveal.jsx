@@ -26,8 +26,8 @@ export default function FaceHelmetReveal() {
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateY = ((x - centerX) / centerX) * 3.5;
-    const rotateX = -((y - centerY) / centerY) * 3.5;
+    const rotateY = ((x - centerX) / centerX) * 3;
+    const rotateX = -((y - centerY) / centerY) * 3;
     setTilt({ rotateX, rotateY });
   };
 
@@ -132,9 +132,9 @@ export default function FaceHelmetReveal() {
 
         {/* Dynamic Top Badge: Message from Charles */}
         <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
-          <div className="font-racing font-black text-2xl tracking-tighter text-white flex items-center gap-1">
-            <span>CL</span>
-            <span className="text-[#E10600]">16</span>
+          <div className="font-racing font-black italic text-3xl md:text-4xl tracking-tighter text-white flex items-center leading-none">
+            <span>C</span>
+            <span className="-ml-0.5">L</span>
           </div>
 
           <div
@@ -156,7 +156,7 @@ export default function FaceHelmetReveal() {
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative w-full h-full overflow-hidden bg-[#f7f7f5] flex flex-col justify-between origin-center transition-transform duration-75 ease-out"
+          className="relative w-full h-full overflow-hidden bg-[#ffffff] flex flex-col justify-between origin-center transition-transform duration-75 ease-out"
           style={{
             transform: `perspective(1200px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
             transformStyle: 'preserve-3d',
@@ -166,24 +166,30 @@ export default function FaceHelmetReveal() {
           <div className="absolute inset-0 pointer-events-none z-0">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <pattern id="card-topo" width="900" height="900" patternUnits="userSpaceOnUse">
+                <pattern id="card-topo" width="1000" height="1000" patternUnits="userSpaceOnUse">
                   <path
-                    d="M 50,450 Q 250,200 500,450 T 900,450"
+                    d="M 50,500 Q 250,220 500,500 T 950,500"
                     fill="none"
                     stroke="rgba(0,0,0,0.06)"
-                    strokeWidth="1.5"
+                    strokeWidth="1.2"
                   />
                   <path
-                    d="M 100,280 Q 300,80 550,280 T 950,280"
+                    d="M 100,300 Q 300,100 550,300 T 980,300"
                     fill="none"
                     stroke="rgba(0,0,0,0.06)"
-                    strokeWidth="1.5"
+                    strokeWidth="1.2"
                   />
                   <path
-                    d="M 0,620 Q 350,820 600,620 T 900,620"
+                    d="M 0,650 Q 350,850 600,650 T 950,650"
                     fill="none"
                     stroke="rgba(0,0,0,0.06)"
-                    strokeWidth="1.5"
+                    strokeWidth="1.2"
+                  />
+                  <path
+                    d="M 200,150 C 400,350 600,150 800,350"
+                    fill="none"
+                    stroke="rgba(0,0,0,0.04)"
+                    strokeWidth="1"
                   />
                 </pattern>
               </defs>
@@ -191,20 +197,20 @@ export default function FaceHelmetReveal() {
             </svg>
           </div>
 
-          {/* Center Monogram Logo (Hero state) */}
-          <div
-            className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none transition-opacity duration-300"
-            style={{ opacity: scrollProgress < 0.2 ? 1 : 0 }}
-          >
-            <div className="font-racing font-black text-2xl tracking-tighter text-neutral-900 flex items-center gap-1">
-              <span>CL</span>
-              <span className="text-[#E10600]">16</span>
-            </div>
+          {/* Ghost Wireframe CAD Helmet Mesh Outline (Behind Charles' Head) */}
+          <div className="absolute top-[8%] left-1/2 -translate-x-1/2 w-[340px] h-[340px] pointer-events-none opacity-25 z-[3]">
+            <svg viewBox="0 0 200 200" className="w-full h-full" fill="none">
+              <ellipse cx="100" cy="95" rx="72" ry="65" stroke="rgba(0,0,0,0.4)" strokeWidth="0.8" strokeDasharray="3 2" />
+              <path d="M 35,95 C 35,45 165,45 165,95" stroke="rgba(0,0,0,0.5)" strokeWidth="0.8" />
+              <path d="M 45,120 C 45,75 155,75 155,120" stroke="rgba(0,0,0,0.4)" strokeWidth="0.7" />
+              <line x1="100" y1="30" x2="100" y2="160" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8" strokeDasharray="4 2" />
+              <ellipse cx="100" cy="55" rx="40" ry="20" stroke="rgba(0,0,0,0.3)" strokeWidth="0.6" />
+            </svg>
           </div>
 
           {/* FRAMER MOTION: MAIN VISUAL STACK (Two Stacked Cover Images with Liquid Circular Mask) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0">
-            <div className="relative w-full max-w-[560px] h-[88vh] flex items-end justify-center origin-bottom">
+            <div className="relative w-full max-w-[620px] h-[90vh] flex items-end justify-center origin-bottom">
               
               {/* Main Visual Stack Component */}
               <MainVisualStack
@@ -229,55 +235,53 @@ export default function FaceHelmetReveal() {
             </div>
           </div>
 
-          {/* Floating HUD Widget (Next Race - Monaco GP in Hero state) */}
+          {/* Exact HUD Widget (Next Race - Monza GP with Chamfered Corner) */}
           <div
             ref={hudWidgetRef}
-            className="relative z-20 max-w-7xl mx-auto w-full px-6 md:px-12 pb-6 flex items-end justify-between pointer-events-none"
+            className="absolute bottom-8 left-6 md:left-12 z-20 pointer-events-auto select-none"
           >
-            {/* Left: Next Race Telemetry HUD */}
-            <div className="p-3.5 rounded-xl border bg-white/90 border-black/10 text-neutral-900 shadow-xl backdrop-blur-xl pointer-events-auto flex flex-col gap-2">
-              <div className="flex items-center justify-between gap-4 border-b border-current/10 pb-1.5">
-                <span className="text-[10px] font-mono-telemetry uppercase tracking-wider opacity-70">
-                  NEXT RACE
-                </span>
-                <span className="text-[10px] font-mono-telemetry font-bold text-[#E10600] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-ping" />
-                  LIVE
+            <div className="w-36 bg-white/95 border border-neutral-300/80 rounded-2xl rounded-tl-[24px] p-3 shadow-lg backdrop-blur-md flex flex-col gap-2 relative">
+              {/* Top Chamfer Accent Notch */}
+              <div className="text-[9px] font-mono-telemetry uppercase tracking-wider text-neutral-500 font-bold border-b border-neutral-200 pb-1.5 flex items-center justify-between">
+                <span>NEXT RACE</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-black/60" />
+              </div>
+
+              {/* Circuit Outline & Name */}
+              <div className="flex flex-col items-center py-1 border-b border-neutral-200">
+                <svg viewBox="0 0 100 40" className="w-20 h-7" fill="none">
+                  {/* Monza Circuit Silhouette */}
+                  <path
+                    d="M 10,25 C 20,25 30,10 50,12 C 70,14 85,18 90,20 C 95,22 92,30 80,30 C 65,30 40,28 20,28 C 12,28 8,26 10,25 Z"
+                    stroke="#111111"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-[11px] font-racing font-black text-black tracking-tight mt-1 uppercase">
+                  MONZA GP
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-black/5 border border-current/10 flex items-center justify-center p-1">
-                  <svg viewBox="0 0 100 60" className="w-full h-full" fill="none">
-                    <path
-                      d="M 15,30 Q 30,10 60,15 T 85,35 Q 70,55 40,50 T 15,30"
-                      stroke="#E10600"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                    />
+              {/* Formula 1 Laurel Wreath + Helmet */}
+              <div className="flex flex-col items-center pt-0.5 text-center">
+                <div className="flex items-center justify-center gap-1 text-neutral-800">
+                  <svg viewBox="0 0 60 40" className="w-12 h-8" fill="none">
+                    {/* Laurel Wreath Left */}
+                    <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#111111" strokeWidth="1.2" strokeLinecap="round" />
+                    {/* Laurel Wreath Right */}
+                    <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#111111" strokeWidth="1.2" strokeLinecap="round" />
+                    {/* Center Helmet Icon */}
+                    <ellipse cx="30" cy="18" rx="10" ry="9" stroke="#111111" strokeWidth="1.5" />
+                    <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#111111" />
+                    <line x1="20" y1="22" x2="40" y2="22" stroke="#111111" strokeWidth="1.2" />
                   </svg>
                 </div>
-                <div>
-                  <h4 className="text-xs font-racing font-bold tracking-tight">MONACO GP</h4>
-                  <p className="text-[10px] font-mono-telemetry opacity-60">CIRCUIT DE MONACO</p>
+                <div className="text-[8px] font-mono-telemetry font-bold text-neutral-700 tracking-wider uppercase leading-tight -mt-1">
+                  <div>FORMULA 1</div>
+                  <div className="text-neutral-400 font-normal">SINCE 2018</div>
                 </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-1 border-t border-current/10 text-[9px] font-mono-telemetry opacity-60">
-                <span>SCUDERIA FERRARI</span>
-                <span className="text-[#E10600] font-bold">#16</span>
-              </div>
-            </div>
-
-            {/* Right: Interactive Hover Prompt */}
-            <div className="hidden sm:flex items-center gap-3 p-3 rounded-xl border bg-white/90 border-black/10 text-neutral-900 shadow-xl backdrop-blur-xl pointer-events-auto">
-              <div className="text-right">
-                <span className="text-[10px] font-mono-telemetry uppercase tracking-wider block opacity-70">
-                  HOVER CURSOR
-                </span>
-                <span className="text-xs font-racing font-bold text-[#E10600] block">
-                  LIQUID MASK REVEAL ⚡
-                </span>
               </div>
             </div>
           </div>
