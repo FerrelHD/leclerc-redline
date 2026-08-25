@@ -210,7 +210,7 @@ export default function FaceHelmetReveal() {
 
           {/* FRAMER MOTION: MAIN VISUAL STACK (Two Stacked Cover Images with Liquid Circular Mask) */}
           <div className="relative w-full h-full flex items-end justify-center z-[6] pb-0">
-            <div className="relative w-full max-w-[620px] h-[90vh] flex items-end justify-center origin-bottom">
+            <div className="relative w-full max-w-[620px] h-[92vh] flex items-end justify-center origin-bottom">
               
               {/* Main Visual Stack Component */}
               <MainVisualStack

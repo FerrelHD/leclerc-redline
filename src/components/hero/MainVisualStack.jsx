@@ -74,7 +74,7 @@ export default function MainVisualStack({
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    maskSize.set(160); // Fluid radius
+    maskSize.set(160);
   };
 
   const handleMouseLeave = () => {
@@ -89,6 +89,11 @@ export default function MainVisualStack({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={`relative w-full h-full overflow-hidden select-none cursor-crosshair ${className}`}
+      style={{
+        // Soft bottom gradient mask to ensure zero visible bottom cut line
+        WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 4%, black 100%)',
+        maskImage: 'linear-gradient(to top, transparent 0%, black 4%, black 100%)',
+      }}
     >
       {/* SVG Liquid Displacement Filter Definition */}
       <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
@@ -119,17 +124,17 @@ export default function MainVisualStack({
       </svg>
 
       {/* 1. TOP LAYER: Charles Leclerc Face Portrait */}
-      <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none">
+      <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-4">
         <TransparentCutout
           src={topImage}
           alt="Charles Leclerc Top Face"
-          className="max-h-full object-contain object-bottom filter brightness-[1.02] contrast-[1.04]"
+          className="max-h-[102%] object-contain object-bottom filter brightness-[1.02] contrast-[1.04]"
         />
       </div>
 
       {/* 2. BOTTOM LAYER: Front 3D Helmet (Revealed through organic liquid mask) */}
       <motion.div
-        className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none"
+        className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-4"
         style={{
           WebkitMaskImage: maskImage,
           maskImage: maskImage,
@@ -139,7 +144,7 @@ export default function MainVisualStack({
         <img
           src={bottomImage}
           alt="Charles Helmet Bottom Reveal"
-          className="max-h-[92%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.35)] scale-[1.04] -translate-y-4"
+          className="max-h-[95%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.35)] scale-[1.04] -translate-y-4"
         />
 
         {/* Visor Glare Specular Sheen Reflection inside the liquid mask */}
