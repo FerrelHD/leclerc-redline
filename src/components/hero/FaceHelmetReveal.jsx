@@ -14,12 +14,30 @@ export default function FaceHelmetReveal() {
   const marqueeTextRef2 = useRef(null);
   const messageBadgeRef = useRef(null);
 
+  // Mouse & Hover Liquid states
   const [mousePos, setMousePos] = useState({ x: 50, y: 38 });
-  const [isHovered, setIsHovered] = useState(false);
+  const [isFaceHovered, setIsFaceHovered] = useState(false);
+  const [liquidExpand, setLiquidExpand] = useState(0); // 0 (hidden) to 1 (fully open)
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Mouse move handler for Parallax 3D & Liquid Ink Band tracking
+  // Smooth lerp / animation loop for liquid ink expansion
+  useEffect(() => {
+    let animId;
+    const updateLiquid = () => {
+      setLiquidExpand((prev) => {
+        const target = isFaceHovered ? 1 : 0;
+        const diff = target - prev;
+        if (Math.abs(diff) < 0.01) return target;
+        return prev + diff * 0.14; // smooth fluid spring speed
+      });
+      animId = requestAnimationFrame(updateLiquid);
+    };
+    animId = requestAnimationFrame(updateLiquid);
+    return () => cancelAnimationFrame(animId);
+  }, [isFaceHovered]);
+
+  // Mouse move handler for Parallax & Liquid Ink Center
   const handleMouseMove = (e) => {
     if (!portraitHeroRef.current) return;
     const rect = portraitHeroRef.current.getBoundingClientRect();
@@ -27,9 +45,13 @@ export default function FaceHelmetReveal() {
     const relX = ((e.clientX - rect.left) / rect.width) * 100;
     const relY = ((e.clientY - rect.top) / rect.height) * 100;
 
+    // Check if cursor is over the face / head area (Y between 12% and 65%, X between 20% and 80%)
+    const overFace = relY >= 12 && relY <= 65 && relX >= 20 && relX <= 80;
+    setIsFaceHovered(overFace);
+
     setMousePos({
-      x: Math.max(0, Math.min(100, relX)),
-      y: Math.max(10, Math.min(85, relY)),
+      x: Math.max(10, Math.min(90, relX)),
+      y: Math.max(15, Math.min(60, relY)),
     });
 
     const centerX = window.innerWidth / 2;
@@ -37,6 +59,11 @@ export default function FaceHelmetReveal() {
     const rotateY = ((e.clientX - centerX) / centerX) * 4;
     const rotateX = -((e.clientY - centerY) / centerY) * 4;
     setTilt({ rotateX, rotateY });
+  };
+
+  const handleMouseLeave = () => {
+    setIsFaceHovered(false);
+    setTilt({ rotateX: 0, rotateY: 0 });
   };
 
   // GSAP ScrollTrigger Sequence
@@ -106,20 +133,17 @@ export default function FaceHelmetReveal() {
   const isDarkPhase = scrollProgress > 0.35;
   const topoStroke = isDarkPhase ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
-  // Calculate dynamic liquid ink clip path position
-  const inkY = isHovered ? mousePos.y : 38;
-  const inkTop = Math.max(0, inkY - 14);
-  const inkBottom = Math.min(100, inkY + 16);
+  // Calculate dynamic liquid ink clip path boundaries
+  const currentY = mousePos.y;
+  const halfSpan = 14 * liquidExpand;
+  const inkTop = Math.max(0, currentY - halfSpan);
+  const inkBottom = Math.min(100, currentY + halfSpan + (4 * liquidExpand));
 
   return (
     <div
       ref={sectionRef}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setTilt({ rotateX: 0, rotateY: 0 });
-      }}
+      onMouseLeave={handleMouseLeave}
       className="relative w-full h-screen overflow-hidden select-none flex flex-col justify-between"
     >
       {/* Dynamic Background Base */}
@@ -158,18 +182,19 @@ export default function FaceHelmetReveal() {
         </svg>
       </div>
 
-      {/* Translucent Liquid Paint Splatter Trail extending horizontally across the background */}
+      {/* Translucent Liquid Paint Splatter Trail extending horizontally across background on hover */}
       <div
-        className="absolute left-0 right-0 pointer-events-none z-[4] transition-all duration-150 ease-out"
+        className="absolute left-0 right-0 pointer-events-none z-[4] transition-opacity duration-300 ease-out"
         style={{
-          top: `${portraitHeroRef.current ? portraitHeroRef.current.offsetTop + (portraitHeroRef.current.offsetHeight * (inkY / 100)) - 60 : 260}px`,
-          opacity: isHovered || !isDarkPhase ? 0.6 : 0,
+          top: `${portraitHeroRef.current ? portraitHeroRef.current.offsetTop + (portraitHeroRef.current.offsetHeight * (currentY / 100)) - 55 : 260}px`,
+          opacity: liquidExpand * (isDarkPhase ? 0.08 : 0.05),
+          transform: `scaleY(${0.6 + liquidExpand * 0.4})`,
         }}
       >
         <svg viewBox="0 0 1400 160" className="w-full h-28" preserveAspectRatio="none">
           <path
-            d="M 0,80 Q 200,30 450,75 Q 700,120 950,65 Q 1200,40 1400,80 L 1400,105 Q 1150,140 900,95 Q 650,50 400,100 Q 150,135 0,100 Z"
-            fill={isDarkPhase ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)'}
+            d="M 0,80 Q 220,25 450,75 Q 700,125 950,65 Q 1180,35 1400,80 L 1400,105 Q 1150,140 900,95 Q 650,45 400,100 Q 180,135 0,100 Z"
+            fill={isDarkPhase ? '#ffffff' : '#000000'}
           />
         </svg>
       </div>
@@ -214,17 +239,17 @@ export default function FaceHelmetReveal() {
         </div>
       </div>
 
-      {/* FULL BACKGROUND HERO PORTRAIT OF CHARLES LECLERC */}
+      {/* FULL BACKGROUND HERO PORTRAIT OF CHARLES LECLERC (Cropped Sebahu) */}
       <div className="absolute inset-0 z-[6] flex items-end justify-center pointer-events-auto">
         <div
           ref={portraitHeroRef}
-          className="relative w-full max-w-[700px] h-[92vh] flex items-end justify-center origin-bottom transition-transform duration-100 ease-out"
+          className="relative w-full max-w-[620px] h-[90vh] flex items-end justify-center origin-bottom transition-transform duration-100 ease-out"
           style={{
             transform: `perspective(1200px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
             transformStyle: 'preserve-3d',
           }}
         >
-          {/* BASE PORTRAIT LAYER */}
+          {/* BASE PORTRAIT LAYER: Clean Cutout Sebahu */}
           <div className="relative w-full h-full flex items-end justify-center">
             <TransparentCutout
               src="/images/leclercface.jpe"
@@ -233,22 +258,23 @@ export default function FaceHelmetReveal() {
             />
           </div>
 
-          {/* DYNAMIC LIQUID INK BRUSH SLICE: FRONT-FACING 3D HELMET REVEAL */}
+          {/* DYNAMIC LIQUID INK BRUSH SLICE: 3D FRONT HELMET REVEAL ON HOVER */}
           <div
-            className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center transition-all duration-150 ease-out"
+            className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center transition-opacity duration-200"
             style={{
+              opacity: liquidExpand > 0.02 ? 1 : 0,
               clipPath: `polygon(
                 0% ${inkTop}%, 
-                15% ${inkTop - 2}%, 
-                35% ${inkTop + 1}%, 
-                60% ${inkTop - 1}%, 
-                85% ${inkTop + 2}%, 
+                12% ${inkTop - (3 * liquidExpand)}%, 
+                30% ${inkTop + (1.5 * liquidExpand)}%, 
+                55% ${inkTop - (1.5 * liquidExpand)}%, 
+                80% ${inkTop + (2.5 * liquidExpand)}%, 
                 100% ${inkTop}%,
                 100% ${inkBottom}%, 
-                85% ${inkBottom + 2}%, 
-                60% ${inkBottom - 1}%, 
-                35% ${inkBottom + 3}%, 
-                15% ${inkBottom - 2}%, 
+                80% ${inkBottom + (2.5 * liquidExpand)}%, 
+                55% ${inkBottom - (1.5 * liquidExpand)}%, 
+                30% ${inkBottom + (3.5 * liquidExpand)}%, 
+                12% ${inkBottom - (2.5 * liquidExpand)}%, 
                 0% ${inkBottom}%
               )`,
             }}
@@ -258,11 +284,11 @@ export default function FaceHelmetReveal() {
               <img
                 src="/images/charles-helmet-front.jpg"
                 alt="Front 3D Helmet"
-                className="max-h-[92%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.3)] scale-[1.02] -translate-y-4"
+                className="max-h-[92%] object-contain object-bottom filter drop-shadow-[0_15px_35px_rgba(225,6,0,0.35)] scale-[1.03] -translate-y-4"
               />
 
               {/* Visor Glare Specular Sheen Reflection */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none mix-blend-overlay" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none mix-blend-overlay" />
             </div>
           </div>
 

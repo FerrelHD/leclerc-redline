@@ -12,10 +12,21 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
 
-      ctx.drawImage(img, 0, 0);
+      // Crop Sebahu: take centered portrait bust
+      const origW = img.naturalWidth;
+      const origH = img.naturalHeight;
+
+      // Focus on head to collar sebahu (crop ~12% from left & right sides)
+      const cropX = origW * 0.10;
+      const cropY = origH * 0.02;
+      const cropW = origW * 0.80;
+      const cropH = origH * 0.96;
+
+      canvas.width = cropW;
+      canvas.height = cropH;
+
+      ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
 
       try {
         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -23,11 +34,10 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         const w = canvas.width;
         const h = canvas.height;
 
-        // Flood fill from all 4 corners to remove the background checkerboard
+        // Flood fill from perimeter to remove checkerboard
         const visited = new Uint8Array(w * h);
         const queue = [];
 
-        // Push perimeter points
         for (let x = 0; x < w; x++) {
           queue.push(x, 0);
           queue.push(x, h - 1);
@@ -38,8 +48,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         }
 
         const isBgPixel = (r, g, b) => {
-          // Checkerboard is pure white (255,255,255) and grey (~192-220,192-220,192-220)
-          const isGrey = r >= 170 && g >= 170 && b >= 170 && Math.abs(r - g) <= 12 && Math.abs(g - b) <= 12 && Math.abs(r - b) <= 12;
+          const isGrey = r >= 170 && g >= 170 && b >= 170 && Math.abs(r - g) <= 14 && Math.abs(g - b) <= 14 && Math.abs(r - b) <= 14;
           const isWhite = r >= 240 && g >= 240 && b >= 240;
           return isGrey || isWhite;
         };
@@ -61,7 +70,6 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           if (isBgPixel(r, g, b)) {
             data[pIdx + 3] = 0; // Make transparent
 
-            // Check 4 neighbors
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
             if (py > 0 && !visited[idx - w]) queue.push(px, py - 1);
