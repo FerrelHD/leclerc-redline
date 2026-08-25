@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, useVelocity } from 'framer-motion';
 import TransparentCutout from './TransparentCutout';
 
 export default function MainVisualStack({
@@ -9,26 +9,61 @@ export default function MainVisualStack({
 }) {
   const containerRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [filterSeed, setFilterSeed] = useState(1);
 
-  // Raw mouse motion values
+  // Mouse position motion values
   const mouseX = useMotionValue(-500);
   const mouseY = useMotionValue(-500);
 
-  // Spring physics for smooth liquid elasticity
-  const springConfig = { damping: 26, stiffness: 280, mass: 0.5 };
+  // Velocity tracking for organic liquid stretching
+  const xVelocity = useVelocity(mouseX);
+  const yVelocity = useVelocity(mouseY);
+
+  // Spring physics for smooth liquid lag & elasticity
+  const springConfig = { damping: 24, stiffness: 220, mass: 0.6 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
-  // Mask radius expands on hover
-  const radius = useMotionValue(0);
-  const smoothRadius = useSpring(radius, { damping: 20, stiffness: 200 });
+  // Mask size spring
+  const maskSize = useMotionValue(0);
+  const smoothSize = useSpring(maskSize, { damping: 18, stiffness: 160 });
 
-  // Dynamic radial liquid circular mask
+  // Dynamic liquid stretch & angle based on mouse velocity
+  const liquidScaleX = useTransform([xVelocity, yVelocity], ([vx, vy]) => {
+    const speed = Math.sqrt(vx * vx + vy * vy);
+    return Math.min(1.45, 1 + speed * 0.00035);
+  });
+
+  const liquidScaleY = useTransform([xVelocity, yVelocity], ([vx, vy]) => {
+    const speed = Math.sqrt(vx * vx + vy * vy);
+    return Math.max(0.75, 1 - speed * 0.00025);
+  });
+
+  const liquidRotate = useTransform([xVelocity, yVelocity], ([vx, vy]) => {
+    return Math.atan2(vy, vx) * (180 / Math.PI);
+  });
+
+  // Dynamic SVG liquid mask generator
   const maskImage = useTransform(
-    [smoothX, smoothY, smoothRadius],
-    ([x, y, r]) =>
-      `radial-gradient(circle ${r}px at ${x}px ${y}px, black 65%, rgba(0,0,0,0.5) 85%, transparent 100%)`
+    [smoothX, smoothY, smoothSize],
+    ([x, y, s]) =>
+      `radial-gradient(ellipse ${s * 1.15}px ${s * 0.95}px at ${x}px ${y}px, black 55%, rgba(0,0,0,0.6) 80%, transparent 100%)`
   );
+
+  // Subtle turbulent ripple animation for living fluid effect
+  useEffect(() => {
+    let animId;
+    let count = 0;
+    const rippleLoop = () => {
+      count++;
+      if (count % 8 === 0) {
+        setFilterSeed((prev) => (prev % 100) + 1);
+      }
+      animId = requestAnimationFrame(rippleLoop);
+    };
+    animId = requestAnimationFrame(rippleLoop);
+    return () => cancelAnimationFrame(animId);
+  }, []);
 
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
@@ -39,12 +74,12 @@ export default function MainVisualStack({
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    radius.set(160); // 160px liquid circular mask radius
+    maskSize.set(160); // Fluid radius
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    radius.set(0);
+    maskSize.set(0);
   };
 
   return (
@@ -55,6 +90,34 @@ export default function MainVisualStack({
       onMouseLeave={handleMouseLeave}
       className={`relative w-full h-full overflow-hidden select-none cursor-crosshair ${className}`}
     >
+      {/* SVG Liquid Displacement Filter Definition */}
+      <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="smooth-liquid-distortion" x="-30%" y="-30%" width="160%" height="160%">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.018"
+              numOctaves="3"
+              seed={filterSeed}
+              result="noise"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="noise"
+              scale="22"
+              xChannelSelector="R"
+              yChannelSelector="G"
+              result="displaced"
+            />
+            <feGaussianBlur in="displaced" stdDeviation="1.5" result="smoothed" />
+            <feMerge>
+              <feMergeNode in="smoothed" />
+              <feMergeNode in="SourceGraphic" opacity="0.4" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+
       {/* 1. TOP LAYER: Charles Leclerc Face Portrait */}
       <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none">
         <TransparentCutout
@@ -64,12 +127,13 @@ export default function MainVisualStack({
         />
       </div>
 
-      {/* 2. BOTTOM LAYER: Front 3D Helmet (Revealed through smooth liquid circular mask) */}
+      {/* 2. BOTTOM LAYER: Front 3D Helmet (Revealed through organic liquid mask) */}
       <motion.div
         className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none"
         style={{
           WebkitMaskImage: maskImage,
           maskImage: maskImage,
+          filter: 'url(#smooth-liquid-distortion)',
         }}
       >
         <img
@@ -82,18 +146,22 @@ export default function MainVisualStack({
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none mix-blend-overlay" />
       </motion.div>
 
-      {/* 3. LIQUID CIRCULAR WAVE RIPPLE (Soft background paint blob around cursor) */}
+      {/* 3. ORGANIC LIQUID BLOB RIPPLE (Soft background paint droplet following cursor) */}
       <motion.div
-        className="absolute z-0 pointer-events-none rounded-full blur-[2px]"
+        className="absolute z-0 pointer-events-none rounded-full"
         style={{
           x: smoothX,
           y: smoothY,
-          width: useTransform(smoothRadius, (r) => r * 2.2),
-          height: useTransform(smoothRadius, (r) => r * 1.8),
+          width: useTransform(smoothSize, (s) => s * 2.2),
+          height: useTransform(smoothSize, (s) => s * 1.8),
           translateX: '-50%',
           translateY: '-50%',
+          scaleX: liquidScaleX,
+          scaleY: liquidScaleY,
+          rotate: liquidRotate,
           backgroundColor: '#e2e4da',
           opacity: isHovered ? 0.75 : 0,
+          filter: 'url(#smooth-liquid-distortion)',
         }}
       />
     </div>
