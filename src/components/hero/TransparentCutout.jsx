@@ -26,7 +26,7 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         const imgData = ctx.getImageData(0, 0, w, h);
         const data = imgData.data;
 
-        // 1. BFS Flood fill from outer perimeter
+        // BFS Flood fill from perimeter to remove background cleanly without touching hair
         const visited = new Uint8Array(w * h);
         const queue = [];
 
@@ -40,10 +40,11 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
         }
 
         const isBgPixel = (r, g, b) => {
-          const isNeutral = Math.abs(r - g) <= 30 && Math.abs(g - b) <= 30 && Math.abs(r - b) <= 30;
-          const isStudioBg = isNeutral && r >= 55;
-          const isWhiteOrLight = r >= 175 && g >= 175 && b >= 175;
-          return isStudioBg || isWhiteOrLight;
+          // Standard clean threshold
+          const isNeutral = Math.abs(r - g) <= 22 && Math.abs(g - b) <= 22 && Math.abs(r - b) <= 22;
+          const isStudioBg = isNeutral && r >= 140;
+          const isWhite = r >= 210 && g >= 210 && b >= 210;
+          return isStudioBg || isWhite;
         };
 
         let head = 0;
@@ -61,39 +62,12 @@ export default function TransparentCutout({ src = "/images/leclercface.jpe", alt
           const b = data[pIdx + 2];
 
           if (isBgPixel(r, g, b)) {
-            data[pIdx + 3] = 0; // 100% transparent
+            data[pIdx + 3] = 0; // Transparent
 
             if (px > 0 && !visited[idx - 1]) queue.push(px - 1, py);
             if (px < w - 1 && !visited[idx + 1]) queue.push(px + 1, py);
             if (py > 0 && !visited[idx - w]) queue.push(px, py - 1);
             if (py < h - 1 && !visited[idx + w]) queue.push(px, py + 1);
-          }
-        }
-
-        // 2. Strict Top Hair Halo Cleanup (Zero stray white specks above hair)
-        for (let y = 0; y < Math.round(h * 0.4); y++) {
-          for (let x = 0; x < w; x++) {
-            const idx = y * w + x;
-            const pIdx = idx * 4;
-
-            if (data[pIdx + 3] > 0) {
-              const r = data[pIdx];
-              const g = data[pIdx + 1];
-              const b = data[pIdx + 2];
-              const brightness = (r + g + b) / 3;
-
-              // Any light speck bordering transparent space in top 40% height is completely cleared
-              if (brightness > 60) {
-                const isNearTransparent =
-                  (y > 0 && data[((y - 1) * w + x) * 4 + 3] === 0) ||
-                  (x > 0 && data[(y * w + (x - 1)) * 4 + 3] === 0) ||
-                  (x < w - 1 && data[(y * w + (x + 1)) * 4 + 3] === 0);
-
-                if (isNearTransparent) {
-                  data[pIdx + 3] = 0;
-                }
-              }
-            }
           }
         }
 
