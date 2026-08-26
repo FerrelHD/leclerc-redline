@@ -10,12 +10,15 @@ export default function MainVisualStack({
 }) {
   const containerRef = useRef(null);
   const visualWrapperRef = useRef(null);
-  const [trailPath, setTrailPath] = useState("");
+  const maskPathRef = useRef(null);
+  const shadowPathRef = useRef(null);
+  const helmetWrapperRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ w: 1000, h: 1000 });
 
   const trailRef = useRef([]);
   const lastMouseRef = useRef({ x: -500, y: -500, time: 0 });
   const isHoveredRef = useRef(false);
+  const isVisibleRef = useRef(true);
 
   // Volumetric 3D Studio Spatial Depth & Natural Camera Perspective refs
   const parallaxTargetRef = useRef({ x: 0, y: 0, rotX: 0, rotY: 0, shadowX: 0, shadowY: 20 });
@@ -104,11 +107,27 @@ export default function MainVisualStack({
     }
   }, [globalMouse, isHovered]);
 
-  // 60FPS Fluid Ribbon Trail Mesh Generator & Volumetric 3D Camera Loop
+  // High-performance RAF loop: direct DOM mutation without React re-render churn
   useEffect(() => {
     let animId;
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && !animId) {
+          animId = requestAnimationFrame(updateMeshAndParallax);
+        }
+      },
+      { threshold: 0 }
+    );
+    if (containerRef.current) observer.observe(containerRef.current);
+
     const updateMeshAndParallax = () => {
+      if (!isVisibleRef.current) {
+        animId = null;
+        return;
+      }
+
       // 1. Smooth 3D Volumetric Inertia Interpolation
       const target = parallaxTargetRef.current;
       const curr = parallaxCurrentRef.current;
@@ -136,90 +155,89 @@ export default function MainVisualStack({
 
       const pts = trailRef.current;
       if (pts.length === 0) {
-        setTrailPath("");
+        if (maskPathRef.current) maskPathRef.current.setAttribute('d', 'M 0 0');
+        if (shadowPathRef.current) shadowPathRef.current.setAttribute('d', '');
+        if (helmetWrapperRef.current) helmetWrapperRef.current.style.opacity = '0';
         animId = requestAnimationFrame(updateMeshAndParallax);
         return;
       }
+
+      let d = "";
 
       // 3. If single point: render a smooth circle
       if (pts.length === 1) {
         const p = pts[0];
         const r = p.baseR * Math.pow(p.life, 0.65);
-        const d = `M ${(p.x - r).toFixed(1)} ${p.y.toFixed(1)} a ${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(2 * r).toFixed(1)} 0 a ${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(-2 * r).toFixed(1)} 0 Z`;
-        setTrailPath(d);
-        animId = requestAnimationFrame(updateMeshAndParallax);
-        return;
-      }
+        d = `M ${(p.x - r).toFixed(1)} ${p.y.toFixed(1)} a ${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(2 * r).toFixed(1)} 0 a ${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(-2 * r).toFixed(1)} 0 Z`;
+      } else {
+        // 4. Build Organic Continuous Fluid Ribbon (Tapered from head P0 to tail Pn)
+        const n = pts.length;
+        const leftPts = [];
+        const rightPts = [];
 
-      // 4. Build Organic Continuous Fluid Ribbon (Tapered from head P0 to tail Pn)
-      const n = pts.length;
-      const leftPts = [];
-      const rightPts = [];
+        for (let i = 0; i < n; i++) {
+          const currPt = pts[i];
+          let vx, vy;
 
-      for (let i = 0; i < n; i++) {
-        const currPt = pts[i];
-        let vx, vy;
+          if (i === 0) {
+            vx = currPt.x - pts[1].x;
+            vy = currPt.y - pts[1].y;
+          } else if (i === n - 1) {
+            vx = pts[i - 1].x - currPt.x;
+            vy = pts[i - 1].y - currPt.y;
+          } else {
+            vx = pts[i - 1].x - pts[i + 1].x;
+            vy = pts[i - 1].y - pts[i + 1].y;
+          }
 
-        if (i === 0) {
-          vx = currPt.x - pts[1].x;
-          vy = currPt.y - pts[1].y;
-        } else if (i === n - 1) {
-          vx = pts[i - 1].x - currPt.x;
-          vy = pts[i - 1].y - currPt.y;
-        } else {
-          vx = pts[i - 1].x - pts[i + 1].x;
-          vy = pts[i - 1].y - pts[i + 1].y;
+          const len = Math.hypot(vx, vy) || 1;
+          const nx = -vy / len;
+          const ny = vx / len;
+
+          const taperRatio = 1 - (i / n) * 0.78;
+          const r = currPt.baseR * Math.pow(currPt.life, 0.6) * taperRatio;
+
+          leftPts.push({ x: currPt.x + nx * r, y: currPt.y + ny * r });
+          rightPts.push({ x: currPt.x - nx * r, y: currPt.y - ny * r });
         }
 
-        const len = Math.hypot(vx, vy) || 1;
-        // Normal vector perpendicular to trajectory
-        const nx = -vy / len;
-        const ny = vx / len;
+        const p0 = pts[0];
+        const r0 = p0.baseR * Math.pow(p0.life, 0.6);
+        const pn = pts[n - 1];
+        const rn = pn.baseR * Math.pow(pn.life, 0.6) * 0.22;
 
-        // Radius tapers along the trail length (head is wide, tail tapers to sleek tip)
-        const taperRatio = 1 - (i / n) * 0.78;
-        const r = currPt.baseR * Math.pow(currPt.life, 0.6) * taperRatio;
+        d = `M ${rightPts[0].x.toFixed(1)} ${rightPts[0].y.toFixed(1)}`;
+        d += ` A ${r0.toFixed(1)} ${r0.toFixed(1)} 0 0 1 ${leftPts[0].x.toFixed(1)} ${leftPts[0].y.toFixed(1)}`;
 
-        leftPts.push({ x: currPt.x + nx * r, y: currPt.y + ny * r });
-        rightPts.push({ x: currPt.x - nx * r, y: currPt.y - ny * r });
+        for (let i = 0; i < n - 1; i++) {
+          const midX = (leftPts[i].x + leftPts[i + 1].x) / 2;
+          const midY = (leftPts[i].y + leftPts[i + 1].y) / 2;
+          d += ` Q ${leftPts[i].x.toFixed(1)} ${leftPts[i].y.toFixed(1)}, ${midX.toFixed(1)} ${midY.toFixed(1)}`;
+        }
+        d += ` L ${leftPts[n - 1].x.toFixed(1)} ${leftPts[n - 1].y.toFixed(1)}`;
+
+        d += ` A ${rn.toFixed(1)} ${rn.toFixed(1)} 0 0 1 ${rightPts[n - 1].x.toFixed(1)} ${rightPts[n - 1].y.toFixed(1)}`;
+
+        for (let i = n - 1; i > 0; i--) {
+          const midX = (rightPts[i].x + rightPts[i - 1].x) / 2;
+          const midY = (rightPts[i].y + rightPts[i - 1].y) / 2;
+          d += ` Q ${rightPts[i].x.toFixed(1)} ${rightPts[i].y.toFixed(1)}, ${midX.toFixed(1)} ${midY.toFixed(1)}`;
+        }
+        d += ` L ${rightPts[0].x.toFixed(1)} ${rightPts[0].y.toFixed(1)} Z`;
       }
 
-      const p0 = pts[0];
-      const r0 = p0.baseR * Math.pow(p0.life, 0.6);
-      const pn = pts[n - 1];
-      const rn = pn.baseR * Math.pow(pn.life, 0.6) * 0.22;
+      if (maskPathRef.current) maskPathRef.current.setAttribute('d', d);
+      if (shadowPathRef.current) shadowPathRef.current.setAttribute('d', d);
+      if (helmetWrapperRef.current) helmetWrapperRef.current.style.opacity = '1';
 
-      // Construct continuous SVG path with rounded head cap, smooth bezier flanks, and tapered tail
-      let d = `M ${rightPts[0].x.toFixed(1)} ${rightPts[0].y.toFixed(1)}`;
-
-      // Head rounded cap arc
-      d += ` A ${r0.toFixed(1)} ${r0.toFixed(1)} 0 0 1 ${leftPts[0].x.toFixed(1)} ${leftPts[0].y.toFixed(1)}`;
-
-      // Left flank bezier curves
-      for (let i = 0; i < n - 1; i++) {
-        const midX = (leftPts[i].x + leftPts[i + 1].x) / 2;
-        const midY = (leftPts[i].y + leftPts[i + 1].y) / 2;
-        d += ` Q ${leftPts[i].x.toFixed(1)} ${leftPts[i].y.toFixed(1)}, ${midX.toFixed(1)} ${midY.toFixed(1)}`;
-      }
-      d += ` L ${leftPts[n - 1].x.toFixed(1)} ${leftPts[n - 1].y.toFixed(1)}`;
-
-      // Tail rounded cap arc
-      d += ` A ${rn.toFixed(1)} ${rn.toFixed(1)} 0 0 1 ${rightPts[n - 1].x.toFixed(1)} ${rightPts[n - 1].y.toFixed(1)}`;
-
-      // Right flank bezier curves back to head
-      for (let i = n - 1; i > 0; i--) {
-        const midX = (rightPts[i].x + rightPts[i - 1].x) / 2;
-        const midY = (rightPts[i].y + rightPts[i - 1].y) / 2;
-        d += ` Q ${rightPts[i].x.toFixed(1)} ${rightPts[i].y.toFixed(1)}, ${midX.toFixed(1)} ${midY.toFixed(1)}`;
-      }
-      d += ` L ${rightPts[0].x.toFixed(1)} ${rightPts[0].y.toFixed(1)} Z`;
-
-      setTrailPath(d);
       animId = requestAnimationFrame(updateMeshAndParallax);
     };
 
     animId = requestAnimationFrame(updateMeshAndParallax);
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -235,34 +253,33 @@ export default function MainVisualStack({
       >
         <defs>
           <clipPath id="fluid-ribbon-mask">
-            <path d={trailPath || "M 0 0"} />
+            <path ref={maskPathRef} d="M 0 0" />
           </clipPath>
         </defs>
       </svg>
 
-      {/* 0. MATCHING LIQUID BACKDROP SHADOW (Exact synchronized fluid trail behind portrait) */}
+      {/* MATCHING LIQUID BACKDROP SHADOW */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
         viewBox={`0 0 ${containerSize.w} ${containerSize.h}`}
       >
-        {trailPath && (
-          <path
-            d={trailPath}
-            fill="#E5E3DB"
-            opacity="0.8"
-            style={{
-              filter: 'blur(22px)',
-            }}
-          />
-        )}
+        <path
+          ref={shadowPathRef}
+          d=""
+          fill="#E5E3DB"
+          opacity="0.8"
+          style={{
+            filter: 'blur(22px)',
+          }}
+        />
       </svg>
 
-      {/* SUBTLE 2D MICRO-PARALLAX WRAPPER (Natural Breathing, Zero Cardboard Tilt) */}
+      {/* SUBTLE 2D MICRO-PARALLAX WRAPPER */}
       <div
         ref={visualWrapperRef}
         className="relative w-full h-full flex items-end justify-center pointer-events-none will-change-transform"
       >
-        {/* 1. TOP LAYER: Charles Leclerc Clean Cutout (Subtly lowered for natural breathing room under CL monogram) */}
+        {/* 1. TOP LAYER: Charles Leclerc Clean Cutout */}
         <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-12 md:translate-y-14 scale-100">
           <TransparentCutout
             src={topImage}
@@ -271,13 +288,14 @@ export default function MainVisualStack({
           />
         </div>
 
-        {/* 2. BOTTOM LAYER: Official Monaco GP Helmet (Calibrated 1:1 to Charles' Head Geometry) */}
+        {/* 2. BOTTOM LAYER: Official Monaco GP Helmet */}
         <div
-          className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-12 md:translate-y-14 scale-100"
+          ref={helmetWrapperRef}
+          className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-12 md:translate-y-14 scale-100 transition-opacity duration-150"
           style={{
             clipPath: 'url(#fluid-ribbon-mask)',
             WebkitClipPath: 'url(#fluid-ribbon-mask)',
-            opacity: trailPath ? 1 : 0,
+            opacity: 0,
           }}
         >
           <div className="w-full h-full flex items-end justify-center">

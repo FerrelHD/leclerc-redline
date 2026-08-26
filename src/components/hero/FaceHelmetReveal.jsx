@@ -18,15 +18,32 @@ export default function FaceHelmetReveal() {
   const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
   const [isHovered, setIsHovered] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const isHoveredRef = useRef(false);
+  const rafMouseRef = useRef(null);
 
   const handleMouseMove = (e) => {
     if (!heroCardRef.current) return;
-    setIsHovered(true);
-    setMousePos({ x: e.clientX, y: e.clientY });
+    if (!isHoveredRef.current) {
+      isHoveredRef.current = true;
+      setIsHovered(true);
+    }
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+    if (!rafMouseRef.current) {
+      rafMouseRef.current = requestAnimationFrame(() => {
+        setMousePos({ x: clientX, y: clientY });
+        rafMouseRef.current = null;
+      });
+    }
   };
 
   const handleMouseLeave = () => {
+    isHoveredRef.current = false;
     setIsHovered(false);
+    if (rafMouseRef.current) {
+      cancelAnimationFrame(rafMouseRef.current);
+      rafMouseRef.current = null;
+    }
     setMousePos({ x: -500, y: -500 });
   };
 

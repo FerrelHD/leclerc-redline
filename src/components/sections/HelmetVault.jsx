@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { helmetsCollection } from '../../data/charlesData';
 import TechFrame from '../ui/TechFrame';
-import HelmetViewer from '../3d/HelmetViewer';
 import { Shield, Sparkles, Layers, Info } from 'lucide-react';
 
 export default function HelmetVault() {
@@ -32,26 +31,43 @@ export default function HelmetVault() {
           </p>
         </div>
 
-        {/* Main Interactive Stage: 3D Viewer & Selected Specs */}
+        {/* Main Interactive Stage: Showcase Viewer & Selected Specs */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-center">
 
-          {/* Left Column: 3D Interactive Canvas Box */}
-          <div className="lg:col-span-7 bg-[#101114]/90 rounded-2xl p-8 border border-white/10 relative overflow-hidden backdrop-blur-xl">
-            <div className="absolute top-4 left-4 flex items-center gap-2 text-xs font-mono-telemetry text-neutral-400">
-              <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
-              <span>LIVE 3D SIMULATION</span>
+          {/* Left Column: Interactive Showcase Box */}
+          <div className="lg:col-span-7 bg-[#101114]/90 rounded-2xl p-8 border border-white/10 relative overflow-hidden backdrop-blur-xl group">
+            {/* Dynamic Ambient Glow Behind Helmet */}
+            <div
+              className="absolute inset-0 opacity-20 blur-3xl transition-all duration-700 pointer-events-none"
+              style={{ background: `radial-gradient(circle at center, ${selectedHelmet.color}, transparent 70%)` }}
+            />
+
+            <div className="absolute top-4 left-4 flex items-center gap-2 text-xs font-mono-telemetry text-neutral-400 z-10">
+              <span className="w-2 h-2 rounded-full bg-[#E10600]" />
+              <span>OFFICIAL TELEMETRY ARCHIVE</span>
             </div>
-            <div className="absolute top-4 right-4 px-3 py-1 rounded bg-[#E10600]/20 text-[#E10600] text-xs font-mono-telemetry font-bold">
+            <div className="absolute top-4 right-4 px-3 py-1 rounded bg-[#E10600]/20 text-[#E10600] text-xs font-mono-telemetry font-bold z-10">
               {selectedHelmet.tag}
             </div>
 
-            {/* 3D Helmet Canvas Component */}
-            <div className="py-6">
-              <HelmetViewer activeColor={selectedHelmet.color} />
+            {/* Showcase Image Display */}
+            <div className="py-6 flex flex-col items-center justify-center relative z-10">
+              <div className="w-[320px] h-[320px] sm:w-[360px] sm:h-[360px] relative flex items-center justify-center">
+                <img
+                  key={selectedHelmet.id}
+                  src={selectedHelmet.image}
+                  alt={selectedHelmet.title}
+                  className="max-w-full max-h-full object-contain filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)] transition-all duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+              <div className="text-[10px] font-mono-telemetry text-neutral-400 tracking-wider uppercase mt-2 bg-black/60 px-3 py-1 rounded-full border border-white/10">
+                BELL RACING HP77 // CARBON COMPOSITE // {selectedHelmet.year}
+              </div>
             </div>
 
             {/* Bottom Status bar */}
-            <div className="flex items-center justify-between border-t border-white/10 pt-4 text-xs font-mono-telemetry text-neutral-400">
+            <div className="flex items-center justify-between border-t border-white/10 pt-4 text-xs font-mono-telemetry text-neutral-400 z-10 relative">
               <span>MODEL: BELL HP77 FIA 8860</span>
               <span>LIVERY: {selectedHelmet.title}</span>
             </div>
