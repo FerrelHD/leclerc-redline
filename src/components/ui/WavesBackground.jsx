@@ -10,10 +10,7 @@ export default function WavesBackground({
   globalMouse = null,
 }) {
   const containerRef = useRef(null);
-  const canvasRef = useRef(null);
-  const strokeColorRef = useRef(strokeColor);
-  strokeColorRef.current = strokeColor;
-
+  const svgRef = useRef(null);
   const mouseRef = useRef({
     x: -500,
     y: -500,
@@ -26,12 +23,20 @@ export default function WavesBackground({
     a: 0,
     set: false,
   });
-
+  const pathsRef = useRef([]);
   const linesRef = useRef([]);
   const noiseRef = useRef(null);
   const rafRef = useRef(null);
-  const isVisibleRef = useRef(true);
-  const boundingRef = useRef({ width: 0, height: 0, left: 0, top: 0 });
+  const boundingRef = useRef(null);
+
+  // Smoothly update stroke color when prop changes
+  useEffect(() => {
+    if (pathsRef.current && pathsRef.current.length > 0) {
+      pathsRef.current.forEach((path) => {
+        if (path) path.setAttribute('stroke', strokeColor);
+      });
+    }
+  }, [strokeColor]);
 
   // Sync external globalMouse if provided
   useEffect(() => {
@@ -50,41 +55,27 @@ export default function WavesBackground({
   }, [globalMouse]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const canvas = canvasRef.current;
-    if (!container || !canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    if (!noiseRef.current) {
-      noiseRef.current = createNoise2D();
-    }
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (!containerRef.current || !svgRef.current) return;
+    noiseRef.current = createNoise2D();
 
     const setSize = () => {
-      if (!container || !canvas) return;
-      const rect = container.getBoundingClientRect();
-      boundingRef.current = {
-        width: rect.width,
-        height: rect.height,
-        left: rect.left,
-        top: rect.top,
-      };
-
-      const w = Math.max(rect.width, 100);
-      const h = Math.max(rect.height, 100);
-
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
-
-      initLines(w, h);
+      if (!containerRef.current || !svgRef.current) return;
+      boundingRef.current = containerRef.current.getBoundingClientRect();
+      const { width, height } = boundingRef.current;
+      svgRef.current.style.width = `${width}px`;
+      svgRef.current.style.height = `${height}px`;
     };
 
-    const initLines = (width, height) => {
+    const setLines = () => {
+      if (!svgRef.current || !boundingRef.current) return;
+      const { width, height } = boundingRef.current;
+      linesRef.current = [];
+
+      pathsRef.current.forEach((path) => {
+        if (path) path.remove();
+      });
+      pathsRef.current = [];
+
       const xGap = spacing;
       const yGap = 12;
 
@@ -97,7 +88,6 @@ export default function WavesBackground({
       const xStart = (width - xGap * totalLines) / 2;
       const yStart = (height - yGap * totalPoints) / 2;
 
-      const lines = [];
       for (let i = 0; i < totalLines; i++) {
         const points = [];
         for (let j = 0; j < totalPoints; j++) {
@@ -108,18 +98,29 @@ export default function WavesBackground({
             cursor: { x: 0, y: 0, vx: 0, vy: 0 },
           });
         }
-        lines.push(points);
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', strokeColor);
+        path.setAttribute('stroke-width', `${strokeWidth}`);
+        path.style.transition = 'stroke 0.15s ease-out';
+
+        svgRef.current.appendChild(path);
+        pathsRef.current.push(path);
+        linesRef.current.push(points);
       }
-      linesRef.current = lines;
     };
 
     setSize();
+    setLines();
 
     const onResize = () => {
       setSize();
+      setLines();
     };
 
     const onMouseMove = (e) => {
+      if (!boundingRef.current) return;
       const mouse = mouseRef.current;
       mouse.x = e.clientX - boundingRef.current.left;
       mouse.y = e.clientY - boundingRef.current.top;
@@ -135,30 +136,16 @@ export default function WavesBackground({
     window.addEventListener('resize', onResize);
     window.addEventListener('mousemove', onMouseMove);
 
-    // IntersectionObserver to pause rendering when off-screen
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isVisibleRef.current = entry.isIntersecting;
-        if (entry.isIntersecting && !rafRef.current) {
-          rafRef.current = requestAnimationFrame(tick);
-        }
-      },
-      { threshold: 0 }
-    );
-    observer.observe(container);
-
+    // Dynamic Multi-Frequency Wave Engine: Continuous Ambient Flow + Mouse Force Field
     const movePoints = (time) => {
       const lines = linesRef.current;
       const mouse = mouseRef.current;
       const noise = noiseRef.current;
       if (!noise) return;
 
-      for (let i = 0; i < lines.length; i++) {
-        const points = lines[i];
-        for (let j = 0; j < points.length; j++) {
-          const p = points[j];
-
-          // 1. Dual-Layer Simplex Noise Harmonic Motion
+      lines.forEach((points) => {
+        points.forEach((p) => {
+          // 1. Dual-Layer Simplex Noise Harmonic Motion (Flows smoothly 24/7 without hovering)
           const primaryMove = noise(
             (p.x + time * 0.005) * 0.0025,
             (p.y + time * 0.003) * 0.002
@@ -172,7 +159,7 @@ export default function WavesBackground({
           p.wave.x = Math.cos(primaryMove) * 16 + Math.sin(harmonicMove) * 6;
           p.wave.y = Math.sin(primaryMove) * 10 + Math.cos(harmonicMove) * 4;
 
-          // 2. Interactive Cursor Force Field
+          // 2. Interactive Cursor Force Field (Added when hovering)
           const dx = p.x - mouse.sx;
           const dy = p.y - mouse.sy;
           const d = Math.hypot(dx, dy);
@@ -194,48 +181,32 @@ export default function WavesBackground({
           p.cursor.y += p.cursor.vy;
           p.cursor.x = Math.min(50, Math.max(-50, p.cursor.x));
           p.cursor.y = Math.min(50, Math.max(-50, p.cursor.y));
-        }
-      }
+        });
+      });
     };
 
-    const drawCanvas = () => {
-      const { width, height } = boundingRef.current;
-      if (width === 0 || height === 0) return;
-
-      ctx.save();
-      ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, width, height);
-
-      ctx.beginPath();
-      ctx.strokeStyle = strokeColorRef.current;
-      ctx.lineWidth = strokeWidth;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
+    const drawLines = () => {
       const lines = linesRef.current;
-      for (let lIndex = 0; lIndex < lines.length; lIndex++) {
-        const points = lines[lIndex];
-        if (points.length < 2) continue;
+      const paths = pathsRef.current;
+
+      lines.forEach((points, lIndex) => {
+        if (points.length < 2 || !paths[lIndex]) return;
 
         const p0 = points[0];
-        ctx.moveTo(p0.x + p0.wave.x, p0.y + p0.wave.y);
+        let d = `M ${(p0.x + p0.wave.x).toFixed(1)} ${(p0.y + p0.wave.y).toFixed(1)}`;
 
         for (let i = 1; i < points.length; i++) {
           const p = points[i];
-          ctx.lineTo(p.x + p.wave.x + p.cursor.x, p.y + p.wave.y + p.cursor.y);
+          const x = (p.x + p.wave.x + p.cursor.x).toFixed(1);
+          const y = (p.y + p.wave.y + p.cursor.y).toFixed(1);
+          d += ` L ${x} ${y}`;
         }
-      }
 
-      ctx.stroke();
-      ctx.restore();
+        paths[lIndex].setAttribute('d', d);
+      });
     };
 
     const tick = (time) => {
-      if (!isVisibleRef.current) {
-        rafRef.current = null;
-        return;
-      }
-
       const mouse = mouseRef.current;
       mouse.sx += (mouse.x - mouse.sx) * 0.1;
       mouse.sy += (mouse.y - mouse.sy) * 0.1;
@@ -252,18 +223,14 @@ export default function WavesBackground({
       mouse.a = Math.atan2(dy, dx);
 
       movePoints(time);
-      drawCanvas();
+      drawLines();
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
 
     return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-      observer.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('mousemove', onMouseMove);
     };
@@ -278,9 +245,10 @@ export default function WavesBackground({
         transition: 'background-color 0.2s ease-out',
       }}
     >
-      <canvas
-        ref={canvasRef}
-        className="block w-full h-full pointer-events-none"
+      <svg
+        ref={svgRef}
+        className="block w-full h-full js-svg pointer-events-none"
+        xmlns="http://www.w3.org/2000/svg"
       />
     </div>
   );
