@@ -1,22 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-export default function AnimatedSignature({ progress = 0, color = "#E10600" }) {
+const AnimatedSignature = forwardRef(({ color = "#E10600" }, ref) => {
   const pathRef = useRef(null);
-  const [totalLength, setTotalLength] = useState(3000);
+  const lengthRef = useRef(3000);
 
   // Measure exact pixel length of the SVG path on mount
   useEffect(() => {
     if (pathRef.current) {
       const len = pathRef.current.getTotalLength();
       if (len > 0) {
-        setTotalLength(len);
+        lengthRef.current = len;
+        pathRef.current.style.strokeDasharray = len;
+        pathRef.current.style.strokeDashoffset = len;
       }
     }
   }, []);
 
-  const clampedProgress = Math.min(1, Math.max(0, progress));
-  // Exact stroke dash offset calculation for continuous pen drawing
-  const currentOffset = totalLength * (1 - clampedProgress);
+  useImperativeHandle(ref, () => ({
+    setProgress: (p) => {
+      if (pathRef.current) {
+        const clamped = Math.min(1, Math.max(0, p));
+        pathRef.current.style.strokeDashoffset = lengthRef.current * (1 - clamped);
+      }
+    }
+  }));
 
   return (
     <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center">
@@ -65,11 +72,13 @@ export default function AnimatedSignature({ progress = 0, color = "#E10600" }) {
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            strokeDasharray: totalLength,
-            strokeDashoffset: currentOffset,
+            strokeDasharray: 3000,
+            strokeDashoffset: 3000,
           }}
         />
       </svg>
     </div>
   );
-}
+});
+
+export default AnimatedSignature;

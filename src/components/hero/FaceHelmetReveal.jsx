@@ -14,6 +14,8 @@ export default function FaceHelmetReveal() {
   const heroCardRef = useRef(null);
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
+  const signatureRef = useRef(null);
+  const signatureWrapperRef = useRef(null);
 
   const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
   const [isHovered, setIsHovered] = useState(false);
@@ -93,15 +95,35 @@ export default function FaceHelmetReveal() {
         messageBadgeRef.current,
         { opacity: 0, y: -15 },
         { opacity: 1, y: 0, ease: 'power2.out' },
-        0.25
+        0
+      );
+      // Stage D: Signature drawing (Syncs exactly with Stage A zoom out)
+      const sigProxy = { p: 0 };
+      tl.to(
+        sigProxy,
+        {
+          p: 1,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            if (signatureRef.current) {
+              signatureRef.current.setProgress(sigProxy.p);
+            }
+          }
+        },
+        0 // Exact same start time and default duration (0.5) as the card zoom out
+      );
+
+      // Stage E: Signature wrapper opacity and scale (Syncs exactly with Stage A zoom out)
+      tl.fromTo(
+        signatureWrapperRef.current,
+        { opacity: 0, scale: 0.92, y: 16 },
+        { opacity: 1, scale: 1.12, y: 16, ease: 'power2.inOut' },
+        0
       );
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
-
-  // Signature calculation: animates progressively throughout zoom out (0.12 -> 0.95)
-  const signatureProgress = Math.min(1, Math.max(0, (scrollProgress - 0.12) / 0.83));
 
   return (
     <div
@@ -222,15 +244,11 @@ export default function FaceHelmetReveal() {
 
         {/* B. GRAND OVERLAPPING SIGNATURE (Bold Prominent Breakout Beyond Card Box) */}
         <div
-          className="absolute z-30 pointer-events-none flex items-center justify-center transition-all duration-200 ease-out"
-          style={{
-            opacity: scrollProgress > 0.1 ? Math.min(1, (scrollProgress - 0.1) * 5) : 0,
-            width: '860px',
-            maxWidth: '92vw',
-            transform: `scale(${0.92 + scrollProgress * 0.2}) translateY(16px)`,
-          }}
+          ref={signatureWrapperRef}
+          className="absolute z-30 pointer-events-none flex items-center justify-center will-change-transform"
+          style={{ width: '860px', maxWidth: '92vw' }}
         >
-          <AnimatedSignature progress={signatureProgress} color="#E10600" />
+          <AnimatedSignature ref={signatureRef} color="#E10600" />
         </div>
 
       </div>
