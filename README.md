@@ -1,6 +1,6 @@
 # 🏎️ Charles Leclerc #16 – Scuderia Ferrari HP Official Showcase
 
-![Charles Leclerc Hero Showcase](public/images/leclercnewimage.png)
+![Charles Leclerc Website Preview](public/images/preview.png)
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
