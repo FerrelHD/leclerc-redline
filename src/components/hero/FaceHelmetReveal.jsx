@@ -56,7 +56,7 @@ export default function FaceHelmetReveal() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: '+=1400',
+          end: '+=800', // Reduced from 1400 so it unpins faster
           pin: true,
           anticipatePin: 1,
           scrub: 0.6,
@@ -148,7 +148,7 @@ export default function FaceHelmetReveal() {
         {/* TOP TRACK: Infinite Continuous Running Marquee (Editorial Italic Monaco Red) */}
         <div className="w-full overflow-hidden whitespace-nowrap flex py-1 relative z-10 opacity-90">
           <motion.div
-            className="flex shrink-0 font-editorial italic font-bold text-[5vw] md:text-[3.8vw] leading-tight tracking-tight text-[#E10600]"
+            className="flex shrink-0 font-bold text-[5vw] md:text-[3.8vw] leading-tight tracking-tight text-[#E10600]"
             animate={{ x: ['0%', '-50%'] }}
             transition={{
               repeat: Infinity,
@@ -156,8 +156,14 @@ export default function FaceHelmetReveal() {
               duration: 32,
             }}
           >
-            <span className="pr-16">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
-            <span className="pr-16">WE DID IT AT HOME • WE DID IT AT MONACO • FOR FERRARI • </span>
+            <span className="pr-16 flex items-center gap-4">
+              <span className="font-editorial not-italic">WE DID IT AT HOME</span>
+              <span className="font-racing"> • WE DID IT AT MONACO • FOR FERRARI • </span>
+            </span>
+            <span className="pr-16 flex items-center gap-4">
+              <span className="font-editorial not-italic">WE DID IT AT HOME</span>
+              <span className="font-racing"> • WE DID IT AT MONACO • FOR FERRARI • </span>
+            </span>
           </motion.div>
         </div>
 

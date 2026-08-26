@@ -1,4 +1,6 @@
-# 🏎️ Charles Leclerc #16 — Scuderia Ferrari HP Official Showcase
+# 🏎️ Charles Leclerc #16 – Scuderia Ferrari HP Official Showcase
+
+![Charles Leclerc Hero Showcase](public/images/leclercnewimage.png)
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -24,10 +26,10 @@ An ultra-luxury, high-performance web experience showcasing Formula 1 driver **C
 
 ### 3. 🎬 Cinematic GSAP Scroll Choreography
 * **Full-bleed Hero Zoom-out:** The fullscreen cover transitions smoothly into a cropped editorial portrait box with authentic Monza GP scooped notch framing.
-* **Real-time SVG Signature Drawing:** Charles Leclerc's grand signature dynamically writes itself across the screen using animated `stroke-dasharray` and `stroke-dashoffset` precisely mapped to scroll progress ($0.12 \to 0.94$).
-* **Frictionless Unpinning:** Optimized scroll pinning distance (`+=1400px`) eliminates frozen scrolling stalls, flowing seamlessly into the multi-chapter timeline.
+* **Real-time SVG Signature Drawing:** Charles Leclerc's grand signature dynamically writes itself across the screen using animated `stroke-dasharray` and `stroke-dashoffset` precisely mapped to GSAP scroll triggers, featuring artifact-free SVG rendering.
+* **Frictionless Unpinning:** Optimized scroll pinning distance (`+=800px`) eliminates frozen scrolling stalls, flowing seamlessly into the multi-chapter timeline.
 
-### 4. 🪖 Helmets Hall of Fame Vault
+### 4. 🏆 Helmets Hall of Fame Vault
 * High-definition livery showcase honoring his historic triumphs at Monaco and Monza, complete with season telemetry specs and dynamic ambient radial lighting.
 
 ### 5. ⏱️ Monza Grand Prix Telemetry HUD

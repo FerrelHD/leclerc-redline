@@ -10,8 +10,8 @@ const AnimatedSignature = forwardRef(({ color = "#E10600" }, ref) => {
       const len = pathRef.current.getTotalLength();
       if (len > 0) {
         lengthRef.current = len;
-        pathRef.current.style.strokeDasharray = len;
-        pathRef.current.style.strokeDashoffset = len;
+        pathRef.current.style.strokeDasharray = len + 50;
+        pathRef.current.style.strokeDashoffset = len + 50;
       }
     }
   }, []);
@@ -20,7 +20,7 @@ const AnimatedSignature = forwardRef(({ color = "#E10600" }, ref) => {
     setProgress: (p) => {
       if (pathRef.current) {
         const clamped = Math.min(1, Math.max(0, p));
-        pathRef.current.style.strokeDashoffset = lengthRef.current * (1 - clamped);
+        pathRef.current.style.strokeDashoffset = (lengthRef.current + 50) * (1 - clamped);
       }
     }
   }));
@@ -28,7 +28,7 @@ const AnimatedSignature = forwardRef(({ color = "#E10600" }, ref) => {
   return (
     <div className="relative w-full h-full pointer-events-none select-none flex items-center justify-center">
       <svg
-        viewBox="0 0 950 720"
+        viewBox="0 0 1050 720"
         className="w-full h-auto overflow-visible filter drop-shadow-[0_4px_20px_rgba(225,6,0,0.6)]"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -72,8 +72,8 @@ const AnimatedSignature = forwardRef(({ color = "#E10600" }, ref) => {
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            strokeDasharray: 3000,
-            strokeDashoffset: 3000,
+            strokeDasharray: 3050,
+            strokeDashoffset: 3050,
           }}
         />
       </svg>
