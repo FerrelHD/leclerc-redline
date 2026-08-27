@@ -6,10 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import CustomCursor from './components/ui/CustomCursor';
 import Navbar from './components/sections/Navbar';
 import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
-import OnTrackOffTrack from './components/sections/OnTrackOffTrack';
-import HelmetVault from './components/sections/HelmetVault';
-import SoundOfSpeed from './components/sections/SoundOfSpeed';
-import CareerMilestones from './components/sections/CareerMilestones';
+import StickyStoryScroll from './components/hero/StickyStoryScroll';
 import Footer from './components/sections/Footer';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -58,24 +55,15 @@ export default function App() {
       <Navbar isAudioPlaying={isAudioPlaying} toggleAudio={toggleAudio} />
 
       {/* Main Experience Flow */}
-      <main className="relative z-10">
+      <main className="relative z-10 bg-[#0A0A0A]">
 
         {/* Section 1: Hero & Signature 3D Face-Helmet Slice Reveal */}
         <section id="hero">
           <FaceHelmetReveal />
         </section>
 
-        {/* Section 2: Dual Identity Split: ON TRACK vs OFF TRACK */}
-        <OnTrackOffTrack />
-
-        {/* Section 3: 3D Helmets Hall of Fame Vault */}
-        <HelmetVault />
-
-        {/* Section 4: Sound of Speed (Interactive Piano Studio) */}
-        <SoundOfSpeed isGlobalAudioPlaying={isAudioPlaying} toggleGlobalAudio={toggleAudio} />
-
-        {/* Section 5: Historic Career Milestones & Live Radio Quotes */}
-        <CareerMilestones />
+        {/* Section 2: New Multi-Chapter Scrollytelling Section */}
+        <StickyStoryScroll />
 
       </main>
 
