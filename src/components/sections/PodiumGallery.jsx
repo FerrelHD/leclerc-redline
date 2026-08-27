@@ -87,7 +87,7 @@ export default function PodiumGallery() {
       {/* Horizontal Sliding Track with Lando Norris Asymmetrical Scattered Layout */}
       <div 
         ref={trackRef} 
-        className="flex h-full w-[max-content] items-center relative will-change-transform pr-12 md:pr-16 gap-20 sm:gap-28 md:gap-36"
+        className="flex h-full w-[max-content] items-center pt-16 sm:pt-20 pb-8 relative will-change-transform pr-12 md:pr-16 gap-20 sm:gap-28 md:gap-36"
       >
 
           {/* MINIMALIST WHITE ENTRANCE BUFFER (Clean Visual Breathing Room on Section Enter) */}
@@ -102,9 +102,9 @@ export default function PodiumGallery() {
             </div>
           </div>
 
-          {/* CLUSTER 1: SPA 2019 (BELGIUM) — Staggered High */}
+          {/* CLUSTER 1: SPA 2019 (BELGIUM) — Staggered Upper Safe */}
           <div className="relative h-full flex flex-col justify-center items-start shrink-0 gap-2.5">
-            <div className="flex flex-col gap-2 -translate-y-20 md:-translate-y-28">
+            <div className="flex flex-col gap-2 -translate-y-4 md:-translate-y-8">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
                 SPA-FRANCORCHAMPS, 2019
               </span>
@@ -122,7 +122,7 @@ export default function PodiumGallery() {
           <div className="relative h-full flex items-center justify-center shrink-0 gap-8 md:gap-12 px-6">
             
             {/* Photo 1: B&W Portrait (Staggered Low) */}
-            <div className="flex flex-col gap-2 translate-y-16 md:translate-y-24">
+            <div className="flex flex-col gap-2 translate-y-10 md:translate-y-16">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
                 MONZA, 2019 // P1
               </span>
@@ -136,7 +136,7 @@ export default function PodiumGallery() {
             </div>
 
             {/* Floating Editorial Quote & Signature (Nestled in upper negative space) */}
-            <div className="flex flex-col gap-2.5 -translate-y-20 md:-translate-y-28 max-w-[280px] sm:max-w-[320px] select-none shrink-0 px-2">
+            <div className="flex flex-col gap-2.5 -translate-y-8 md:-translate-y-12 max-w-[280px] sm:max-w-[320px] select-none shrink-0 px-2">
               <span className="font-editorial text-2xl sm:text-3xl md:text-[2rem] text-[#0A0A0B] leading-[1.2] font-light tracking-tight">
                 It doesn't matter <span className="italic font-bold text-[#E10600]">where</span> you start, it's <span className="italic font-bold">how</span> you progress from there.
               </span>
@@ -146,7 +146,7 @@ export default function PodiumGallery() {
             </div>
 
             {/* Photo 2: Color Centerpiece Landscape (Ground Level) */}
-            <div className="flex flex-col gap-2 translate-y-4 md:translate-y-8">
+            <div className="flex flex-col gap-2 translate-y-2 md:translate-y-6">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
                 ITALIAN GRAND PRIX, 2019
               </span>
@@ -159,10 +159,10 @@ export default function PodiumGallery() {
               </div>
             </div>
 
-            {/* Photo 3: Celebration Square (Staggered High) */}
-            <div className="flex flex-col gap-2 -translate-y-16 md:-translate-y-24">
+            {/* Photo 3: Celebration Square (Staggered Upper Safe) */}
+            <div className="flex flex-col gap-2 -translate-y-4 md:-translate-y-8">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
-                TIFFOSI CELEBRATION
+                TIFOSI CELEBRATION
               </span>
               <div className="w-[180px] sm:w-[200px] md:w-[220px] aspect-square rounded-[2px] overflow-hidden bg-neutral-200 shadow-md group">
                 <img 
@@ -179,7 +179,7 @@ export default function PodiumGallery() {
           <div className="relative h-full flex items-center justify-center shrink-0 gap-6 md:gap-10 px-4">
             
             {/* Photo 1: Square (Staggered Low) */}
-            <div className="flex flex-col gap-2 translate-y-20 md:translate-y-28">
+            <div className="flex flex-col gap-2 translate-y-12 md:translate-y-18">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold text-right">
                 BAHRAIN GP, 2022
               </span>
@@ -192,10 +192,10 @@ export default function PodiumGallery() {
               </div>
             </div>
 
-            {/* Photo 2: B&W Portrait (Staggered High) */}
-            <div className="flex flex-col gap-2 -translate-y-20 md:-translate-y-28">
+            {/* Photo 2: B&W Portrait (Staggered Upper Safe) */}
+            <div className="flex flex-col gap-2 -translate-y-6 md:-translate-y-10">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
-                DESERT POLE
+                DESERT POLE // SAKHIR
               </span>
               <div className="w-[190px] sm:w-[210px] md:w-[240px] aspect-[4/5] rounded-[2px] overflow-hidden bg-neutral-200 shadow-xl group">
                 <img 
@@ -206,8 +206,8 @@ export default function PodiumGallery() {
               </div>
             </div>
 
-            {/* Photo 3: Austria Landscape (Mid-Low) */}
-            <div className="flex flex-col gap-2 translate-y-6 md:translate-y-10">
+            {/* Photo 3: Austria Landscape (Mid Level) */}
+            <div className="flex flex-col gap-2 translate-y-2 md:translate-y-6">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
                 RED BULL RING, 2022
               </span>
@@ -220,10 +220,10 @@ export default function PodiumGallery() {
               </div>
             </div>
 
-            {/* Photo 4: Austria Portrait (Staggered High) */}
-            <div className="flex flex-col gap-2 -translate-y-18 md:-translate-y-26">
+            {/* Photo 4: Austria Portrait (Staggered Upper Safe) */}
+            <div className="flex flex-col gap-2 -translate-y-4 md:-translate-y-8">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
-                AUSTRIAN GP WIN
+                SPIELBERG VICTORY
               </span>
               <div className="w-[180px] sm:w-[200px] md:w-[230px] aspect-[3/4] rounded-[2px] overflow-hidden bg-neutral-200 shadow-lg group">
                 <img 
@@ -239,8 +239,8 @@ export default function PodiumGallery() {
           {/* CLUSTER 4: MONACO 2024 (THE FINALE) */}
           <div className="relative h-full flex items-center justify-center shrink-0 gap-6 md:gap-10 pr-6">
             
-            {/* Photo 1: B&W Square (Staggered High) */}
-            <div className="flex flex-col gap-2 -translate-y-18 md:-translate-y-26">
+            {/* Photo 1: B&W Square (Staggered Upper Safe) */}
+            <div className="flex flex-col gap-2 -translate-y-4 md:-translate-y-8">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
                 MONACO GP, 2024
               </span>
@@ -254,7 +254,7 @@ export default function PodiumGallery() {
             </div>
 
             {/* Photo 2: Grand Finale Car (Mid Center) */}
-            <div className="flex flex-col gap-2 translate-y-2">
+            <div className="flex flex-col gap-2 translate-y-1 md:translate-y-3">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 text-center font-bold">
                 HOME TRIUMPH // P1
               </span>
@@ -268,7 +268,7 @@ export default function PodiumGallery() {
             </div>
 
             {/* Photo 3: Crowd Celebration Horizontal (Staggered Low) */}
-            <div className="flex flex-col gap-2 translate-y-16 md:translate-y-24">
+            <div className="flex flex-col gap-2 translate-y-10 md:translate-y-16">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
                 MONTE CARLO HARBOR
               </span>
