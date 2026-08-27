@@ -101,23 +101,23 @@ export default function MenuOverlay({ isOpen, onClose }) {
     { label: 'CALENDAR', href: '#milestones' },
   ];
 
-  // Snappy easeOut transition curve
+  // Responsive ease-out for opening, snappy ease-in for closing
   const curveVariants = {
     initial: {
-      d: "M 0 0 L 100 0 L 100 0 Q 50 90 0 0 Z",
+      d: "M 0 0 L 100 0 L 100 0 Q 50 50 0 0 Z",
     },
     animate: {
       d: "M 0 0 L 100 0 L 100 100 Q 50 100 0 100 Z",
       transition: {
-        duration: 0.55,
-        ease: [0.16, 1, 0.3, 1],
+        duration: 0.65,
+        ease: [0.33, 1, 0.68, 1], // Smooth Deceleration (Ease-Out) for opening
       },
     },
     exit: {
-      d: "M 0 0 L 100 0 L 100 0 Q 50 90 0 0 Z",
+      d: "M 0 0 L 100 0 L 100 0 Q 50 50 0 0 Z",
       transition: {
         duration: 0.45,
-        ease: [0.7, 0, 0.84, 0],
+        ease: [0.32, 0, 0.67, 0], // Acceleration (Ease-In) for snappy closing
       },
     },
   };

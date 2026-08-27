@@ -3,9 +3,9 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import CustomCursor from './components/ui/CustomCursor';
 import Navbar from './components/sections/Navbar';
 import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
+import StorytellingScroll from './components/sections/StorytellingScroll';
 import HelmetVault from './components/sections/HelmetVault';
 import OnTrackOffTrack from './components/sections/OnTrackOffTrack';
 import Footer from './components/sections/Footer';
@@ -49,8 +49,7 @@ export default function App() {
       {/* Noise Texture Overlay */}
       <div className="noise-overlay" />
 
-      {/* Spring Physics Precision Cursor */}
-      <CustomCursor />
+
 
       {/* Floating HUD Navigation Bar */}
       <Navbar isAudioPlaying={isAudioPlaying} toggleAudio={toggleAudio} />
@@ -62,6 +61,9 @@ export default function App() {
         <section id="hero">
           <FaceHelmetReveal />
         </section>
+
+        {/* Section 2: Cinematic Storytelling with Kinetic Scroll Fill */}
+        <StorytellingScroll />
 
       </main>
 
