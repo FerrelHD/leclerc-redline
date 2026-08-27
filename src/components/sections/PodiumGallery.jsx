@@ -13,90 +13,53 @@ export default function PodiumGallery() {
     const ctx = gsap.context(() => {
       const getScrollDistance = () => {
         if (!trackRef.current) return 0;
-        // Exact scroll distance so the finale cluster is fully visible without empty white tail
-        return Math.max(0, trackRef.current.scrollWidth - window.innerWidth);
+        return Math.max(0, trackRef.current.scrollWidth - window.innerWidth + 40);
       };
 
-      const setSectionHeight = () => {
-        if (!sectionRef.current || !trackRef.current) return;
-        const dist = getScrollDistance();
-        if (dist > 0) {
-          sectionRef.current.style.height = `${dist + window.innerHeight}px`;
-        }
-      };
-
-      // Set initial height
-      setSectionHeight();
-
-      // Ensure PodiumGallery height updates BEFORE any ScrollTrigger calculates positions
-      ScrollTrigger.addEventListener('refreshInit', setSectionHeight);
-
-      // CSS Sticky Parallax: 100% immune to GSAP pin boundary bouncing
+      // Native GSAP Horizontal Pin with brisk, responsive scrub ratio
       gsap.to(trackRef.current, {
         x: () => -getScrollDistance(),
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: 'bottom bottom',
-          scrub: true,
+          end: () => `+=${Math.round(getScrollDistance() * 0.65)}`, // Fast, fluid 1:1 scroll responsiveness (no dead scroll)
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.5,
           invalidateOnRefresh: true,
-          refreshPriority: 2,
+          anticipatePin: 1,
           onEnter: () => {
-            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.4 });
+            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
             document.body.classList.remove('nav-theme-dark');
           },
           onLeave: () => {
-            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.4 });
+            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
             document.body.classList.remove('nav-theme-dark');
           },
           onEnterBack: () => {
-            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.4 });
+            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
             document.body.classList.remove('nav-theme-dark');
           },
           onLeaveBack: () => {
-            gsap.to('body', { backgroundColor: '#0A0A0A', color: '#FFFFFF', duration: 0.4 });
+            gsap.to('body', { backgroundColor: '#0A0A0A', color: '#FFFFFF', duration: 0.3 });
             document.body.classList.add('nav-theme-dark');
           },
         },
       });
 
-      // Recalculate on image loads inside track
+      // Recalculate as images finish decoding inside track
       if (trackRef.current) {
         const images = trackRef.current.querySelectorAll('img');
         images.forEach(img => {
           if (!img.complete) {
-            img.addEventListener('load', () => {
-              setSectionHeight();
-              ScrollTrigger.refresh();
-            }, { once: true });
+            img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
           }
         });
       }
 
-      // Observe track resize (e.g. after images decode or fonts load)
-      const ro = new ResizeObserver(() => {
-        setSectionHeight();
-        ScrollTrigger.refresh();
-      });
-      if (trackRef.current) ro.observe(trackRef.current);
-
-      const t1 = setTimeout(() => {
-        setSectionHeight();
-        ScrollTrigger.refresh();
-      }, 300);
-
-      const t2 = setTimeout(() => {
-        setSectionHeight();
-        ScrollTrigger.refresh();
-      }, 800);
-
-      return () => {
-        ScrollTrigger.removeEventListener('refreshInit', setSectionHeight);
-        ro.disconnect();
-        clearTimeout(t1);
-        clearTimeout(t2);
-      };
+      const t = setTimeout(() => ScrollTrigger.refresh(), 300);
+      return () => clearTimeout(t);
     }, sectionRef);
 
     return () => ctx.revert();
@@ -107,30 +70,25 @@ export default function PodiumGallery() {
     <section 
       id="podiums"
       ref={sectionRef} 
-      className="relative bg-[#F8F9FA] text-[#0A0A0B] z-10 w-full"
+      className="relative bg-[#F8F9FA] text-[#0A0A0B] z-10 w-full h-screen overflow-hidden flex flex-col justify-center select-none"
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center select-none">
-        
-        {/* Background Topography Lines (Lando Norris Style) */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03]">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="topo" width="400" height="400" patternUnits="userSpaceOnUse">
-                <path d="M0 200 Q 100 100 200 200 T 400 200 M 0 100 Q 150 50 200 150 T 400 50" fill="none" stroke="#000" strokeWidth="1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#topo)" />
-          </svg>
-        </div>
+      {/* Background Topography Lines (Lando Norris Style) */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03]">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="topo" width="400" height="400" patternUnits="userSpaceOnUse">
+              <path d="M0 200 Q 100 100 200 200 T 400 200 M 0 100 Q 150 50 200 150 T 400 50" fill="none" stroke="#000" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#topo)" />
+        </svg>
+      </div>
 
-        {/* Horizontal Sliding Track with Balanced Cluster Spacing */}
-        <div 
-          ref={trackRef} 
-          className="flex h-full w-[max-content] items-center relative will-change-transform pr-8 md:pr-12 gap-20 md:gap-32 lg:gap-40"
-        >
-          
-          {/* INITIAL WHITE ENTRANCE GAP — cinematic breathing room before first card */}
-          <div className="w-[20vw] h-full shrink-0 pointer-events-none" />
+      {/* Horizontal Sliding Track with Fluid Cluster Spacing */}
+      <div 
+        ref={trackRef} 
+        className="flex h-full w-[max-content] items-center relative will-change-transform pl-8 sm:pl-16 md:pl-24 pr-8 md:pr-12 gap-12 sm:gap-16 md:gap-24"
+      >
 
           {/* CLUSTER 1: SPA 2019 (BELGIUM) */}
           <div className="relative h-full flex flex-col justify-center items-start shrink-0 gap-3">
@@ -294,8 +252,6 @@ export default function PodiumGallery() {
           </div>
 
         </div>
-
-      </div>
     </section>
   );
 }
