@@ -9,6 +9,7 @@ export default function TextBoxReveal({
   boxColor = "#E10600",
   className = "",
   as = "div",
+  once = false,
 }) {
   const Component = as;
   const content = text || children;
@@ -19,8 +20,8 @@ export default function TextBoxReveal({
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, amount: 0.01 }}
-        transition={{ delay: delay + duration * 0.35, duration: 0.1 }}
+        viewport={{ once: once, amount: 0.1 }}
+        transition={{ delay: delay + duration * 0.35, duration: 0.15 }}
       >
         {content}
       </motion.div>
@@ -32,7 +33,7 @@ export default function TextBoxReveal({
           scaleX: [0, 1, 1, 0],
           originX: [0, 0, 1, 1],
         }}
-        viewport={{ once: true, amount: 0.01 }}
+        viewport={{ once: once, amount: 0.1 }}
         transition={{
           delay: delay,
           duration: duration,

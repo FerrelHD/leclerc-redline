@@ -1,22 +1,73 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight, Mail, ExternalLink } from 'lucide-react';
 import { driverProfile } from '../../data/charlesData';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function Footer() {
+  const footerRef = useRef(null);
+  const headlineRef = useRef(null);
+  const tagRef = useRef(null);
+  const actionsRef = useRef(null);
+  const bottomBarRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 80%',
+          end: 'bottom bottom',
+          toggleActions: 'play reverse play reverse',
+          invalidateOnRefresh: true,
+        },
+      });
+
+      tl.fromTo(
+        tagRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+        0
+      )
+        .fromTo(
+          headlineRef.current,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
+          0.1
+        )
+        .fromTo(
+          actionsRef.current,
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+          0.25
+        )
+        .fromTo(
+          bottomBarRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6, ease: 'power1.out' },
+          0.35
+        );
+    }, footerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <footer className="relative w-full bg-[#050506] text-white pt-24 pb-12 px-6 md:px-12 overflow-hidden">
+    <footer ref={footerRef} className="relative w-full bg-[#050506] text-white pt-24 pb-12 px-6 md:px-12 overflow-hidden select-none">
 
       {/* Massive Statement Watermark */}
       <div className="max-w-7xl mx-auto border-b border-white/10 pb-20 mb-16">
-        <span className="text-xs font-mono-telemetry text-[#E10600] uppercase tracking-widest block mb-4">
+        <span ref={tagRef} className="text-xs font-mono-telemetry text-[#E10600] uppercase tracking-widest block mb-4">
           IL PREDESTINATO // ALWAYS AT THE LIMIT
         </span>
-        <h2 className="text-5xl md:text-8xl lg:text-9xl font-racing font-black uppercase tracking-tighter leading-none mb-8">
+        <h2 ref={headlineRef} className="text-5xl md:text-8xl lg:text-9xl font-racing font-black uppercase tracking-tighter leading-none mb-8">
           CHARLES <br />
           <span className="text-[#E10600]">LECLERC</span>
         </h2>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div ref={actionsRef} className="flex flex-wrap items-center gap-4">
           <a
             href="https://store.ferrari.com/"
             target="_blank"
@@ -37,7 +88,7 @@ export default function Footer() {
       </div>
 
       {/* Footer Navigation & Socials */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-xs font-mono-telemetry text-neutral-400">
+      <div ref={bottomBarRef} className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-xs font-mono-telemetry text-neutral-400">
 
         {/* Social Links */}
         <div className="flex items-center gap-6">

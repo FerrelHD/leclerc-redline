@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TextBoxReveal from '../ui/TextBoxReveal';
@@ -9,11 +9,11 @@ export default function PodiumGallery() {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const ctx = gsap.context(() => {
       const getScrollDistance = () => {
         if (!trackRef.current) return 0;
-        return trackRef.current.scrollWidth - window.innerWidth;
+        return Math.max(0, trackRef.current.scrollWidth - window.innerWidth);
       };
 
       const setSectionHeight = () => {
@@ -27,6 +27,9 @@ export default function PodiumGallery() {
       // Set initial height
       setSectionHeight();
 
+      // Ensure PodiumGallery height updates BEFORE any ScrollTrigger calculates positions
+      ScrollTrigger.addEventListener('refreshInit', setSectionHeight);
+
       // CSS Sticky Parallax: 100% immune to GSAP pin boundary bouncing
       gsap.to(trackRef.current, {
         x: () => -getScrollDistance(),
@@ -37,6 +40,7 @@ export default function PodiumGallery() {
           end: 'bottom bottom',
           scrub: true,
           invalidateOnRefresh: true,
+          refreshPriority: 2,
           onEnter: () => {
             gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.4 });
             document.body.classList.remove('nav-theme-dark');
@@ -56,18 +60,47 @@ export default function PodiumGallery() {
         },
       });
 
-      // Observe track resize (e.g. after images decode) to recalculate height and refresh trigger
+      // Recalculate on image loads inside track
+      if (trackRef.current) {
+        const images = trackRef.current.querySelectorAll('img');
+        images.forEach(img => {
+          if (!img.complete) {
+            img.addEventListener('load', () => {
+              setSectionHeight();
+              ScrollTrigger.refresh();
+            }, { once: true });
+          }
+        });
+      }
+
+      // Observe track resize (e.g. after images decode or fonts load)
       const ro = new ResizeObserver(() => {
         setSectionHeight();
         ScrollTrigger.refresh();
       });
       if (trackRef.current) ro.observe(trackRef.current);
 
-      return () => ro.disconnect();
+      const t1 = setTimeout(() => {
+        setSectionHeight();
+        ScrollTrigger.refresh();
+      }, 300);
+
+      const t2 = setTimeout(() => {
+        setSectionHeight();
+        ScrollTrigger.refresh();
+      }, 800);
+
+      return () => {
+        ScrollTrigger.removeEventListener('refreshInit', setSectionHeight);
+        ro.disconnect();
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
+
 
   return (
     <section 
@@ -94,8 +127,8 @@ export default function PodiumGallery() {
           className="flex h-full w-[max-content] items-center relative will-change-transform pr-16 md:pr-24 gap-32 md:gap-48 lg:gap-60"
         >
           
-          {/* INITIAL CLEAN FULL WHITE ENTRANCE GAP */}
-          <div className="w-[70vw] md:w-[85vw] h-full shrink-0 pointer-events-none" />
+          {/* INITIAL WHITE ENTRANCE GAP — cinematic breathing room before first card */}
+          <div className="w-[35vw] h-full shrink-0 pointer-events-none" />
 
           {/* CLUSTER 1: SPA 2019 (BELGIUM) */}
           <div className="relative h-full flex flex-col justify-center items-start shrink-0 gap-3">

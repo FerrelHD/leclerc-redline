@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -11,9 +11,8 @@ export default function StorytellingScroll() {
   const line1Ref = useRef(null);
   const line2Ref = useRef(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const ctx = gsap.context(() => {
-
       // 1. Navbar Theme Switcher
       ScrollTrigger.create({
         trigger: sectionRef.current,
@@ -21,41 +20,41 @@ export default function StorytellingScroll() {
         end: 'bottom 50%',
         onEnter:     () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
+        onEnterBack: () => document.body.classList.add('nav-theme-dark'),
+        onLeave:     () => document.body.classList.remove('nav-theme-dark'),
       });
 
-      // 2. Horizontal Scrub Reveal — headlines fly in tied to scroll position
-      //    Line 1: slides in from LEFT  (x: -25vw → 0)
-      //    Line 2: slides in from RIGHT (x: +25vw → 0)
-      //    Both lines start slightly transparent and become fully visible
-      gsap.set([line1Ref.current, line2Ref.current], { opacity: 0 });
-
+      // 2. Horizontal Scrub Reveal — headlines fly in tied to scroll position (bidirectional)
       gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 85%',
-          end:   'top 30%',
-          scrub: 1.2,          // tied directly to scroll, 1.2s lag for smoothness
+          start: 'top 90%',
+          end:   'top 35%',
+          scrub: 0.8,
+          invalidateOnRefresh: true,
         },
       })
         .fromTo(line1Ref.current,
-          { x: '-28vw', opacity: 0 },
+          { x: '-25vw', opacity: 0 },
           { x: '0vw',   opacity: 1, ease: 'none' },
           0
         )
         .fromTo(line2Ref.current,
-          { x: '28vw',  opacity: 0 },
+          { x: '25vw',  opacity: 0 },
           { x: '0vw',   opacity: 1, ease: 'none' },
           0
         );
 
-      // 3. Line-by-Line Red Text Box Wipe Reveal — paragraph
+      // 3. Line-by-Line Red Text Box Wipe Reveal — paragraph (bidirectional)
       const items = gsap.utils.toArray('.story-reveal-item');
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: contentRef.current,
           start: 'top 75%',
-          toggleActions: 'restart none none reset',
+          end: 'bottom 20%',
+          toggleActions: 'play reverse play reverse',
+          invalidateOnRefresh: true,
         },
       });
 
@@ -68,17 +67,18 @@ export default function StorytellingScroll() {
 
         const itemTl = gsap.timeline();
         itemTl
-          .to(wipe, { scaleX: 1, duration: 0.38, ease: 'power3.inOut' })
+          .to(wipe, { scaleX: 1, duration: 0.35, ease: 'power3.inOut' })
           .set(text, { opacity: 1 })
           .set(wipe, { transformOrigin: 'right center' })
-          .to(wipe, { scaleX: 0, duration: 0.38, ease: 'power3.inOut' });
+          .to(wipe, { scaleX: 0, duration: 0.35, ease: 'power3.inOut' });
 
-        tl.add(itemTl, index * 0.13);
+        tl.add(itemTl, index * 0.12);
       });
 
-      requestAnimationFrame(() => ScrollTrigger.refresh());
-
+      const t = setTimeout(() => ScrollTrigger.refresh(), 250);
+      return () => clearTimeout(t);
     }, sectionRef);
+
     return () => ctx.revert();
   }, []);
 

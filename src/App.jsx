@@ -18,10 +18,15 @@ ScrollTrigger.config({ ignoreMobileResize: true });
 export default function App() {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
-  // Initialize Lenis Smooth Inertia Scrolling
   useEffect(() => {
+    // Prevent browser from restoring scroll to middle of page before GSAP/Lenis calculates heights
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     const lenis = new Lenis({
-      duration: 1.4,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 0.95,
@@ -29,19 +34,50 @@ export default function App() {
       infinite: false,
     });
 
-    lenis.on('scroll', ScrollTrigger.update);
-
-    const tickerCb = (time) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(tickerCb);
+    // Tick Lenis inside GSAP's RAF so both share the same frame loop
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
     gsap.ticker.lagSmoothing(0);
 
+    // Push scroll position to ScrollTrigger on every Lenis tick
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // Global load handler to guarantee accurate ScrollTrigger positions across all sections
+    const handleGlobalRefresh = () => {
+      ScrollTrigger.refresh();
+    };
+
+    window.addEventListener('load', handleGlobalRefresh);
+
+    if (document.fonts) {
+      document.fonts.ready.then(handleGlobalRefresh);
+    }
+
+    // Recalculate as images finish decoding
+    const imgs = document.querySelectorAll('img');
+    imgs.forEach((img) => {
+      if (!img.complete) {
+        img.addEventListener('load', handleGlobalRefresh, { once: true });
+        img.addEventListener('error', handleGlobalRefresh, { once: true });
+      }
+    });
+
+    const t1 = setTimeout(handleGlobalRefresh, 150);
+    const t2 = setTimeout(handleGlobalRefresh, 500);
+    const t3 = setTimeout(handleGlobalRefresh, 1200);
+
     return () => {
-      gsap.ticker.remove(tickerCb);
+      window.removeEventListener('load', handleGlobalRefresh);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      gsap.ticker.remove((time) => lenis.raf(time * 1000));
       lenis.destroy();
     };
   }, []);
+
+
+
+
 
   const toggleAudio = () => {
     setIsAudioPlaying(!isAudioPlaying);
