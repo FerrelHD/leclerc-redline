@@ -11,6 +11,7 @@ import MonacoMaranelloSplit from './components/sections/MonacoMaranelloSplit';
 import TelemetryMarquee from './components/ui/TelemetryMarquee';
 import Footer from './components/sections/Footer';
 import CustomCursor from './components/ui/CustomCursor';
+import LoadingScreen from './components/ui/LoadingScreen';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -75,6 +76,9 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA]">
+      {/* Luxury Motorsport Telemetry Preloader */}
+      <LoadingScreen />
+
       {/* Precision Dynamic Cursor */}
       <CustomCursor />
 

@@ -37,25 +37,25 @@ export default function MonacoMaranelloSplit() {
 
       tl.fromTo(
         leftImgRef.current,
-        { x: -140, opacity: 0 },
-        { x: 0, opacity: 1, ease: 'power2.out' },
+        { xPercent: -100, opacity: 0 },
+        { xPercent: -50, opacity: 1, ease: 'power2.out' },
         0
       )
       .fromTo(
         leftTextRef.current,
-        { x: -70, opacity: 0 },
+        { x: -50, opacity: 0 },
         { x: 0, opacity: 1, ease: 'power2.out' },
         0
       )
       .fromTo(
         rightImgRef.current,
-        { x: 140, opacity: 0 },
-        { x: 0, opacity: 1, ease: 'power2.out' },
+        { xPercent: 100, opacity: 0 },
+        { xPercent: 50, opacity: 1, ease: 'power2.out' },
         0
       )
       .fromTo(
         rightTextRef.current,
-        { x: 70, opacity: 0 },
+        { x: 50, opacity: 0 },
         { x: 0, opacity: 1, ease: 'power2.out' },
         0
       );
@@ -86,11 +86,11 @@ export default function MonacoMaranelloSplit() {
 
       <div className="relative z-10 w-full h-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-0">
         {/* Sisi Kiri: Monaco Home */}
-        <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-end px-6 lg:pl-28 lg:pr-16 xl:pl-36 xl:pr-24 group">
+        <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-end px-6 lg:pr-20 xl:pr-28 group">
           {/* Gambar Kiri — Mundur ke tepi luar kiri agar tidak menabrak teks */}
           <div
             ref={leftImgRef}
-            className="absolute left-0 bottom-0 -translate-x-[42%] sm:-translate-x-[36%] md:-translate-x-[30%] lg:-translate-x-[32%] xl:-translate-x-[28%] h-[42vh] sm:h-[52vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-start will-change-transform"
+            className="absolute left-0 bottom-0 h-[40vh] sm:h-[50vh] lg:h-[80vh] max-h-[700px] pointer-events-none flex items-end justify-start will-change-transform z-0"
           >
             <img
               src="/images/leclerc monaco side.png"
@@ -103,7 +103,7 @@ export default function MonacoMaranelloSplit() {
           {/* Teks Kiri */}
           <div
             ref={leftTextRef}
-            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[240px] lg:max-w-[220px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
+            className="relative z-10 flex flex-col items-center text-center max-w-[200px] sm:max-w-[230px] lg:max-w-[220px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
           >
             <div className="overflow-hidden">
               <span className="block font-editorial text-2xl sm:text-3xl md:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">MONACO</span>
@@ -126,11 +126,11 @@ export default function MonacoMaranelloSplit() {
         </div>
 
         {/* Sisi Kanan: First Win Spa */}
-        <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-start px-6 lg:pr-28 lg:pl-16 xl:pr-36 xl:pl-24 group">
+        <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-start px-6 lg:pl-20 xl:pl-28 group">
           {/* Teks Kanan */}
           <div
             ref={rightTextRef}
-            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[240px] lg:max-w-[220px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
+            className="relative z-10 flex flex-col items-center text-center max-w-[200px] sm:max-w-[230px] lg:max-w-[220px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
           >
             <div className="overflow-hidden">
               <span className="block font-editorial text-2xl sm:text-3xl md:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">FIRST</span>
@@ -154,7 +154,7 @@ export default function MonacoMaranelloSplit() {
           {/* Gambar Kanan — Mundur ke tepi luar kanan agar simetris & tidak menabrak teks */}
           <div
             ref={rightImgRef}
-            className="absolute right-0 bottom-0 translate-x-[42%] sm:translate-x-[36%] md:translate-x-[30%] lg:translate-x-[32%] xl:translate-x-[28%] h-[42vh] sm:h-[52vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-end will-change-transform"
+            className="absolute right-0 bottom-0 h-[40vh] sm:h-[50vh] lg:h-[80vh] max-h-[700px] pointer-events-none flex items-end justify-end will-change-transform z-0"
           >
             <img
               src="/images/leclerc first win side-Photoroom.png"
