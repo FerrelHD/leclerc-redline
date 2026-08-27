@@ -19,7 +19,7 @@ export default function TextBoxReveal({
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, amount: 0.1 }}
+        viewport={{ once: true, amount: 0.01 }}
         transition={{ delay: delay + duration * 0.35, duration: 0.1 }}
       >
         {content}
@@ -32,7 +32,7 @@ export default function TextBoxReveal({
           scaleX: [0, 1, 1, 0],
           originX: [0, 0, 1, 1],
         }}
-        viewport={{ once: true, amount: 0.1 }}
+        viewport={{ once: true, amount: 0.01 }}
         transition={{
           delay: delay,
           duration: duration,
