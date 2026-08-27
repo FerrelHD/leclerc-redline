@@ -113,40 +113,40 @@ export default function StorytellingScroll() {
           />
         </div>
 
-        {/* 2. Storytelling Paragraph (Line-by-Line Sequential Red Box Reveal) */}
-        <div className="mt-12 md:mt-14 max-w-3xl mx-auto flex flex-col items-center gap-1.5 md:gap-2 text-center text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-wide leading-relaxed text-neutral-300">
+        {/* 2. Storytelling Paragraph (Justified Editorial Alignment) */}
+        <div className="mt-12 md:mt-14 max-w-2xl md:max-w-3xl mx-auto text-justify text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-wide leading-relaxed text-neutral-300">
           
           {/* Line 1 */}
-          <div className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1.5">
+          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
             <span className="story-text block">
               A relentless pursuit of perfection.
             </span>
             <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </div>
+          </span>{' '}
 
           {/* Line 2 */}
-          <div className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1.5">
+          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
             <span className="story-text block">
               From the narrow streets of the Principality
             </span>
             <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </div>
+          </span>{' '}
 
           {/* Line 3 */}
-          <div className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1.5">
+          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
             <span className="story-text block">
               to the iconic <span className="font-semibold text-[#E10600]">Rosso Corsa</span> of Scuderia Ferrari,
             </span>
             <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </div>
+          </span>{' '}
 
           {/* Line 4 */}
-          <div className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1.5">
+          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
             <span className="story-text block">
               Charles Leclerc embodies the pure essence of racing speed.
             </span>
             <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </div>
+          </span>
 
         </div>
 
