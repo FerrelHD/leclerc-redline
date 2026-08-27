@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,16 +8,13 @@ import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
 import StorytellingScroll from './components/sections/StorytellingScroll';
 import PodiumGallery from './components/sections/PodiumGallery';
 import MonacoMaranelloSplit from './components/sections/MonacoMaranelloSplit';
-import HelmetVault from './components/sections/HelmetVault';
-import OnTrackOffTrack from './components/sections/OnTrackOffTrack';
 import Footer from './components/sections/Footer';
+import CustomCursor from './components/ui/CustomCursor';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
 export default function App() {
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-
   useEffect(() => {
     // Prevent browser from restoring scroll to middle of page before GSAP/Lenis calculates heights
     if ('scrollRestoration' in history) {
@@ -75,26 +72,19 @@ export default function App() {
     };
   }, []);
 
-
-
-
-
-  const toggleAudio = () => {
-    setIsAudioPlaying(!isAudioPlaying);
-  };
-
   return (
     <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA]">
+      {/* Precision Dynamic Cursor */}
+      <CustomCursor />
 
       {/* Noise Texture Overlay */}
       <div className="noise-overlay" />
 
       {/* Floating HUD Navigation Bar */}
-      <Navbar isAudioPlaying={isAudioPlaying} toggleAudio={toggleAudio} />
+      <Navbar />
 
       {/* Main Experience Flow */}
       <main className="relative z-10 bg-[#0A0A0A]">
-
         {/* Section 1: Hero & Signature 3D Face-Helmet Slice Reveal */}
         <section id="hero">
           <FaceHelmetReveal />
@@ -108,12 +98,10 @@ export default function App() {
 
         {/* Section 4: Dual Identity - Monaco Roots vs Maranello Spirit */}
         <MonacoMaranelloSplit />
-
       </main>
 
-      {/* Section 6: Official Motorsport Luxury Footer */}
+      {/* Section 5: Official Motorsport Luxury Footer */}
       <Footer />
-
     </div>
   );
 }

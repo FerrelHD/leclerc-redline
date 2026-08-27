@@ -104,6 +104,7 @@ export default function PodiumGallery() {
 
   return (
     <section 
+      id="podiums"
       ref={sectionRef} 
       className="relative bg-[#F8F9FA] text-[#0A0A0B] z-10 w-full"
     >

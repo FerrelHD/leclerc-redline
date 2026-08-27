@@ -60,6 +60,7 @@ export default function MonacoMaranelloSplit() {
 
   return (
     <section
+      id="monaco-maranello"
       ref={sectionRef}
       className="relative w-full h-screen min-h-[640px] max-h-[1080px] bg-white text-[#0A0A0B] z-20 overflow-hidden flex items-center justify-center select-none"
     >

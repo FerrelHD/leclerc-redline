@@ -8,8 +8,9 @@
 ## 🗺️ Project Index & Ecosystem Overview
 
 ```
-📁 E:\College Stuff\Career\
-├── 🏎️ leclerc/               -> High-End Creative Web Experience (Canvas 2D, Web Audio API, GSAP + Lenis)
+📁 Career Projects/
+├── ⚡ portfolio-v2/           -> Vue 3 + GSAP 60 FPS Digital Portfolio (Kinetic Char Splitter, macOS Frames, Physics Magnetic Cursor)
+├── 🏎️ leclerc/               -> High-End Creative Web Experience (Canvas 2D, Motorsport UI, GSAP + Lenis)
 ├── 🕷️ Portofolio/            -> Interactive Comic-Themed Portfolio (Gamification, Command Palette, Terminal, Audio FX)
 ├── 🎓 Student Life/          -> Cross-Platform App (React 19 + TypeScript + Electron + Capacitor Mobile + Supabase AI)
 ├── ☕ Website Kopi/           -> Fullstack Laravel 10/11 + Filament Admin CMS (E-Commerce, Booking & Services)
@@ -116,15 +117,37 @@
 
 ---
 
+### 6. ⚡ Project: `portfolio-v2` / `ferrelrashadportfolio` (Vue 3 Motion Architecture & macOS Frames)
+* **Stack:** Vue 3 (Composition API), TypeScript, Vite 6, Tailwind CSS 3, GSAP 3 (ScrollTrigger), Lenis Scroll, Lucide.
+* **Onboarding Blueprint:** `docs/UA_ONBOARDING.md`
+
+#### 🎯 Fitur & Reusable Components:
+1. **Kinetic Typography Splitter (`src/functions/index.ts` -> `textSplitterIntoChar`)**
+   * *Kegunaan:* Memecah teks secara dinamis menjadi `<span class="char">` untuk animasi reveal huruf per huruf (*scroll-triggered*) dengan perlindungan *word boundaries* agar tidak patah di mobile.
+2. **Physics Magnetic Cursor & Button Wrapper (`src/components/design/MagneticEffect.vue` & `Cursor.vue`)**
+   * *Kegunaan:* Efek tarikan magnetik pegas halus yang menarik elemen tombol ke arah kursor mouse saat di-hover dan kembali membal (*elastic rebound*) saat mouse keluar.
+3. **Realistic macOS Browser & IDE Terminal Window Frame (`src/components/sections/Works.vue` & `Slider.vue`)**
+   * *Kegunaan:* Komponen bingkai jendela OS realistis dengan *traffic light dots* (Red, Yellow, Green), title bar glassmorphism, dan container video 60 FPS untuk showcase portofolio modern.
+4. **Dynamic International Timezone Clock (`src/components/design/Footer.vue`)**
+   * *Kegunaan:* Real-time user/target timezone renderer menggunakan `Intl.DateTimeFormat` bawaan JavaScript tanpa library tanggal eksternal.
+5. **Production SEO, JSON-LD Schema & Open Graph Card (`index.html`)**
+   * *Kegunaan:* Standarisasi metadata sosial media (`og:image`, `twitter:image`) dan profil developer resmi berformat schema Google Search.
+
+---
+
 ## 🧠 Matrix Kemampuan & Referensi Cepat untuk AI / Developer
 
 Ketika kamu meminta fitur tertentu di project baru, berikut referensi project asalnya:
 
 | Jika kamu ingin membuat fitur... | Ambil referensi dari Project: | File / Modul Kunci: |
 | :--- | :--- | :--- |
+| **Kinetic Char-by-Char Text Reveal** | `portfolio-v2` | `src/functions/index.ts` (`textSplitterIntoChar`) |
+| **Physics-Based Magnetic Buttons / Cursor** | `portfolio-v2` / `leclerc` | `MagneticEffect.vue`, `Cursor.vue`, `CustomCursor.jsx` |
+| **macOS Window Frame Mockup (Projects & IDE)**| `portfolio-v2` | `src/components/sections/Works.vue` & `Slider.vue` |
+| **Dynamic Timezone Live Clock** | `portfolio-v2` | `src/components/design/Footer.vue` (`Intl.DateTimeFormat`) |
 | **Generative Canvas Waves / Perlin Noise** | `leclerc` | `src/components/ui/WavesBackground.jsx` |
 | **Synthesizer Suara / Web Audio API** | `leclerc` / `Portofolio` | `src/components/sections/SoundOfSpeed.jsx` & `src/lib/soundFx.js` |
-| **Smooth Scroll + GSAP ScrollTrigger** | `leclerc` / `Portofolio` | `src/App.jsx` (`Lenis` + `gsap.ticker`) |
+| **Smooth Scroll + GSAP ScrollTrigger** | `portfolio-v2` / `leclerc` | `src/App.vue` / `src/App.jsx` (`Lenis` + `gsap.ticker`) |
 | **Command Palette (`Cmd+K` Modal)** | `Portofolio` | `src/components/CommandPalette.jsx` |
 | **Interactive CLI Hacker Terminal** | `Portofolio` | `src/components/ParkerLabTerminal.jsx` |
 | **Achievement / Gamification Pop-up** | `Portofolio` | `src/lib/achievements.js` & `src/components/AchievementToast.jsx` |
@@ -144,8 +167,10 @@ Ketika kamu meminta fitur tertentu di project baru, berikut referensi project as
 
 1. **Untuk AI Assistant (Antigravity / LLM):**  
    Cukup berikan instruksi seperti:  
+   * *"Buatkan fitur kinetic text splitter seperti di project portfolio-v2"*  
+   * *"Pasang efek magnetik tombol seperti di project portfolio-v2 / leclerc"*  
+   * *"Buatkan mockup frame browser macOS seperti di project portfolio-v2"*
    * *"Buatkan fitur Command Palette seperti di project Portofolio"*  
-   * *"Pasang integrasi Lenis + GSAP ScrollTrigger persis seperti di project leclerc"*  
    * *"Setup Electron + Capacitor wrapper dari pola di project Student Life"*
 2. **Untuk Koleksi Belajar Pribadi (Obsidian / Notion / GitHub):**  
    File ini bisa kamu simpan sebagai **`Master-Feature-Catalog.md`** di vault catatanmu untuk menjadi indeks portofolio teknikal dan referensi arsitektur code kamu kapan pun dibutuhkan!

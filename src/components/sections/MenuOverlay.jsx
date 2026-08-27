@@ -96,9 +96,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
   const menuItems = [
     { label: 'HOME', href: '#hero' },
-    { label: 'ON TRACK', href: '#ontrack-offtrack' },
-    { label: 'OFF TRACK', href: '#sound-of-speed' },
-    { label: 'CALENDAR', href: '#milestones' },
+    { label: 'STORY', href: '#story' },
+    { label: 'PODIUMS', href: '#podiums' },
+    { label: 'DUAL IDENTITY', href: '#monaco-maranello' },
   ];
 
   // Responsive ease-out for opening, snappy ease-in for closing

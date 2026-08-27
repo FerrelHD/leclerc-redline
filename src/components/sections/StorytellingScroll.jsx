@@ -85,6 +85,7 @@ export default function StorytellingScroll() {
 
   return (
     <section 
+      id="story"
       ref={sectionRef}
       className="relative w-full bg-[#0A0A0A] text-white z-30 py-32 md:py-48 px-6 md:px-12 overflow-hidden shadow-2xl flex flex-col items-center justify-center"
     >
