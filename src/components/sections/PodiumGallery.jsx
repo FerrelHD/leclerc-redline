@@ -84,11 +84,23 @@ export default function PodiumGallery() {
         </svg>
       </div>
 
-      {/* Horizontal Sliding Track with Fluid Cluster Spacing */}
+      {/* Horizontal Sliding Track with Balanced Cluster Spacing */}
       <div 
         ref={trackRef} 
-        className="flex h-full w-[max-content] items-center relative will-change-transform pl-8 sm:pl-16 md:pl-24 pr-8 md:pr-12 gap-12 sm:gap-16 md:gap-24"
+        className="flex h-full w-[max-content] items-center relative will-change-transform pr-8 md:pr-12 gap-12 sm:gap-16 md:gap-24"
       >
+
+          {/* MINIMALIST WHITE ENTRANCE BUFFER (Clean Visual Breathing Room on Section Enter) */}
+          <div className="w-[70vw] sm:w-[75vw] lg:w-[80vw] h-full shrink-0 flex items-center justify-start pl-8 sm:pl-16 md:pl-24 pointer-events-none select-none">
+            <div className="flex flex-col gap-2.5 opacity-35">
+              <span className="font-mono-telemetry text-[11px] sm:text-xs tracking-[0.35em] uppercase text-neutral-500 font-bold">
+                SCUDERIA FERRARI // #16 ARCHIVE
+              </span>
+              <span className="font-editorial italic text-2xl sm:text-3xl md:text-4xl text-neutral-600 font-light">
+                The Pursuit of Victory
+              </span>
+            </div>
+          </div>
 
           {/* CLUSTER 1: SPA 2019 (BELGIUM) */}
           <div className="relative h-full flex flex-col justify-center items-start shrink-0 gap-3">
