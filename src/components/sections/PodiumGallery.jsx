@@ -253,8 +253,8 @@ export default function PodiumGallery() {
               </div>
             </div>
 
-            {/* Photo 2: Grand Finale Car (Mid Center) */}
-            <div className="flex flex-col gap-2 translate-y-4 md:translate-y-8">
+            {/* Photo 2: Grand Finale Car (Elevated Centerpiece Safe) */}
+            <div className="flex flex-col gap-2 -translate-y-2 md:-translate-y-5">
               <span className="font-mono-telemetry text-[9px] uppercase tracking-widest text-neutral-500 text-center font-bold">
                 HOME TRIUMPH // P1
               </span>
