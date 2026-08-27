@@ -13,11 +13,9 @@
   }
 
   html {
-    scroll-behavior: smooth;
     background-color: #080809;
     color: #F8F9FA;
     font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    overflow-x: hidden;
   }
 
   body {
@@ -27,7 +25,7 @@
     color: #F8F9FA;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   ::selection {
@@ -119,4 +117,21 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-ferrari-red);
+}
+
+/* Navbar Auto-Contrast Logic */
+/* Default (Hero & Light Sections): Black Text */
+header .nav-text {
+  color: #0A0A0B;
+}
+header .nav-burger {
+  background-color: #0A0A0B;
+}
+
+/* Dark Theme (Storytelling & Vault): White Text */
+body.nav-theme-dark header .nav-text {
+  color: #FFFFFF !important;
+}
+body.nav-theme-dark header .nav-burger {
+  background-color: #FFFFFF !important;
 }

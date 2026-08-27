@@ -128,22 +128,12 @@ export default function FaceHelmetReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative w-full h-screen overflow-hidden select-none bg-[#101114]"
+      className="relative w-full h-screen overflow-hidden select-none bg-[#0A0A0A]"
     >
       {/* ========================================================================= */}
-      {/* 1. BACKGROUND LAYER: DEEP INK OBSIDIAN WITH INTERACTIVE WAVES & MARQUEE  */}
+      {/* 1. BACKGROUND LAYER: SLEEK SOLID MOTORSPORT BLACK WITH CONTINUOUS MARQUEE */}
       {/* ========================================================================= */}
-      <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#101114]">
-
-        {/* Interactive Fluid Waves Grid in Dark Background */}
-        <div className="absolute inset-0 opacity-40 pointer-events-none">
-          <WavesBackground
-            strokeColor="rgba(225, 6, 0, 0.18)"
-            spacing={24}
-            strokeWidth={1.2}
-            globalMouse={mousePos}
-          />
-        </div>
+      <div className="absolute inset-0 z-0 flex flex-col justify-center pointer-events-none overflow-hidden bg-[#0A0A0A]">
 
         {/* TOP TRACK: Infinite Continuous Running Marquee (Editorial Italic Monaco Red) */}
         <div className="w-full overflow-hidden whitespace-nowrap flex py-1 relative z-10 opacity-90">

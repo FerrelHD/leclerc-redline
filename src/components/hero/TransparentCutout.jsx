@@ -44,15 +44,16 @@ export default function TransparentCutout({ src = "/images/leclercnewimage.png",
         const isBgPixel = (r, g, b) => {
           if (isHelmet) {
             // Helmet: only remove pure white outer background
-            return r >= 246 && g >= 246 && b >= 246;
+            return r >= 240 && g >= 240 && b >= 240;
           } else {
-            // Fake checkerboard pixels: neutral grey squares (e.g. 204, 238) or white (255)
-            const isNeutral = Math.abs(r - g) <= 15 && Math.abs(g - b) <= 15 && Math.abs(r - b) <= 15;
-            const isCheckerboard = isNeutral && r >= 170;
-            const isPureWhite = r >= 235 && g >= 235 && b >= 235;
+            // Background is neutral checkerboard or studio white
+            const maxDiff = Math.max(Math.abs(r - g), Math.abs(g - b), Math.abs(r - b));
+            const isNeutral = maxDiff <= 25;
+            const isLightNeutral = isNeutral && (r >= 125 || g >= 125 || b >= 125);
+            const isPureWhite = r >= 215 && g >= 215 && b >= 215;
 
-            // Stop immediately at dark boundaries (hair & dark fleece jacket outline: r,g,b < 100)
-            return isCheckerboard || isPureWhite;
+            // Stop at skin (warm, high r-b diff) and dark hair/fleece (r,g,b < 95)
+            return isLightNeutral || isPureWhite;
           }
         };
 

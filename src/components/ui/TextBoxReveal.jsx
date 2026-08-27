@@ -18,7 +18,8 @@ export default function TextBoxReveal({
       {/* 1. Underlying Text with entrance opacity */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ delay: delay + duration * 0.35, duration: 0.1 }}
       >
         {content}
@@ -27,10 +28,11 @@ export default function TextBoxReveal({
       {/* 2. Ferrari Red Box Wipe (Sweeps in from Left, Sweeps out to Right) */}
       <motion.div
         initial={{ scaleX: 0, originX: 0 }}
-        animate={{
+        whileInView={{
           scaleX: [0, 1, 1, 0],
           originX: [0, 0, 1, 1],
         }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{
           delay: delay,
           duration: duration,

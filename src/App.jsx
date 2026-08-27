@@ -6,11 +6,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from './components/sections/Navbar';
 import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
 import StorytellingScroll from './components/sections/StorytellingScroll';
+import PodiumGallery from './components/sections/PodiumGallery';
 import HelmetVault from './components/sections/HelmetVault';
 import OnTrackOffTrack from './components/sections/OnTrackOffTrack';
 import Footer from './components/sections/Footer';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 export default function App() {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -18,11 +20,12 @@ export default function App() {
   // Initialize Lenis Smooth Inertia Scrolling
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.4,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 1.8,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.6,
+      infinite: false,
     });
 
     lenis.on('scroll', ScrollTrigger.update);
@@ -44,12 +47,10 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA] overflow-x-hidden">
+    <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA]">
 
       {/* Noise Texture Overlay */}
       <div className="noise-overlay" />
-
-
 
       {/* Floating HUD Navigation Bar */}
       <Navbar isAudioPlaying={isAudioPlaying} toggleAudio={toggleAudio} />
@@ -64,6 +65,9 @@ export default function App() {
 
         {/* Section 2: Cinematic Storytelling with Kinetic Scroll Fill */}
         <StorytellingScroll />
+
+        {/* Section 3: The Glory - Horizontal Podium Gallery */}
+        <PodiumGallery />
 
       </main>
 
