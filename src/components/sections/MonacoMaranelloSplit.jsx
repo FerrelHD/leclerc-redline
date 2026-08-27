@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight } from 'lucide-react';
+import MagneticEffect from '../ui/MagneticEffect';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,30 +24,25 @@ export default function MonacoMaranelloSplit() {
         onEnterBack: () => document.body.classList.remove('nav-theme-dark'),
       });
 
-      // 2. Set State Awal: Teks & Gambar Sembunyi (Opacity 0 & Offset)
-      gsap.set([leftImgRef.current, leftTextRef.current], { x: -70, opacity: 0 });
-      gsap.set([rightImgRef.current, rightTextRef.current], { x: 70, opacity: 0 });
-
-      // 3. Timeline Bersama: Gambar & Teks Muncul 100% BERBARENGAN
-      // Saat scroll turun: play (masuk berbarengan)
-      // Saat scroll naik: reverse (mundur dan menghilang berbarengan)
+      // 2. Timeline Bersama: Gambar & Teks Muncul 100% BERBARENGAN & REVERSE saat scroll balik ke atas
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 70%',
-          end: 'bottom 15%',
+          start: 'top 75%',
+          end: 'bottom 20%',
           toggleActions: 'play reverse play reverse',
           invalidateOnRefresh: true,
         },
       });
 
-      tl.to(
+      tl.fromTo(
         [leftImgRef.current, leftTextRef.current],
+        { x: -70, opacity: 0 },
         { x: 0, opacity: 1, duration: 0.85, ease: 'power3.out' },
         0
-      )
-      .to(
+      ).fromTo(
         [rightImgRef.current, rightTextRef.current],
+        { x: 70, opacity: 0 },
         { x: 0, opacity: 1, duration: 0.85, ease: 'power3.out' },
         0
       );
@@ -81,7 +77,7 @@ export default function MonacoMaranelloSplit() {
           {/* Gambar Kiri */}
           <div
             ref={leftImgRef}
-            className="absolute left-0 bottom-0 -translate-x-[22%] sm:-translate-x-[16%] md:-translate-x-[10%] h-[74vh] sm:h-[83vh] lg:h-[91vh] max-h-[800px] pointer-events-none transition-transform duration-700 group-hover:scale-105 flex items-end justify-start will-change-transform opacity-0"
+            className="absolute left-0 bottom-0 -translate-x-[22%] sm:-translate-x-[16%] md:-translate-x-[10%] h-[74vh] sm:h-[83vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-start will-change-transform"
           >
             <img
               src="/images/leclerc monaco side.png"
@@ -94,7 +90,7 @@ export default function MonacoMaranelloSplit() {
           {/* Teks Kiri */}
           <div
             ref={leftTextRef}
-            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[230px] -translate-y-6 sm:-translate-y-10 lg:-translate-y-12 will-change-transform opacity-0"
+            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[230px] -translate-y-6 sm:-translate-y-10 lg:-translate-y-12 will-change-transform"
           >
             <div className="overflow-hidden">
               <span className="block font-editorial text-3xl sm:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">MONACO</span>
@@ -107,9 +103,11 @@ export default function MonacoMaranelloSplit() {
               <p className="text-[11px] sm:text-xs md:text-[13px] text-neutral-500 font-light leading-relaxed">Winning on the historic streets where his journey began. A lifelong dream fulfilled in front of his home crowd.</p>
             </div>
             <div className="overflow-visible mt-5 flex justify-center">
-              <a href="#hero" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
-                <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
-              </a>
+              <MagneticEffect factor={0.25}>
+                <a href="#hero" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
+                  <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
+                </a>
+              </MagneticEffect>
             </div>
           </div>
         </div>
@@ -119,7 +117,7 @@ export default function MonacoMaranelloSplit() {
           {/* Teks Kanan */}
           <div
             ref={rightTextRef}
-            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[230px] -translate-y-6 sm:-translate-y-10 lg:-translate-y-12 will-change-transform opacity-0"
+            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[230px] -translate-y-6 sm:-translate-y-10 lg:-translate-y-12 will-change-transform"
           >
             <div className="overflow-hidden">
               <span className="block font-editorial text-3xl sm:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">FIRST</span>
@@ -132,16 +130,18 @@ export default function MonacoMaranelloSplit() {
               <p className="text-[11px] sm:text-xs md:text-[13px] text-neutral-500 font-light leading-relaxed">The emotional maiden Formula 1 victory at Spa-Francorchamps in 2019. The very first step onto the top of the podium.</p>
             </div>
             <div className="overflow-visible mt-5 flex justify-center">
-              <a href="#hero" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
-                <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
-              </a>
+              <MagneticEffect factor={0.25}>
+                <a href="#hero" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
+                  <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
+                </a>
+              </MagneticEffect>
             </div>
           </div>
 
           {/* Gambar Kanan */}
           <div
             ref={rightImgRef}
-            className="absolute right-0 bottom-0 translate-x-[22%] sm:translate-x-[16%] md:translate-x-[10%] h-[74vh] sm:h-[83vh] lg:h-[91vh] max-h-[800px] pointer-events-none transition-transform duration-700 group-hover:scale-105 flex items-end justify-end will-change-transform opacity-0"
+            className="absolute right-0 bottom-0 translate-x-[22%] sm:translate-x-[16%] md:translate-x-[10%] h-[74vh] sm:h-[83vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-end will-change-transform"
           >
             <img
               src="/images/leclerc first win side-Photoroom.png"

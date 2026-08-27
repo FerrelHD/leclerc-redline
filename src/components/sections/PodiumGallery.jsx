@@ -13,6 +13,7 @@ export default function PodiumGallery() {
     const ctx = gsap.context(() => {
       const getScrollDistance = () => {
         if (!trackRef.current) return 0;
+        // Exact scroll distance so the finale cluster is fully visible without empty white tail
         return Math.max(0, trackRef.current.scrollWidth - window.innerWidth);
       };
 
@@ -122,14 +123,14 @@ export default function PodiumGallery() {
           </svg>
         </div>
 
-        {/* Horizontal Sliding Track with Initial White Gap Buffer & Wide Cluster Spacing */}
+        {/* Horizontal Sliding Track with Balanced Cluster Spacing */}
         <div 
           ref={trackRef} 
-          className="flex h-full w-[max-content] items-center relative will-change-transform pr-16 md:pr-24 gap-32 md:gap-48 lg:gap-60"
+          className="flex h-full w-[max-content] items-center relative will-change-transform pr-8 md:pr-12 gap-20 md:gap-32 lg:gap-40"
         >
           
           {/* INITIAL WHITE ENTRANCE GAP — cinematic breathing room before first card */}
-          <div className="w-[35vw] h-full shrink-0 pointer-events-none" />
+          <div className="w-[20vw] h-full shrink-0 pointer-events-none" />
 
           {/* CLUSTER 1: SPA 2019 (BELGIUM) */}
           <div className="relative h-full flex flex-col justify-center items-start shrink-0 gap-3">
@@ -245,7 +246,7 @@ export default function PodiumGallery() {
           </div>
 
           {/* CLUSTER 4: MONACO 2024 (THE FINALE) */}
-          <div className="relative h-full flex items-center justify-center shrink-0 gap-6 md:gap-10 pr-12">
+          <div className="relative h-full flex items-center justify-center shrink-0 gap-6 md:gap-10 pr-6">
             
             {/* Photo 1: Curated Editorial Black & White (Staggered High) */}
             <div className="w-[260px] md:w-[300px] aspect-square rounded-sm overflow-hidden bg-neutral-200 -translate-y-16 md:-translate-y-24 shadow-lg">
@@ -281,7 +282,7 @@ export default function PodiumGallery() {
             </div>
 
             {/* Final Statement */}
-            <div className="flex flex-col gap-2 select-none opacity-50 pl-6 pr-12">
+            <div className="flex flex-col gap-2 select-none opacity-60 pl-4 pr-6">
               <span className="font-mono-telemetry text-xs tracking-[0.3em] uppercase text-neutral-500 font-bold">
                 MONACO 2024 // THE DREAM REALIZED
               </span>
