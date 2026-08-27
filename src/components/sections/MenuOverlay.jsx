@@ -16,7 +16,7 @@ function MenuItemLink({ item, isActive, onSelect, onHover }) {
         onHover();
       }}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative font-racing font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[76px] tracking-tight leading-none uppercase block py-1 transition-colors duration-200 cursor-pointer ${
+      className={`relative font-racing font-black text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] tracking-tighter leading-none uppercase block py-1 transition-colors duration-200 cursor-pointer ${
         isActive ? 'text-white' : 'text-[#8E8E93] hover:text-white'
       }`}
     >
@@ -212,14 +212,14 @@ export default function MenuOverlay({ isOpen, onClose }) {
             </div>
 
             {/* Center Stage: Masonry Photo Collage (Left) & Restored Racing Menu Navigation (Right) */}
-            <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center my-auto">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center my-auto">
               
               {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Lando Norris Editorial Style) */}
-              <div className="hidden md:grid lg:col-span-6 grid-cols-2 gap-4 lg:gap-6 max-w-[560px]">
+              <div className="hidden md:grid lg:col-span-5 grid-cols-2 gap-3.5 lg:gap-5 max-w-[360px] lg:max-w-[420px] xl:max-w-[460px]">
                 
                 {/* Column 1 (Cards 1 & 3): Drifting gently up & down */}
                 <motion.div
-                  className="flex flex-col gap-4 lg:gap-6"
+                  className="flex flex-col gap-3.5 lg:gap-5"
                   animate={{
                     y: [-6, 6, -6],
                   }}
@@ -264,7 +264,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
                 {/* Column 2 (Cards 2 & 4): Staggered Downward Offset & Reverse Drift */}
                 <motion.div
-                  className="flex flex-col gap-4 lg:gap-6 -translate-y-8"
+                  className="flex flex-col gap-3.5 lg:gap-5 -translate-y-6 sm:-translate-y-8"
                   animate={{
                     y: [6, -6, 6],
                   }}
@@ -310,7 +310,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
               </div>
 
               {/* RIGHT COLUMN: Restored Racing Typography Menu (HOME, ON TRACK, OFF TRACK, CALENDAR) */}
-              <div className="lg:col-span-6 flex flex-col items-start lg:items-end justify-center text-left lg:text-right gap-6">
+              <div className="w-full lg:col-span-7 flex flex-col items-start lg:items-end justify-center text-left lg:text-right gap-4 sm:gap-6">
                 
                 {/* Menu Links with Staggered Per-Character Bouncy Roll-Up Animation */}
                 <nav className="flex flex-col gap-2 md:gap-3">

@@ -8,9 +8,8 @@
 ## 🗺️ Project Index & Ecosystem Overview
 
 ```
-📁 Career Projects/
-├── ⚡ portfolio-v2/           -> Vue 3 + GSAP 60 FPS Digital Portfolio (Kinetic Char Splitter, macOS Frames, Physics Magnetic Cursor)
-├── 🏎️ leclerc/               -> High-End Creative Web Experience (Canvas 2D, Motorsport UI, GSAP + Lenis)
+📁 E:\College Stuff\Career\
+├── 🏎️ leclerc/               -> High-End Creative Web Experience (Canvas 2D, Web Audio API, GSAP + Lenis)
 ├── 🕷️ Portofolio/            -> Interactive Comic-Themed Portfolio (Gamification, Command Palette, Terminal, Audio FX)
 ├── 🎓 Student Life/          -> Cross-Platform App (React 19 + TypeScript + Electron + Capacitor Mobile + Supabase AI)
 ├── ☕ Website Kopi/           -> Fullstack Laravel 10/11 + Filament Admin CMS (E-Commerce, Booking & Services)
