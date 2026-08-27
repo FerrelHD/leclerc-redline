@@ -16,7 +16,7 @@ function MenuItemLink({ item, isActive, onSelect, onHover }) {
         onHover();
       }}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative font-racing font-black text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] tracking-tighter leading-none uppercase block py-1 transition-colors duration-200 cursor-pointer ${
+      className={`relative font-racing font-black text-2xl sm:text-3xl md:text-[2.2rem] lg:text-[2.5rem] xl:text-[2.9rem] tracking-tight leading-none uppercase block py-1 transition-colors duration-200 cursor-pointer ${
         isActive ? 'text-white' : 'text-[#8E8E93] hover:text-white'
       }`}
     >
@@ -70,21 +70,13 @@ function MenuItemLink({ item, isActive, onSelect, onHover }) {
         </div>
       </div>
 
-      {/* Monaco Scarlet Red Strike-through Wave on Active Item */}
+      {/* Monaco Scarlet Red Strike-through Line on Active Item */}
       {isActive && (
         <motion.div
           layoutId="menu-red-stroke"
-          className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 pointer-events-none flex items-center"
+          className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 pointer-events-none flex items-center"
         >
-          <svg viewBox="0 0 100 12" className="w-full h-full overflow-visible" preserveAspectRatio="none">
-            <path
-              d="M 0,6 Q 25,1 50,6 T 100,6"
-              stroke="#E10600"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </svg>
+          <div className="w-full h-[2px] bg-[#E10600] rounded-full shadow-[0_0_8px_#E10600]" />
         </motion.div>
       )}
     </a>
@@ -215,7 +207,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center my-auto">
               
               {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Lando Norris Editorial Style) */}
-              <div className="hidden md:grid lg:col-span-5 grid-cols-2 gap-3.5 lg:gap-5 max-w-[360px] lg:max-w-[420px] xl:max-w-[460px]">
+              <div className="hidden md:grid lg:col-span-5 grid-cols-2 gap-3 lg:gap-4 max-w-[320px] lg:max-w-[360px] xl:max-w-[400px]">
                 
                 {/* Column 1 (Cards 1 & 3): Drifting gently up & down */}
                 <motion.div
