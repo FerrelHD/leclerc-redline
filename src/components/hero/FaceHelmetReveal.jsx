@@ -63,6 +63,12 @@ export default function FaceHelmetReveal() {
           onUpdate: (self) => {
             setScrollProgress(self.progress);
           },
+          onLeaveBack: () => {
+            document.body.classList.remove('nav-theme-dark');
+          },
+          onEnterBack: () => {
+            document.body.classList.remove('nav-theme-dark');
+          },
         },
       });
 

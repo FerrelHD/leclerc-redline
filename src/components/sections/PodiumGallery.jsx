@@ -42,8 +42,8 @@ export default function PodiumGallery() {
             document.body.classList.remove('nav-theme-dark');
           },
           onLeave: () => {
-            gsap.to('body', { backgroundColor: '#050506', color: '#FFFFFF', duration: 0.4 });
-            document.body.classList.add('nav-theme-dark');
+            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.4 });
+            document.body.classList.remove('nav-theme-dark');
           },
           onEnterBack: () => {
             gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.4 });

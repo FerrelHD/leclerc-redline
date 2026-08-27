@@ -7,6 +7,7 @@ import Navbar from './components/sections/Navbar';
 import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
 import StorytellingScroll from './components/sections/StorytellingScroll';
 import PodiumGallery from './components/sections/PodiumGallery';
+import MonacoMaranelloSplit from './components/sections/MonacoMaranelloSplit';
 import HelmetVault from './components/sections/HelmetVault';
 import OnTrackOffTrack from './components/sections/OnTrackOffTrack';
 import Footer from './components/sections/Footer';
@@ -68,6 +69,9 @@ export default function App() {
 
         {/* Section 3: The Glory - Horizontal Podium Gallery */}
         <PodiumGallery />
+
+        {/* Section 4: Dual Identity - Monaco Roots vs Maranello Spirit */}
+        <MonacoMaranelloSplit />
 
       </main>
 
