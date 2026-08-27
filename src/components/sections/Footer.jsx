@@ -1,7 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowUpRight, Mail, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, Mail } from 'lucide-react';
+import MagneticEffect from '../ui/MagneticEffect';
+import KineticText from '../ui/KineticText';
 import { driverProfile } from '../../data/charlesData';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -58,32 +60,46 @@ export default function Footer() {
     <footer ref={footerRef} className="relative w-full bg-[#050506] text-white pt-24 pb-12 px-6 md:px-12 overflow-hidden select-none">
 
       {/* Massive Statement Watermark */}
-      <div className="max-w-7xl mx-auto border-b border-white/10 pb-20 mb-16">
+      <div className="max-w-7xl mx-auto border-b border-white/10 pb-16 sm:pb-20 mb-12 sm:mb-16">
         <span ref={tagRef} className="text-xs font-mono-telemetry text-[#E10600] uppercase tracking-widest block mb-4">
           IL PREDESTINATO // ALWAYS AT THE LIMIT
         </span>
-        <h2 ref={headlineRef} className="text-5xl md:text-8xl lg:text-9xl font-racing font-black uppercase tracking-tighter leading-none mb-8">
-          CHARLES <br />
-          <span className="text-[#E10600]">LECLERC</span>
-        </h2>
+        
+        <div className="flex flex-col mb-8">
+          <KineticText
+            text="CHARLES"
+            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-racing font-black uppercase tracking-tighter leading-none text-white"
+            stagger={0.03}
+          />
+          <KineticText
+            text="LECLERC"
+            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-racing font-black uppercase tracking-tighter leading-none text-[#E10600]"
+            delay={0.15}
+            stagger={0.03}
+          />
+        </div>
 
         <div ref={actionsRef} className="flex flex-wrap items-center gap-4">
-          <a
-            href="https://store.ferrari.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 rounded-lg bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-[#E10600]/30 transition-all hover:scale-105"
-          >
-            <span>Visit Ferrari Store</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
-          <a
-            href="mailto:business@charlesleclerc.com"
-            className="px-6 py-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white font-racing font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
-          >
-            <Mail className="w-4 h-4" />
-            <span>Business Inquiries</span>
-          </a>
+          <MagneticEffect factor={0.2}>
+            <a
+              href="https://store.ferrari.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded-lg bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-[#E10600]/30 transition-all hover:scale-105 active:scale-95"
+            >
+              <span>Visit Ferrari Store</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </MagneticEffect>
+          <MagneticEffect factor={0.2}>
+            <a
+              href="mailto:business@charlesleclerc.com"
+              className="px-6 py-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white font-racing font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Business Inquiries</span>
+            </a>
+          </MagneticEffect>
         </div>
       </div>
 

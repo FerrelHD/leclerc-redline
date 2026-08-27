@@ -135,3 +135,20 @@ body.nav-theme-dark header .nav-text {
 body.nav-theme-dark header .nav-burger {
   background-color: #FFFFFF !important;
 }
+
+/* Infinite Telemetry Marquee */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+  will-change: transform;
+}

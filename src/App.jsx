@@ -8,6 +8,7 @@ import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
 import StorytellingScroll from './components/sections/StorytellingScroll';
 import PodiumGallery from './components/sections/PodiumGallery';
 import MonacoMaranelloSplit from './components/sections/MonacoMaranelloSplit';
+import TelemetryMarquee from './components/ui/TelemetryMarquee';
 import Footer from './components/sections/Footer';
 import CustomCursor from './components/ui/CustomCursor';
 
@@ -98,6 +99,9 @@ export default function App() {
 
         {/* Section 4: Dual Identity - Monaco Roots vs Maranello Spirit */}
         <MonacoMaranelloSplit />
+
+        {/* 60 FPS Infinite Telemetry Partner Marquee */}
+        <TelemetryMarquee />
       </main>
 
       {/* Section 5: Official Motorsport Luxury Footer */}

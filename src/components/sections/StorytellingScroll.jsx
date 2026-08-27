@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import KineticText from '../ui/KineticText';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -97,21 +98,19 @@ export default function StorytellingScroll() {
         className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center text-center select-none"
       >
 
-        {/* 1. Headlines — Horizontal Scrub Reveal (no box wipe, scrub handles motion) */}
-        <div className="flex flex-col items-center gap-2 md:gap-3 text-center overflow-hidden">
-          
-          <div ref={line1Ref} className="inline-block py-0.5 px-2">
-            <span className="font-racing font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-[#E10600] uppercase whitespace-nowrap block">
-              BORN IN MONACO.
-            </span>
-          </div>
-
-          <div ref={line2Ref} className="inline-block py-0.5 px-2">
-            <span className="font-racing font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-[#E10600] uppercase whitespace-nowrap block">
-              FORGED IN MARANELLO.
-            </span>
-          </div>
-
+        {/* 1. Headlines — Kinetic 3D Character Splitter Roll-In */}
+        <div className="flex flex-col items-center gap-1 sm:gap-2 text-center">
+          <KineticText
+            text="BORN IN MONACO."
+            className="font-racing font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-[#E10600] uppercase"
+            stagger={0.025}
+          />
+          <KineticText
+            text="FORGED IN MARANELLO."
+            className="font-racing font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-white uppercase"
+            delay={0.15}
+            stagger={0.025}
+          />
         </div>
 
         {/* 2. Storytelling Paragraph (Line-by-Line Sequential Red Box Reveal) */}
