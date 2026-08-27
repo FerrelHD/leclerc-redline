@@ -95,11 +95,11 @@ export default function StorytellingScroll() {
 
       <div 
         ref={contentRef}
-        className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12 lg:gap-16 select-none"
+        className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 sm:gap-12 lg:gap-16 xl:gap-20 select-none px-4 sm:px-8 md:px-12"
       >
-        {/* Kolom Kiri: Headlines & Identity (58%) */}
-        <div className="w-full lg:w-[58%] flex flex-col items-start text-left">
-          <div className="flex items-center gap-2 mb-4 font-mono-telemetry text-xs tracking-[0.3em] uppercase text-[#E10600]">
+        {/* Kolom Kiri: Headlines & Identity (50%) */}
+        <div className="w-full lg:w-1/2 flex flex-col items-start text-left">
+          <div className="flex items-center gap-2 mb-3 sm:mb-4 font-mono-telemetry text-xs tracking-[0.3em] uppercase text-[#E10600]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-pulse" />
             <span>01 // DRIVER MANIFESTO</span>
           </div>
@@ -107,27 +107,27 @@ export default function StorytellingScroll() {
           <div className="flex flex-col gap-1 sm:gap-2">
             <KineticText
               text="BORN IN MONACO."
-              className="font-racing font-black text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] tracking-tighter text-[#E10600] uppercase leading-none"
+              className="font-racing font-black text-3xl sm:text-4xl md:text-5xl lg:text-[2.85rem] xl:text-[3.5rem] tracking-tighter text-[#E10600] uppercase leading-[0.95]"
               stagger={0.025}
             />
             <KineticText
               text="FORGED IN MARANELLO."
-              className="font-racing font-black text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] tracking-tighter text-white uppercase leading-none"
+              className="font-racing font-black text-3xl sm:text-4xl md:text-5xl lg:text-[2.85rem] xl:text-[3.5rem] tracking-tighter text-white uppercase leading-[0.95]"
               delay={0.15}
               stagger={0.025}
             />
           </div>
 
-          <div className="mt-6 flex items-center gap-3 text-[11px] font-mono-telemetry text-neutral-500 uppercase tracking-widest">
+          <div className="mt-5 sm:mt-6 flex items-center gap-3 text-[11px] font-mono-telemetry text-neutral-500 uppercase tracking-widest">
             <span>SCUDERIA FERRARI HP</span>
             <span>•</span>
             <span>#16 CAR NUMBER</span>
           </div>
         </div>
 
-        {/* Kolom Kanan: Manifesto Narrative & Signature (42%) */}
-        <div className="w-full lg:w-[42%] flex flex-col items-start border-l-2 border-[#E10600]/40 pl-6 sm:pl-8 lg:pl-10">
-          <div className="flex flex-col gap-3 text-left text-base sm:text-lg md:text-xl font-light tracking-wide leading-relaxed text-neutral-300">
+        {/* Kolom Kanan: Manifesto Narrative & Signature (50%) */}
+        <div className="w-full lg:w-1/2 flex flex-col items-start border-l-2 border-[#E10600]/50 pl-5 sm:pl-8 lg:pl-10">
+          <div className="flex flex-col gap-2.5 sm:gap-3 text-left text-sm sm:text-base md:text-lg lg:text-[1.05rem] xl:text-[1.15rem] font-light tracking-wide leading-relaxed text-neutral-300">
             {/* Line 1 */}
             <div className="story-reveal-item relative inline-block overflow-hidden py-0.5">
               <span className="story-text block">
@@ -162,7 +162,7 @@ export default function StorytellingScroll() {
           </div>
 
           {/* Signature & Location Tag */}
-          <div className="mt-8 flex flex-col gap-1 border-t border-white/10 pt-4 w-full">
+          <div className="mt-6 sm:mt-8 flex flex-col gap-1 border-t border-white/10 pt-4 w-full">
             <span className="font-editorial italic font-bold text-lg text-white">
               Charles Leclerc
             </span>
