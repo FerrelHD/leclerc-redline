@@ -58,7 +58,7 @@ export default function MonacoMaranelloSplit() {
     <section
       id="monaco-maranello"
       ref={sectionRef}
-      className="relative w-full h-screen min-h-[640px] max-h-[1080px] bg-white text-[#0A0A0B] z-20 overflow-hidden flex items-center justify-center select-none"
+      className="relative w-full min-h-screen lg:h-screen lg:min-h-[640px] lg:max-h-[1080px] bg-white text-[#0A0A0B] z-20 overflow-hidden flex items-center justify-center select-none py-24 sm:py-28 lg:py-0"
     >
       <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.04]">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -71,13 +71,13 @@ export default function MonacoMaranelloSplit() {
         </svg>
       </div>
 
-      <div className="relative z-10 w-full h-full flex flex-col lg:flex-row items-center justify-between">
+      <div className="relative z-10 w-full h-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-0">
         {/* Sisi Kiri: Monaco Home */}
-        <div className="relative w-full lg:w-1/2 h-full flex items-center justify-center lg:justify-end px-6 lg:pl-20 lg:pr-12 xl:pr-16 group">
+        <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-end px-6 lg:pl-20 lg:pr-12 xl:pr-16 group">
           {/* Gambar Kiri */}
           <div
             ref={leftImgRef}
-            className="absolute left-0 bottom-0 -translate-x-[22%] sm:-translate-x-[16%] md:-translate-x-[10%] h-[74vh] sm:h-[83vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-start will-change-transform"
+            className="absolute left-0 bottom-0 -translate-x-[28%] sm:-translate-x-[20%] md:-translate-x-[14%] lg:-translate-x-[10%] h-[42vh] sm:h-[52vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-start will-change-transform"
           >
             <img
               src="/images/leclerc monaco side.png"
@@ -90,21 +90,21 @@ export default function MonacoMaranelloSplit() {
           {/* Teks Kiri */}
           <div
             ref={leftTextRef}
-            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[230px] -translate-y-6 sm:-translate-y-10 lg:-translate-y-12 will-change-transform"
+            className="relative z-10 flex flex-col items-center text-center max-w-[220px] sm:max-w-[260px] lg:max-w-[230px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
           >
             <div className="overflow-hidden">
-              <span className="block font-editorial text-3xl sm:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">MONACO</span>
+              <span className="block font-editorial text-2xl sm:text-3xl md:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">MONACO</span>
             </div>
             <div className="relative overflow-hidden mt-[-3px]">
-              <span className="block font-racing font-black text-[2.6rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] text-[#0A0A0B] uppercase tracking-tighter leading-none">HOME</span>
-              <span className="absolute inset-0 flex items-center justify-center font-editorial italic font-extrabold text-4xl sm:text-5xl md:text-[3.5rem] text-[#E10600]/80 pointer-events-none rotate-[-8deg]">#16</span>
+              <span className="block font-racing font-black text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] text-[#0A0A0B] uppercase tracking-tighter leading-none">HOME</span>
+              <span className="absolute inset-0 flex items-center justify-center font-editorial italic font-extrabold text-3xl sm:text-4xl md:text-[3.5rem] text-[#E10600]/80 pointer-events-none rotate-[-8deg]">#16</span>
             </div>
-            <div className="overflow-hidden mt-4">
+            <div className="overflow-hidden mt-3 sm:mt-4">
               <p className="text-[11px] sm:text-xs md:text-[13px] text-neutral-500 font-light leading-relaxed">Winning on the historic streets where his journey began. A lifelong dream fulfilled in front of his home crowd.</p>
             </div>
-            <div className="overflow-visible mt-5 flex justify-center">
+            <div className="overflow-visible mt-4 sm:mt-5 flex justify-center">
               <MagneticEffect factor={0.25}>
-                <a href="#hero" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
+                <a href="#hero" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
                   <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
                 </a>
               </MagneticEffect>
@@ -113,25 +113,25 @@ export default function MonacoMaranelloSplit() {
         </div>
 
         {/* Sisi Kanan: First Win Spa */}
-        <div className="relative w-full lg:w-1/2 h-full flex items-center justify-center lg:justify-start px-6 lg:pr-20 lg:pl-12 xl:pl-16 group mt-16 lg:mt-0">
+        <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-start px-6 lg:pr-20 lg:pl-12 xl:pl-16 group">
           {/* Teks Kanan */}
           <div
             ref={rightTextRef}
-            className="relative z-10 flex flex-col items-center text-center max-w-[210px] sm:max-w-[230px] -translate-y-6 sm:-translate-y-10 lg:-translate-y-12 will-change-transform"
+            className="relative z-10 flex flex-col items-center text-center max-w-[220px] sm:max-w-[260px] lg:max-w-[230px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
           >
             <div className="overflow-hidden">
-              <span className="block font-editorial text-3xl sm:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">FIRST</span>
+              <span className="block font-editorial text-2xl sm:text-3xl md:text-4xl md:text-[2.8rem] text-[#0A0A0B] leading-none tracking-tight">FIRST</span>
             </div>
             <div className="relative overflow-hidden mt-[-3px]">
-              <span className="block font-racing font-black text-[2.6rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] text-[#0A0A0B] uppercase tracking-tighter leading-none">WIN</span>
-              <span className="absolute inset-0 flex items-center justify-center font-editorial italic font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#E10600]/80 pointer-events-none rotate-[8deg]">SPA</span>
+              <span className="block font-racing font-black text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] text-[#0A0A0B] uppercase tracking-tighter leading-none">WIN</span>
+              <span className="absolute inset-0 flex items-center justify-center font-editorial italic font-extrabold text-2xl sm:text-3xl md:text-5xl text-[#E10600]/80 pointer-events-none rotate-[8deg]">SPA</span>
             </div>
-            <div className="overflow-hidden mt-4">
+            <div className="overflow-hidden mt-3 sm:mt-4">
               <p className="text-[11px] sm:text-xs md:text-[13px] text-neutral-500 font-light leading-relaxed">The emotional maiden Formula 1 victory at Spa-Francorchamps in 2019. The very first step onto the top of the podium.</p>
             </div>
-            <div className="overflow-visible mt-5 flex justify-center">
+            <div className="overflow-visible mt-4 sm:mt-5 flex justify-center">
               <MagneticEffect factor={0.25}>
-                <a href="#hero" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
+                <a href="#hero" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
                   <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
                 </a>
               </MagneticEffect>
@@ -141,7 +141,7 @@ export default function MonacoMaranelloSplit() {
           {/* Gambar Kanan */}
           <div
             ref={rightImgRef}
-            className="absolute right-0 bottom-0 translate-x-[22%] sm:translate-x-[16%] md:translate-x-[10%] h-[74vh] sm:h-[83vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-end will-change-transform"
+            className="absolute right-0 bottom-0 translate-x-[28%] sm:translate-x-[20%] md:translate-x-[14%] lg:translate-x-[10%] h-[42vh] sm:h-[52vh] lg:h-[91vh] max-h-[800px] pointer-events-none flex items-end justify-end will-change-transform"
           >
             <img
               src="/images/leclerc first win side-Photoroom.png"

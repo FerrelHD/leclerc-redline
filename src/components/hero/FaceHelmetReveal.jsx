@@ -72,12 +72,26 @@ export default function FaceHelmetReveal() {
         },
       });
 
+      const getCropInset = () => {
+        const w = window.innerWidth;
+        if (w < 640) return 'inset(0% 4% 0% 4% round 16px)';
+        if (w < 1024) return 'inset(0% 14% 0% 14% round 20px)';
+        return 'inset(0% 26% 0% 26% round 24px)';
+      };
+
+      const getZoomScale = () => {
+        const w = window.innerWidth;
+        if (w < 640) return 0.88;
+        if (w < 1024) return 0.80;
+        return 0.72;
+      };
+
       // Stage A: Whole Hero Card zooms out & crops horizontally into a Portrait Box
       tl.to(
         heroCardRef.current,
         {
-          scale: 0.72,
-          clipPath: 'inset(0% 26% 0% 26% round 24px)',
+          scale: getZoomScale(),
+          clipPath: getCropInset(),
           backgroundColor: '#FFFFFF',
           boxShadow: '0 40px 120px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.15)',
           ease: 'power2.inOut',
@@ -237,7 +251,7 @@ export default function FaceHelmetReveal() {
           {/* 1:1 AUTHENTIC MONZA GP HUD CARD */}
           <div
             ref={hudWidgetRef}
-            className="absolute bottom-8 left-6 md:left-12 z-20 pointer-events-auto select-none"
+            className="absolute bottom-4 sm:bottom-8 left-3 sm:left-6 md:left-12 z-20 pointer-events-auto select-none scale-[0.8] sm:scale-100 origin-bottom-left"
           >
             <MonzaHudCard />
           </div>
