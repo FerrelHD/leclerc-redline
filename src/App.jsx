@@ -6,7 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import CustomCursor from './components/ui/CustomCursor';
 import Navbar from './components/sections/Navbar';
 import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
-import StickyStoryScroll from './components/hero/StickyStoryScroll';
+import HelmetVault from './components/sections/HelmetVault';
+import OnTrackOffTrack from './components/sections/OnTrackOffTrack';
 import Footer from './components/sections/Footer';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -61,9 +62,6 @@ export default function App() {
         <section id="hero">
           <FaceHelmetReveal />
         </section>
-
-        {/* Section 2: New Multi-Chapter Scrollytelling Section */}
-        <StickyStoryScroll />
 
       </main>
 
