@@ -95,61 +95,82 @@ export default function StorytellingScroll() {
 
       <div 
         ref={contentRef}
-        className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center text-center select-none"
+        className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12 lg:gap-16 select-none"
       >
+        {/* Kolom Kiri: Headlines & Identity (58%) */}
+        <div className="w-full lg:w-[58%] flex flex-col items-start text-left">
+          <div className="flex items-center gap-2 mb-4 font-mono-telemetry text-xs tracking-[0.3em] uppercase text-[#E10600]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-pulse" />
+            <span>01 // DRIVER MANIFESTO</span>
+          </div>
 
-        {/* 1. Headlines — Kinetic 3D Character Splitter Roll-In */}
-        <div className="flex flex-col items-center gap-1 sm:gap-2 text-center">
-          <KineticText
-            text="BORN IN MONACO."
-            className="font-racing font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-[#E10600] uppercase"
-            stagger={0.025}
-          />
-          <KineticText
-            text="FORGED IN MARANELLO."
-            className="font-racing font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-white uppercase"
-            delay={0.15}
-            stagger={0.025}
-          />
+          <div className="flex flex-col gap-1 sm:gap-2">
+            <KineticText
+              text="BORN IN MONACO."
+              className="font-racing font-black text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] tracking-tighter text-[#E10600] uppercase leading-none"
+              stagger={0.025}
+            />
+            <KineticText
+              text="FORGED IN MARANELLO."
+              className="font-racing font-black text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] tracking-tighter text-white uppercase leading-none"
+              delay={0.15}
+              stagger={0.025}
+            />
+          </div>
+
+          <div className="mt-6 flex items-center gap-3 text-[11px] font-mono-telemetry text-neutral-500 uppercase tracking-widest">
+            <span>SCUDERIA FERRARI HP</span>
+            <span>•</span>
+            <span>#16 CAR NUMBER</span>
+          </div>
         </div>
 
-        {/* 2. Storytelling Paragraph (Justified Editorial Alignment) */}
-        <div className="mt-12 md:mt-14 max-w-2xl md:max-w-3xl mx-auto text-justify text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-wide leading-relaxed text-neutral-300">
-          
-          {/* Line 1 */}
-          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
-            <span className="story-text block">
-              A relentless pursuit of perfection.
-            </span>
-            <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </span>{' '}
+        {/* Kolom Kanan: Manifesto Narrative & Signature (42%) */}
+        <div className="w-full lg:w-[42%] flex flex-col items-start border-l-2 border-[#E10600]/40 pl-6 sm:pl-8 lg:pl-10">
+          <div className="flex flex-col gap-3 text-left text-base sm:text-lg md:text-xl font-light tracking-wide leading-relaxed text-neutral-300">
+            {/* Line 1 */}
+            <div className="story-reveal-item relative inline-block overflow-hidden py-0.5">
+              <span className="story-text block">
+                A relentless pursuit of perfection.
+              </span>
+              <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
+            </div>
 
-          {/* Line 2 */}
-          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
-            <span className="story-text block">
-              From the narrow streets of the Principality
-            </span>
-            <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </span>{' '}
+            {/* Line 2 */}
+            <div className="story-reveal-item relative inline-block overflow-hidden py-0.5">
+              <span className="story-text block">
+                From the narrow streets of the Principality
+              </span>
+              <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
+            </div>
 
-          {/* Line 3 */}
-          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
-            <span className="story-text block">
-              to the iconic <span className="font-semibold text-[#E10600]">Rosso Corsa</span> of Scuderia Ferrari,
-            </span>
-            <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </span>{' '}
+            {/* Line 3 */}
+            <div className="story-reveal-item relative inline-block overflow-hidden py-0.5">
+              <span className="story-text block">
+                to the iconic <span className="font-semibold text-[#E10600]">Rosso Corsa</span> of Scuderia Ferrari,
+              </span>
+              <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
+            </div>
 
-          {/* Line 4 */}
-          <span className="story-reveal-item relative inline-block overflow-hidden py-0.5 px-1 my-0.5">
-            <span className="story-text block">
-              Charles Leclerc embodies the pure essence of racing speed.
-            </span>
-            <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
-          </span>
+            {/* Line 4 */}
+            <div className="story-reveal-item relative inline-block overflow-hidden py-0.5">
+              <span className="story-text block">
+                Charles Leclerc embodies the pure essence of racing speed.
+              </span>
+              <div className="story-wipe absolute inset-0 bg-[#E10600] z-20 pointer-events-none" />
+            </div>
+          </div>
 
+          {/* Signature & Location Tag */}
+          <div className="mt-8 flex flex-col gap-1 border-t border-white/10 pt-4 w-full">
+            <span className="font-editorial italic font-bold text-lg text-white">
+              Charles Leclerc
+            </span>
+            <span className="font-mono-telemetry text-[10px] text-neutral-500 tracking-widest uppercase">
+              MONTE CARLO 🇲🇨 // SF-24 COCKPIT
+            </span>
+          </div>
         </div>
-
       </div>
     </section>
   );
