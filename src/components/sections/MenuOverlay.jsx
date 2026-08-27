@@ -240,7 +240,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     <img
                       src="/images/leclerc1.jpg"
                       alt="Charles Leclerc Helmet"
-                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
@@ -256,7 +256,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     <img
                       src="/images/leclerc3.jpg"
                       alt="Charles Leclerc Cockpit"
-                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
@@ -285,7 +285,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     <img
                       src="/images/leclerc2.jpg"
                       alt="Charles Leclerc Cockpit Stand"
-                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
@@ -301,7 +301,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     <img
                       src="/images/leclerc4.jpg"
                       alt="Charles Leclerc Helmet Motion"
-                      className="w-full h-full object-cover filter grayscale-[25%] contrast-[1.05] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-500 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
