@@ -120,15 +120,19 @@ export default function SocialsDeck() {
 
       {/* 
         Interactive Fan Deck:
-        - 100% Authentic Real Photographs of Charles Leclerc
-        - No border / outline on cards (clean luxury shadow only)
-        - Accordion shift on hover with rock-solid z-index
+        - 100% 3D GPU Depth Plane (preserve-3d + translateZ): eliminates ALL 2D z-index popping/glitches
+        - Permanent static resting order: cards ALWAYS return to their natural fan layers
+        - Wide Accordion Spread: Neighbor cards push 125px away
       */}
       <div 
         onMouseLeave={() => setHoveredIndex(null)}
         className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[460px] sm:min-h-[540px] md:min-h-[600px] px-2"
+        style={{ perspective: 1200 }}
       >
-        <div className="relative flex items-center justify-center w-full min-h-[400px] sm:min-h-[480px] md:min-h-[540px]">
+        <div 
+          className="relative flex items-center justify-center w-full min-h-[400px] sm:min-h-[480px] md:min-h-[540px]"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
           {socialCards.map((card, i) => {
             const offsetFromCenter = i - 3;
             const absOffset = Math.abs(offsetFromCenter);
@@ -141,7 +145,7 @@ export default function SocialsDeck() {
             const isHovered = hoveredIndex === i;
             const hasHover = hoveredIndex !== null;
 
-            // Accordion shift logic:
+            // Wide Accordion shift logic:
             let targetX = defaultX;
             let targetY = defaultY;
             let targetRotate = defaultRotate;
@@ -149,19 +153,19 @@ export default function SocialsDeck() {
 
             if (hasHover) {
               if (isHovered) {
-                targetY = defaultY - 32;
+                targetY = defaultY - 36;
                 targetRotate = 0;
-                targetScale = 1.10;
+                targetScale = 1.12;
               } else if (i < hoveredIndex) {
-                const pushDistance = (hoveredIndex - i === 1) ? -75 : -45;
+                const pushDistance = (hoveredIndex - i === 1) ? -125 : -70;
                 targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate - 3;
-                targetScale = 0.96;
+                targetRotate = defaultRotate - 4;
+                targetScale = 0.95;
               } else if (i > hoveredIndex) {
-                const pushDistance = (i - hoveredIndex === 1) ? 75 : 45;
+                const pushDistance = (i - hoveredIndex === 1) ? 125 : 70;
                 targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate + 3;
-                targetScale = 0.96;
+                targetRotate = defaultRotate + 4;
+                targetScale = 0.95;
               }
             }
 
@@ -172,18 +176,22 @@ export default function SocialsDeck() {
                 animate={{
                   x: targetX,
                   y: targetY,
-                  rotate: targetRotate,
+                  rotateZ: targetRotate,
                   scale: targetScale,
+                  // Continuous 3D floating depth: 80px closer on hover, 0px at rest (ZERO integer z-index popping!)
+                  z: isHovered ? 80 : 0,
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 320,
-                  damping: 26,
-                  mass: 0.7,
+                  stiffness: 280,
+                  damping: 24,
+                  mass: 0.6,
                 }}
                 className="absolute cursor-pointer select-none origin-bottom will-change-transform"
                 style={{
+                  // Constant static z-index: guarantees natural resting layer at all times!
                   zIndex: isHovered ? 40 : defaultZ,
+                  transformStyle: 'preserve-3d',
                   width: 'clamp(145px, 16vw, 250px)',
                   aspectRatio: '9/16',
                   transformOrigin: '50% 90%',
@@ -193,7 +201,7 @@ export default function SocialsDeck() {
                 <div
                   className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-950 transition-shadow duration-300 ${
                     isHovered
-                      ? 'shadow-[0_30px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/15'
+                      ? 'shadow-[0_35px_80px_rgba(0,0,0,0.9)] ring-1 ring-white/15'
                       : 'shadow-2xl'
                   }`}
                 >

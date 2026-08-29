@@ -16,10 +16,10 @@ export default function ArchiveZoomParallax() {
         trigger: sectionRef.current,
         start: 'top 40%',
         end: 'bottom 40%',
-        onEnter:     () => document.body.classList.remove('nav-theme-dark'),
+        onEnter: () => document.body.classList.remove('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.add('nav-theme-dark'),
         onEnterBack: () => document.body.classList.remove('nav-theme-dark'),
-        onLeave:     () => document.body.classList.remove('nav-theme-dark'),
+        onLeave: () => document.body.classList.remove('nav-theme-dark'),
       });
     }, sectionRef);
 
@@ -141,8 +141,8 @@ export default function ArchiveZoomParallax() {
   ];
 
   return (
-    <section 
-      id="archive-parallax" 
+    <section
+      id="archive-parallax"
       ref={sectionRef}
       className="relative bg-[#F9F9FB] w-full text-[#0A0A0A] transition-colors duration-500"
     >
@@ -161,7 +161,7 @@ export default function ArchiveZoomParallax() {
       {/* Sticky Parallax Container (h-[260vh]) */}
       <div ref={containerRef} className="relative h-[260vh] w-full">
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#F9F9FB]">
-          
+
           <motion.div
             style={{
               opacity: canvasOpacity,
