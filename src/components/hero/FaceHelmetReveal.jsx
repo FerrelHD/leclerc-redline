@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import MainVisualStack from './MainVisualStack';
 import AnimatedSignature from './AnimatedSignature';
 import MonzaHudCard from './MonzaHudCard';
+import InteractiveNeuralVortex from '../ui/interactive-neural-vortex-background';
 import WavesBackground from '../ui/WavesBackground';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -227,14 +228,9 @@ export default function FaceHelmetReveal() {
             clipPath: 'inset(0% 0% 0% 0% round 0px)',
           }}
         >
-          {/* Interactive Simplex-Noise Fluid Wave Grid inside Hero Card */}
-          <div className="absolute inset-0 pointer-events-none z-0 opacity-80">
-            <WavesBackground
-              strokeColor="rgba(10, 10, 11, 0.08)"
-              spacing={20}
-              strokeWidth={1.2}
-              globalMouse={mousePos}
-            />
+          {/* Interactive WebGL Neural Vortex Fluid Background inside Hero Card */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <InteractiveNeuralVortex className="absolute inset-0 w-full h-full pointer-events-none z-0" />
           </div>
 
           {/* FRAMER MOTION: MAIN VISUAL STACK (Portrait + Monaco GP Helmet Reveal) */}
