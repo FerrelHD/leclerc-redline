@@ -76,18 +76,26 @@ export default function SocialsDeck() {
     <section
       id="socials-deck"
       ref={sectionRef}
-      className="relative z-30 -mt-[100vh] w-full pt-28 pb-36 px-4 sm:px-8 md:px-12 bg-[#09090B] text-white rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-40px_100px_rgba(0,0,0,0.98)] border-t border-white/[0.08] overflow-hidden"
+      className="relative z-30 -mt-[100vh] w-full pt-28 pb-36 px-4 sm:px-8 md:px-12 bg-[#0B0B0A] text-white rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-40px_100px_rgba(0,0,0,0.98)] border-t border-white/[0.08] overflow-hidden"
     >
-      {/* 1. Cinematic Film Grain Texture Overlay */}
-      {/* Ultra-Fine HD Micro Film Grain (Crisp 1px noise particles) */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.038] mix-blend-overlay z-0"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='hdNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23hdNoise)'/%3E%3C/svg%3E")`,
-          backgroundSize: '100px 100px',
-          backgroundRepeat: 'repeat',
-        }}
-      />
+      {/* 1:1 Exact SVG Grain Filter from User's Portfolio (App.vue) */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        <svg
+          className="h-full w-full object-cover object-center"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <filter id="leclerc-portfolio-noise">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.65"
+              numOctaves="1"
+              stitchTiles="stitch"
+            />
+            <feBlend mode="screen" />
+          </filter>
+          <rect className="w-full h-full" filter="url(#leclerc-portfolio-noise)" opacity="0.14" />
+        </svg>
+      </div>
 
       {/* 2. Atmospheric Scuderia Radial Glow */}
       <div
