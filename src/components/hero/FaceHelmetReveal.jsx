@@ -62,6 +62,11 @@ export default function FaceHelmetReveal() {
           scrub: 0.6,
           onUpdate: (self) => {
             setScrollProgress(self.progress);
+            if (self.progress > 0.08) {
+              document.body.classList.add('nav-theme-dark');
+            } else {
+              document.body.classList.remove('nav-theme-dark');
+            }
           },
           onLeaveBack: () => {
             document.body.classList.remove('nav-theme-dark');
@@ -167,11 +172,11 @@ export default function FaceHelmetReveal() {
             }}
           >
             <span className="pr-16 flex items-center gap-4">
-              <span className="font-editorial not-italic">WE DID IT AT HOME</span>
+              <span className="font-racing">WE DID IT AT HOME</span>
               <span className="font-racing"> • WE DID IT AT MONACO • FOR FERRARI • </span>
             </span>
             <span className="pr-16 flex items-center gap-4">
-              <span className="font-editorial not-italic">WE DID IT AT HOME</span>
+              <span className="font-racing">WE DID IT AT HOME</span>
               <span className="font-racing"> • WE DID IT AT MONACO • FOR FERRARI • </span>
             </span>
           </motion.div>
