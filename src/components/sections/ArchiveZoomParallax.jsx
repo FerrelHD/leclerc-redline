@@ -48,10 +48,6 @@ export default function ArchiveZoomParallax() {
   const scaleBottomCenter = useTransform(scrollYProgress, [0, 0.36, 0.42, 0.72, 1], [1, 2.6, 2.6, 1.7, 1.7], { clamp: true });
   const scaleBottomRight = useTransform(scrollYProgress, [0, 0.36, 0.42, 0.72, 1], [1, 2.5, 2.5, 1.6, 1.6], { clamp: true });
 
-  // Subtle natural depth of field
-  const blurBackground = useTransform(scrollYProgress, [0, 0.36, 1], ['blur(0px)', 'blur(1.2px)', 'blur(1.2px)'], { clamp: true });
-  const blurForeground = useTransform(scrollYProgress, [0, 0.36, 1], ['blur(0px)', 'blur(0.8px)', 'blur(0.8px)'], { clamp: true });
-
   // Smooth Fade Out synced with the overlap rise (0.42 to 0.72)
   const canvasOpacity = useTransform(
     scrollYProgress,
@@ -66,7 +62,6 @@ export default function ArchiveZoomParallax() {
       src: '/images/leclercmain.jpg',
       alt: 'Charles Leclerc Center Focus',
       scale: scaleCenter,
-      filter: undefined,
       wrapperStyle: { width: '23vw', height: '34vh' },
       imgStyle: 'object-top object-cover',
       zIndex: 25,
@@ -77,7 +72,6 @@ export default function ArchiveZoomParallax() {
       src: '/images/pitstop.jpg',
       alt: 'Scuderia Ferrari Pitstop',
       scale: scaleTop,
-      filter: blurForeground,
       wrapperStyle: { width: '34vw', height: '28vh', top: '-34vh', left: '0vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 30,
@@ -88,7 +82,6 @@ export default function ArchiveZoomParallax() {
       src: '/images/steering-wheel.jpg',
       alt: 'F1 Steering Wheel Cockpit',
       scale: scaleLeft,
-      filter: blurForeground,
       wrapperStyle: { width: '18vw', height: '44vh', top: '-8vh', left: '-31vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 30,
@@ -99,7 +92,6 @@ export default function ArchiveZoomParallax() {
       src: '/images/sparks.jpg',
       alt: 'Ferrari SF-24 Sparks',
       scale: scaleRight,
-      filter: blurForeground,
       wrapperStyle: { width: '24vw', height: '26vh', top: '-2vh', left: '32vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 30,
@@ -110,7 +102,6 @@ export default function ArchiveZoomParallax() {
       src: '/images/monaco-track.jpg',
       alt: 'Ferrari F1 Car Track Action',
       scale: scaleBottomLeft,
-      filter: blurBackground,
       wrapperStyle: { width: '32vw', height: '24vh', top: '30vh', left: '-28vw' },
       imgStyle: 'object-[50%_90%] object-cover',
       zIndex: 15,
@@ -121,7 +112,6 @@ export default function ArchiveZoomParallax() {
       src: '/images/celebration.jpg',
       alt: 'Charles Podium Triumph',
       scale: scaleBottomCenter,
-      filter: blurBackground,
       wrapperStyle: { width: '20vw', height: '25vh', top: '31vh', left: '6vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 15,
@@ -132,7 +122,6 @@ export default function ArchiveZoomParallax() {
       src: '/images/tifosi.jpg',
       alt: 'Tifosi Red Sea Monza',
       scale: scaleBottomRight,
-      filter: blurBackground,
       wrapperStyle: { width: '16vw', height: '18vh', top: '25vh', left: '29vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 15,
@@ -174,7 +163,6 @@ export default function ArchiveZoomParallax() {
                   key={pic.id}
                   style={{
                     scale: pic.scale,
-                    filter: pic.filter,
                   }}
                   className="absolute inset-0 flex items-center justify-center pointer-events-none will-change-transform"
                 >
@@ -189,7 +177,8 @@ export default function ArchiveZoomParallax() {
                       src={pic.src}
                       alt={pic.alt}
                       className={`w-full h-full ${pic.imgStyle}`}
-                      loading="eager"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 </motion.div>

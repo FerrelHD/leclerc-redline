@@ -7,6 +7,13 @@ gsap.registerPlugin(ScrollTrigger);
 const paragraphText =
   "Born on the legendary streets of Monte Carlo and forged in the historic halls of Maranello. Driven by raw qualifying speed, calm precision, and an unyielding commitment to bring the World Championship home with Scuderia Ferrari.";
 
+const statsData = [
+  { target: 8, pad: true, label: 'Grand Prix Wins' },
+  { target: 26, pad: false, label: 'Pole Positions' },
+  { target: 43, pad: false, label: 'Podium Finishes' },
+  { target: 10, pad: false, label: 'Fastest Laps' },
+];
+
 export default function StorytellingScroll() {
   const sectionRef = useRef(null);
 
@@ -23,16 +30,14 @@ export default function StorytellingScroll() {
         onLeave:     () => document.body.classList.remove('nav-theme-dark'),
       });
 
-      // 2. Headline Reveal (Staggered upward reveal)
+      // 2. Left Sticky Header Reveal
       gsap.fromTo(
-        '.about-title-item',
-        { yPercent: 110, opacity: 0, rotateZ: 2 },
+        '.about-header-item',
+        { y: 30, opacity: 0 },
         {
-          yPercent: 0,
+          y: 0,
           opacity: 1,
-          rotateZ: 0,
-          duration: 0.9,
-          stagger: 0.1,
+          duration: 0.8,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -42,60 +47,82 @@ export default function StorytellingScroll() {
         }
       );
 
-      // 3. Tag Reveal
+      // 3. Smooth Stagger Blur-to-Focus on Story Text
       gsap.fromTo(
-        '.about-tag',
-        { opacity: 0, x: -25 },
+        '.about-word',
+        { opacity: 0, y: 16, filter: 'blur(8px)' },
         {
           opacity: 1,
-          x: 0,
-          duration: 0.7,
-          delay: 0.25,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.55,
+          stagger: 0.015,
           ease: 'power2.out',
           scrollTrigger: {
-            trigger: sectionRef.current,
+            trigger: '.about-bio-text',
             start: 'top 80%',
             toggleActions: 'play none none reverse',
           },
         }
       );
 
-      // 4. Description Paragraph Words Staggered Reveal
+      // 4. Secondary Narrative / Quote Reveal
       gsap.fromTo(
-        '.about-word',
-        { opacity: 0, y: 18, filter: 'blur(3px)' },
+        '.about-quote',
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          duration: 0.5,
-          stagger: 0.02,
+          duration: 0.7,
           ease: 'power2.out',
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%',
+            trigger: '.about-quote',
+            start: 'top 85%',
             toggleActions: 'play none none reverse',
           },
         }
       );
 
-      // 5. Telemetry Footer Reveal
+      // 5. Clean Editorial Stats Container Reveal
       gsap.fromTo(
-        '.about-meta',
-        { opacity: 0, y: 15 },
+        '.about-stat-item',
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
           duration: 0.6,
-          delay: 0.6,
-          ease: 'power2.out',
+          stagger: 0.08,
+          ease: 'power3.out',
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%',
+            trigger: '.about-stats-container',
+            start: 'top 85%',
             toggleActions: 'play none none reverse',
           },
         }
       );
+
+      // 6. Interactive Count-up Animation for Statistics Numbers
+      const statElements = sectionRef.current.querySelectorAll('.stat-count');
+      statElements.forEach((el) => {
+        const targetVal = parseInt(el.getAttribute('data-target'), 10);
+        const pad = el.getAttribute('data-pad') === 'true';
+        const counter = { val: 0 };
+
+        gsap.to(counter, {
+          val: targetVal,
+          duration: 1.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.about-stats-container',
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+          onUpdate: () => {
+            const current = Math.round(counter.val);
+            el.textContent = pad && current < 10 ? `0${current}` : `${current}`;
+          },
+        });
+      });
 
     }, sectionRef);
 
@@ -106,53 +133,87 @@ export default function StorytellingScroll() {
     <section 
       id="story"
       ref={sectionRef}
-      className="relative w-full bg-[#080809] text-[#F8F9FA] z-30 pt-28 pb-32 md:pt-36 md:pb-44 px-6 sm:px-10 md:px-16 lg:px-24 overflow-hidden border-t border-white/[0.04]"
+      className="relative w-full bg-[#080809] text-[#F8F9FA] z-30 pt-28 pb-32 md:pt-36 md:pb-44 px-6 sm:px-10 md:px-16 lg:px-24 border-t border-white/[0.04]"
     >
-      <div className="w-full max-w-7xl mx-auto flex flex-col">
+      <div className="w-full max-w-7xl mx-auto">
         
-        {/* Big Heading 1 (persis WHAT I DO / dengan mask slide-up) */}
-        <h2 className="font-racing font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] tracking-tight uppercase text-white leading-none select-none flex flex-wrap gap-x-4 sm:gap-x-6 overflow-hidden py-2">
-          <span className="inline-block overflow-hidden">
-            <span className="about-title-item inline-block will-change-transform">ABOUT</span>
-          </span>
-          <span className="inline-block overflow-hidden">
-            <span className="about-title-item inline-block will-change-transform">LECLERC</span>
-          </span>
-          <span className="inline-block overflow-hidden">
-            <span className="about-title-item inline-block will-change-transform text-[#E10600]">/</span>
-          </span>
-        </h2>
-
-        {/* 12-Column Editorial Grid (1:1 dengan portfolio Services.vue layout) */}
-        <div className="mt-12 sm:mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-y-6 md:gap-x-8 items-start">
+        {/* Responsive Flex Layout: Dijamin Tidak Akan Bertabrakan */}
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-16 xl:gap-20">
           
-          {/* Middle Column: ( PROFILE ) label */}
-          <div className="md:col-span-4 md:col-start-1 lg:col-span-3">
-            <p className="about-tag font-mono-telemetry text-xs sm:text-sm tracking-[0.25em] text-[#E10600] uppercase font-bold will-change-transform">
-              ( PROFILE )
-            </p>
+          {/* ============================================================ */}
+          {/* LEFT COLUMN: Dedicated Width, Sticky, Zero-Collision Header */}
+          {/* ============================================================ */}
+          <div className="w-full lg:w-[320px] xl:w-[360px] shrink-0 lg:sticky lg:top-32 lg:self-start">
+            <div className="about-header-item space-y-4">
+              
+              {/* Profile Tag */}
+              <div className="flex items-center gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
+                <p className="font-mono-telemetry text-xs tracking-[0.25em] text-[#E10600] uppercase font-bold">
+                  ( PROFILE )
+                </p>
+              </div>
+
+              {/* Title 2 Baris: ABOUT / LECLERC // */}
+              <h2 className="font-racing font-extrabold text-3xl sm:text-4xl lg:text-[2.5rem] xl:text-[2.85rem] tracking-tight uppercase text-white leading-[1.05] select-none">
+                <span className="block">ABOUT</span>
+                <span className="block mt-1">
+                  LECLERC <span className="text-[#E10600] tracking-tighter">//</span>
+                </span>
+              </h2>
+
+              {/* Clean Editorial Meta */}
+              <p className="font-mono-telemetry text-xs text-neutral-400 tracking-widest uppercase pt-2">
+                #16 • SCUDERIA FERRARI HP
+              </p>
+            </div>
           </div>
 
-          {/* Right Column: Clean Editorial Narrative with Word-by-Word Motion */}
-          <div className="md:col-span-8 lg:col-span-7">
-            <p className="font-sans font-light text-xl sm:text-2xl md:text-3xl lg:text-[2rem] text-[#F8F9FA]/90 leading-snug md:leading-relaxed tracking-tight text-balance">
-              {paragraphText.split(' ').map((word, wIdx) => (
-                <span key={wIdx} className="inline-block mr-[0.28em] overflow-hidden">
-                  <span className="about-word inline-block will-change-transform">
-                    {word}
+          {/* ============================================================ */}
+          {/* RIGHT COLUMN: Large Editorial Narrative & Count-Up Stats     */}
+          {/* ============================================================ */}
+          <div className="w-full lg:flex-1 lg:max-w-2xl space-y-12 sm:space-y-14">
+            
+            {/* 1. Main Bio Paragraph with Blur-to-Focus Reveal */}
+            <div className="about-bio-text">
+              <p className="font-sans font-light text-xl sm:text-2xl md:text-3xl lg:text-[2rem] text-[#F8F9FA] leading-snug sm:leading-relaxed tracking-tight text-balance">
+                {paragraphText.split(' ').map((word, wIdx) => (
+                  <span key={wIdx} className="inline-block mr-[0.28em]">
+                    <span className="about-word inline-block will-change-transform">
+                      {word}
+                    </span>
                   </span>
-                </span>
-              ))}
-            </p>
-
-            {/* Meta tags */}
-            <div className="about-meta mt-8 sm:mt-10 flex items-center gap-4 text-xs sm:text-sm font-mono-telemetry text-neutral-500 uppercase tracking-widest will-change-transform">
-              <span className="text-[#E10600] font-bold">#16</span>
-              <span>•</span>
-              <span>SCUDERIA FERRARI HP</span>
-              <span>•</span>
-              <span>MONTE CARLO, MONACO</span>
+                ))}
+              </p>
             </div>
+
+            {/* 2. Authentic Editorial Statement */}
+            <div className="about-quote pl-6 border-l border-[#E10600]/80 py-1">
+              <p className="text-neutral-400 font-sans text-base sm:text-lg lg:text-xl font-light leading-relaxed">
+                &ldquo;Every lap around Monaco is burned into my memory since childhood. Driving for Ferrari is an honor, but the only goal that matters is putting the red car back at the very top.&rdquo;
+              </p>
+            </div>
+
+            {/* 3. Pure Typography Stats dengan Animasi Count-Up On-Scroll */}
+            <div className="about-stats-container pt-8 border-t border-white/[0.08]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
+                {statsData.map((stat, idx) => (
+                  <div key={idx} className="about-stat-item">
+                    <span
+                      className="stat-count block font-racing font-bold text-4xl sm:text-5xl text-white tracking-tight"
+                      data-target={stat.target}
+                      data-pad={stat.pad ? 'true' : 'false'}
+                    >
+                      {stat.pad ? '00' : '0'}
+                    </span>
+                    <span className="block font-mono-telemetry text-xs text-neutral-400 tracking-wider uppercase mt-2">
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
         </div>
