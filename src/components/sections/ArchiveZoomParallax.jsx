@@ -65,7 +65,7 @@ export default function ArchiveZoomParallax() {
       wrapperStyle: { width: '23vw', height: '34vh' },
       imgStyle: 'object-top object-cover',
       zIndex: 25,
-      shadow: 'shadow-[0_25px_60px_rgba(0,0,0,0.22)] ring-1 ring-black/5',
+      shadow: 'shadow-[0_20px_35px_rgba(0,0,0,0.18)] ring-1 ring-black/5',
     },
     {
       id: 'top',
@@ -75,7 +75,7 @@ export default function ArchiveZoomParallax() {
       wrapperStyle: { width: '34vw', height: '28vh', top: '-34vh', left: '0vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 30,
-      shadow: 'shadow-[0_20px_45px_rgba(0,0,0,0.16)]',
+      shadow: 'shadow-[0_16px_30px_rgba(0,0,0,0.14)]',
     },
     {
       id: 'left',
@@ -85,7 +85,7 @@ export default function ArchiveZoomParallax() {
       wrapperStyle: { width: '18vw', height: '44vh', top: '-8vh', left: '-31vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 30,
-      shadow: 'shadow-[0_20px_45px_rgba(0,0,0,0.16)]',
+      shadow: 'shadow-[0_16px_30px_rgba(0,0,0,0.14)]',
     },
     {
       id: 'right',
@@ -95,7 +95,7 @@ export default function ArchiveZoomParallax() {
       wrapperStyle: { width: '24vw', height: '26vh', top: '-2vh', left: '32vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 30,
-      shadow: 'shadow-[0_20px_45px_rgba(0,0,0,0.16)]',
+      shadow: 'shadow-[0_16px_30px_rgba(0,0,0,0.14)]',
     },
     {
       id: 'bottom-left',
@@ -105,7 +105,7 @@ export default function ArchiveZoomParallax() {
       wrapperStyle: { width: '32vw', height: '24vh', top: '30vh', left: '-28vw' },
       imgStyle: 'object-[50%_90%] object-cover',
       zIndex: 15,
-      shadow: 'shadow-[0_15px_35px_rgba(0,0,0,0.14)]',
+      shadow: 'shadow-[0_12px_24px_rgba(0,0,0,0.12)]',
     },
     {
       id: 'bottom-center',
@@ -115,7 +115,7 @@ export default function ArchiveZoomParallax() {
       wrapperStyle: { width: '20vw', height: '25vh', top: '31vh', left: '6vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 15,
-      shadow: 'shadow-[0_15px_35px_rgba(0,0,0,0.14)]',
+      shadow: 'shadow-[0_12px_24px_rgba(0,0,0,0.12)]',
     },
     {
       id: 'bottom-right',
@@ -125,7 +125,7 @@ export default function ArchiveZoomParallax() {
       wrapperStyle: { width: '16vw', height: '18vh', top: '25vh', left: '29vw' },
       imgStyle: 'object-center object-cover',
       zIndex: 15,
-      shadow: 'shadow-[0_15px_35px_rgba(0,0,0,0.14)]',
+      shadow: 'shadow-[0_12px_24px_rgba(0,0,0,0.12)]',
     },
   ];
 
@@ -155,7 +155,7 @@ export default function ArchiveZoomParallax() {
             style={{
               opacity: canvasOpacity,
             }}
-            className="relative w-full h-full flex items-center justify-center will-change-transform"
+            className="relative w-full h-full flex items-center justify-center"
           >
             <div className="relative w-full h-full flex items-center justify-center">
               {pictures.map((pic) => (
@@ -164,20 +164,22 @@ export default function ArchiveZoomParallax() {
                   style={{
                     scale: pic.scale,
                   }}
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none will-change-transform"
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
                 >
                   <div
                     className={`relative pointer-events-auto overflow-hidden bg-white ${pic.shadow}`}
                     style={{
                       ...pic.wrapperStyle,
                       zIndex: pic.zIndex,
+                      transform: 'translateZ(0)',
+                      backfaceVisibility: 'hidden',
                     }}
                   >
                     <img
                       src={pic.src}
                       alt={pic.alt}
                       className={`w-full h-full ${pic.imgStyle}`}
-                      loading="lazy"
+                      loading="eager"
                       decoding="async"
                     />
                   </div>

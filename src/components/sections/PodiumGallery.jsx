@@ -30,19 +30,19 @@ export default function PodiumGallery() {
           invalidateOnRefresh: true,
           anticipatePin: 1,
           onEnter: () => {
-            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
+            gsap.to(document.body, { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
             document.body.classList.remove('nav-theme-dark');
           },
           onLeave: () => {
-            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
+            gsap.to(document.body, { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
             document.body.classList.remove('nav-theme-dark');
           },
           onEnterBack: () => {
-            gsap.to('body', { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
+            gsap.to(document.body, { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
             document.body.classList.remove('nav-theme-dark');
           },
           onLeaveBack: () => {
-            gsap.to('body', { backgroundColor: '#0A0A0A', color: '#FFFFFF', duration: 0.3 });
+            gsap.to(document.body, { backgroundColor: '#0A0A0A', color: '#FFFFFF', duration: 0.3 });
             document.body.classList.add('nav-theme-dark');
           },
         },

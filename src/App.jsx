@@ -37,7 +37,7 @@ export default function App() {
 
     // Tick Lenis inside GSAP's RAF so both share the same frame loop
     gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
 
     // Push scroll position to ScrollTrigger on every Lenis tick
     lenis.on('scroll', ScrollTrigger.update);

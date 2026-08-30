@@ -10,7 +10,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
   const footerRef = useRef(null);
-  const headlineRef = useRef(null);
   const tagRef = useRef(null);
   const actionsRef = useRef(null);
   const bottomBarRef = useRef(null);
@@ -34,22 +33,16 @@ export default function Footer() {
         0
       )
         .fromTo(
-          headlineRef.current,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
-          0.1
-        )
-        .fromTo(
           actionsRef.current,
           { opacity: 0, y: 25 },
           { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-          0.25
+          0.15
         )
         .fromTo(
           bottomBarRef.current,
           { opacity: 0 },
           { opacity: 1, duration: 0.6, ease: 'power1.out' },
-          0.35
+          0.25
         );
     }, footerRef);
 

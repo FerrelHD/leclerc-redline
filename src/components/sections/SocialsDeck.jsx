@@ -120,19 +120,15 @@ export default function SocialsDeck() {
 
       {/* 
         Interactive Fan Deck:
-        - 100% 3D GPU Depth Plane (preserve-3d + translateZ): eliminates ALL 2D z-index popping/glitches
-        - Permanent static resting order: cards ALWAYS return to their natural fan layers
-        - Wide Accordion Spread: Neighbor cards push 125px away
+        - Pure 2D GPU Transforms (x, y, rotate, scale): Eliminates 3D clipping and polygon intersection ("saling tembus")
+        - Deterministic Layering (zIndex): Hovered card sits on top (zIndex: 50), immediately returns to natural fan order on unhover without delay or glitch
+        - Wide Accordion Spread: Neighbor cards push away cleanly
       */}
       <div 
         onMouseLeave={() => setHoveredIndex(null)}
         className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[460px] sm:min-h-[540px] md:min-h-[600px] px-2"
-        style={{ perspective: 1200 }}
       >
-        <div 
-          className="relative flex items-center justify-center w-full min-h-[400px] sm:min-h-[480px] md:min-h-[540px]"
-          style={{ transformStyle: 'preserve-3d' }}
-        >
+        <div className="relative flex items-center justify-center w-full min-h-[400px] sm:min-h-[480px] md:min-h-[540px]">
           {socialCards.map((card, i) => {
             const offsetFromCenter = i - 3;
             const absOffset = Math.abs(offsetFromCenter);
@@ -176,22 +172,18 @@ export default function SocialsDeck() {
                 animate={{
                   x: targetX,
                   y: targetY,
-                  rotateZ: targetRotate,
+                  rotate: targetRotate,
                   scale: targetScale,
-                  // Continuous 3D floating depth: 80px closer on hover, 0px at rest (ZERO integer z-index popping!)
-                  z: isHovered ? 80 : 0,
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 280,
-                  damping: 24,
+                  stiffness: 320,
+                  damping: 26,
                   mass: 0.6,
                 }}
                 className="absolute cursor-pointer select-none origin-bottom will-change-transform"
                 style={{
-                  // Constant static z-index: guarantees natural resting layer at all times!
-                  zIndex: isHovered ? 40 : defaultZ,
-                  transformStyle: 'preserve-3d',
+                  zIndex: isHovered ? 50 : defaultZ,
                   width: 'clamp(145px, 16vw, 250px)',
                   aspectRatio: '9/16',
                   transformOrigin: '50% 90%',
