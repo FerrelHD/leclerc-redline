@@ -38,7 +38,7 @@ export default function MonacoMaranelloSplit() {
       tl.fromTo(
         leftImgRef.current,
         { xPercent: -100, opacity: 0 },
-        { xPercent: -50, opacity: 1, ease: 'power2.out' },
+        { xPercent: -28, opacity: 1, ease: 'power2.out' },
         0
       )
       .fromTo(
@@ -50,7 +50,7 @@ export default function MonacoMaranelloSplit() {
       .fromTo(
         rightImgRef.current,
         { xPercent: 100, opacity: 0 },
-        { xPercent: 50, opacity: 1, ease: 'power2.out' },
+        { xPercent: 28, opacity: 1, ease: 'power2.out' },
         0
       )
       .fromTo(

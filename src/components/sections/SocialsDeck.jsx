@@ -53,19 +53,28 @@ const socialCards = [
 
 export default function SocialsDeck() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isFanned, setIsFanned] = useState(false);
   const sectionRef = useRef(null);
 
-  // Switch navbar back to dark theme (white text/icons) on this black section
+  // Switch navbar to dark theme and trigger deck fan-out on scroll
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // 1. Maintain white navbar text throughout this section and into footer
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top 50%',
-        end: 'bottom 50%',
+        end: 'bottom bottom',
         onEnter:     () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
-        onLeave:     () => document.body.classList.remove('nav-theme-dark'),
+      });
+
+      // 2. Fanned Deck Deal: Start as 1 single card, fan out when scrolled well into view
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top 45%',
+        onEnter:     () => setIsFanned(true),
+        onLeaveBack: () => setIsFanned(false),
       });
     }, sectionRef);
 
@@ -76,10 +85,10 @@ export default function SocialsDeck() {
     <section
       id="socials-deck"
       ref={sectionRef}
-      className="relative z-30 -mt-[100vh] w-full pt-28 pb-36 px-4 sm:px-8 md:px-12 bg-[#0B0B0A] text-white rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-40px_100px_rgba(0,0,0,0.98)] border-t border-white/[0.08] overflow-hidden"
+      className="relative z-10 w-full pt-28 pb-8 sm:pb-12 px-4 sm:px-8 md:px-12 bg-transparent text-white"
     >
-      {/* 1:1 Exact SVG Grain Filter from User's Portfolio (App.vue) */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      {/* 1:1 Exact SVG Grain Filter feathered smoothly at bottom to blend 100% into footer */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]">
         <svg
           className="h-full w-full object-cover object-center"
           xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +102,12 @@ export default function SocialsDeck() {
             />
             <feBlend mode="screen" />
           </filter>
-          <rect className="w-full h-full" filter="url(#leclerc-portfolio-noise)" opacity="0.14" />
+          <rect
+            width="100%"
+            height="100%"
+            filter="url(#leclerc-portfolio-noise)"
+            opacity="0.05"
+          />
         </svg>
       </div>
 
@@ -139,36 +153,19 @@ export default function SocialsDeck() {
             const defaultZ = 25 - absOffset * 2;
 
             const isHovered = hoveredIndex === i;
-            const hasHover = hoveredIndex !== null;
-
-            // Wide Accordion shift logic:
-            let targetX = defaultX;
-            let targetY = defaultY;
-            let targetRotate = defaultRotate;
-            let targetScale = 1.0;
-
-            if (hasHover) {
-              if (isHovered) {
-                targetY = defaultY - 36;
-                targetRotate = 0;
-                targetScale = 1.12;
-              } else if (i < hoveredIndex) {
-                const pushDistance = (hoveredIndex - i === 1) ? -125 : -70;
-                targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate - 4;
-                targetScale = 0.95;
-              } else if (i > hoveredIndex) {
-                const pushDistance = (i - hoveredIndex === 1) ? 125 : 70;
-                targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate + 4;
-                targetScale = 0.95;
-              }
-            }
+            // Dynamic Fan-out Deal + Natural Peek Hover Logic:
+            // 1. Initial State: All cards stacked at (x: 0, y: 0, rotate: 0) directly behind center card (1 card visible).
+            // 2. Scrolled in ("udah mulai masuk banget"): Cards fan out smoothly from behind center card with cascading delay!
+            // 3. Hover: Elevated peek upward (targetY - 32) without changing zIndex.
+            const targetX = isFanned ? defaultX : 0;
+            const targetY = isFanned ? (isHovered ? defaultY - 32 : defaultY) : 0;
+            const targetRotate = isFanned ? defaultRotate : 0;
+            const targetScale = isHovered ? 1.02 : 1.0;
 
             return (
               <motion.div
                 key={card.id}
-                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseEnter={() => isFanned && setHoveredIndex(i)}
                 animate={{
                   x: targetX,
                   y: targetY,
@@ -177,13 +174,14 @@ export default function SocialsDeck() {
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 320,
-                  damping: 26,
+                  stiffness: 280,
+                  damping: 24,
                   mass: 0.6,
+                  delay: isFanned && hoveredIndex === null ? absOffset * 0.05 : 0,
                 }}
                 className="absolute cursor-pointer select-none origin-bottom will-change-transform"
                 style={{
-                  zIndex: isHovered ? 50 : defaultZ,
+                  zIndex: defaultZ,
                   width: 'clamp(145px, 16vw, 250px)',
                   aspectRatio: '9/16',
                   transformOrigin: '50% 90%',
@@ -191,9 +189,9 @@ export default function SocialsDeck() {
               >
                 {/* Card Container: ZERO OUTLINE / ZERO BORDER */}
                 <div
-                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-950 transition-shadow duration-300 ${
+                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-950 transition-all duration-300 ${
                     isHovered
-                      ? 'shadow-[0_35px_80px_rgba(0,0,0,0.9)] ring-1 ring-white/15'
+                      ? 'shadow-[0_30px_70px_rgba(0,0,0,0.95)] ring-1 ring-white/20'
                       : 'shadow-2xl'
                   }`}
                 >
@@ -241,7 +239,7 @@ export default function SocialsDeck() {
       </div>
 
       {/* Official Follow Button */}
-      <div className="relative z-10 mt-8 text-center">
+      <div className="relative z-10 mt-10 sm:mt-14 mb-10 sm:mb-14 text-center">
         <a
           href="https://www.instagram.com/charles_leclerc/"
           target="_blank"

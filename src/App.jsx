@@ -10,7 +10,6 @@ import PodiumGallery from './components/sections/PodiumGallery';
 import MonacoMaranelloSplit from './components/sections/MonacoMaranelloSplit';
 import ArchiveZoomParallax from './components/sections/ArchiveZoomParallax';
 import SocialsDeck from './components/sections/SocialsDeck';
-import TelemetryMarquee from './components/ui/TelemetryMarquee';
 import Footer from './components/sections/Footer';
 import CustomCursor from './components/ui/CustomCursor';
 import LoadingScreen from './components/ui/LoadingScreen';
@@ -109,15 +108,37 @@ export default function App() {
         {/* Section 5: The Raw Archive - 3D Editorial Zoom Parallax */}
         <ArchiveZoomParallax />
 
-        {/* Section 6: What's Up On Socials - Fanned Cards Deck (White Theme) */}
-        <SocialsDeck />
-
-        {/* 60 FPS Infinite Telemetry Partner Marquee */}
-        <TelemetryMarquee />
       </main>
 
-      {/* Section 5: Official Motorsport Luxury Footer */}
-      <Footer />
+      {/* ========================================================================= */}
+      {/* UNIFIED SOCIALS & MOTORSPORT LUXURY FOOTER (SINGLE SEAMLESS BACKGROUND)   */}
+      {/* ========================================================================= */}
+      <div className="relative z-30 -mt-[100vh] w-full bg-[#000000] text-white rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-40px_100px_rgba(0,0,0,0.98)] border-t border-white/[0.08] overflow-hidden">
+        {/* EXPANSIVE FERRARI RED BACKLIGHT (WIDENED & EXTENDED ALL THE WAY TO THE BOTTOM EDGE) */}
+        <div
+          className="absolute inset-x-0 top-[500px] sm:top-[560px] md:top-[620px] bottom-0 w-full pointer-events-none z-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 1800px 90% at 50% 25%, rgba(220, 38, 38, 0.48) 0%, rgba(220, 38, 38, 0.22) 40%, rgba(180, 20, 20, 0.08) 70%, transparent 95%)',
+            filter: 'blur(90px)',
+          }}
+        />
+        {/* Lower Ambient Floor Fill to Illuminate Bottom Rounded Corners */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-[700px] w-full pointer-events-none z-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 1600px 550px at 50% 100%, rgba(220, 38, 38, 0.32) 0%, rgba(180, 20, 20, 0.12) 50%, transparent 85%)',
+            filter: 'blur(80px)',
+          }}
+        />
+
+        {/* Section 6: What's Up On Socials - Fanned Cards Deck */}
+        <SocialsDeck />
+
+        {/* Section 7: Official Motorsport Luxury Footer */}
+        <Footer />
+      </div>
     </div>
   );
 }
