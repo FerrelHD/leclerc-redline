@@ -279,8 +279,8 @@ export default function MainVisualStack({
         ref={visualWrapperRef}
         className="relative w-full h-full flex items-end justify-center pointer-events-none will-change-transform"
       >
-        {/* 1. TOP LAYER: Charles Leclerc Clean Cutout */}
-        <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none translate-y-12 md:translate-y-14 scale-100">
+        {/* 1. TOP LAYER: Charles Leclerc Clean Cutout - Responsive: elevated on mobile so face & shoulders are hero-focused */}
+        <div className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none -translate-y-8 sm:translate-y-4 md:translate-y-14 scale-[1.38] sm:scale-105 md:scale-100 origin-bottom">
           <TransparentCutout
             src={topImage}
             alt="Charles Leclerc Top Face"
@@ -291,7 +291,7 @@ export default function MainVisualStack({
         {/* 2. BOTTOM LAYER: Official Monaco GP Helmet */}
         <div
           ref={helmetWrapperRef}
-          className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none translate-y-12 md:translate-y-14 scale-100 transition-opacity duration-150"
+          className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none -translate-y-8 sm:translate-y-4 md:translate-y-14 scale-[1.38] sm:scale-105 md:scale-100 origin-bottom transition-opacity duration-150"
           style={{
             clipPath: 'url(#fluid-ribbon-mask)',
             WebkitClipPath: 'url(#fluid-ribbon-mask)',

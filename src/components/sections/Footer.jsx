@@ -1,31 +1,17 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ArrowUpRight } from 'lucide-react';
 import MagneticEffect from '../ui/MagneticEffect';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const sponsorList = [
-  'SHELL',
-  'HP',
-  'RAY-BAN',
-  'RICHARD MILLE',
-  'PUMA',
-  'PIRELLI',
-  'AWS',
-  'BELL HELMETS',
-  'VGW PLAY',
-  'PERONI NASTRO AZZURRO 0.0%',
-  'CEVA LOGISTICS',
-  'BANCO SANTANDER',
-];
 
 const pageLinks = [
   { label: 'HOME', href: '#hero' },
   { label: 'ON TRACK', href: '#story' },
   { label: 'OFF TRACK', href: '#archive-parallax' },
-  { label: 'CALENDAR', href: '#podiums' },
+  { label: 'CALENDAR', href: '#monaco-maranello' },
+  { label: 'GALLERY', href: '#gallery' },
   { label: 'STORE', href: 'https://store.ferrari.com/', external: true },
 ];
 
@@ -36,57 +22,57 @@ const followLinks = [
   { label: 'TWITCH', href: 'https://www.twitch.tv/charlesleclerc' },
 ];
 
+const tickerItems = [
+  'SCUDERIA FERRARI HP',
+  'SHELL V-POWER',
+  'RICHARD MILLE',
+  'RAY-BAN',
+  'VISTA JET',
+  'MONACO GP WINNER 2024',
+  'MONZA GP WINNER',
+  'PUMA MOTORSPORT',
+  'GIORGIO ARMANI',
+  'BANCO SANTANDER',
+];
+
 export default function Footer() {
   const footerRef = useRef(null);
+  const driverHeroRef = useRef(null);
   const headingLine1Ref = useRef(null);
   const headingLine2Ref = useRef(null);
+  const ctaRef = useRef(null);
   const sigWrapperRef = useRef(null);
   const sigPathRef = useRef(null);
   const numPathRef = useRef(null);
-
-  // Pillar Refs for Cinematic Stagger Rise Reveal Animation
-  const driverHeroRef = useRef(null);
-  const ctaRef = useRef(null);
   const pagesHeadingRef = useRef(null);
   const pagesListRef = useRef(null);
   const followHeadingRef = useRef(null);
   const followListRef = useRef(null);
 
-  // Sibling Focus Hover State
   const [hoveredPage, setHoveredPage] = useState(null);
   const [hoveredFollow, setHoveredFollow] = useState(null);
 
-  // Duplicate sponsor list 4x for continuous infinite 60fps marquee
-  const tickerItems = [
-    ...sponsorList,
-    ...sponsorList,
-    ...sponsorList,
-    ...sponsorList,
-  ];
-
   useEffect(() => {
+    // Setup handwritten signature SVG length for live stroke drawing
+    if (sigPathRef.current) {
+      const len = sigPathRef.current.getTotalLength();
+      sigPathRef.current.style.strokeDasharray = len;
+      sigPathRef.current.style.strokeDashoffset = len;
+    }
+    if (numPathRef.current) {
+      const len = numPathRef.current.getTotalLength();
+      numPathRef.current.style.strokeDasharray = len;
+      numPathRef.current.style.strokeDashoffset = len;
+    }
+
     const ctx = gsap.context(() => {
-      if (!sigPathRef.current || !numPathRef.current) return;
-
-      // Calculate path lengths for handwritten draw-in effect
-      const lenSig = sigPathRef.current.getTotalLength();
-      const lenNum = numPathRef.current.getTotalLength();
-
-      gsap.set(sigPathRef.current, {
-        strokeDasharray: lenSig,
-        strokeDashoffset: lenSig,
-      });
-      gsap.set(numPathRef.current, {
-        strokeDasharray: lenNum,
-        strokeDashoffset: lenNum,
-      });
-
-      // Maintain white navbar text throughout Footer
+      // Keep navbar in dark mode across entire footer
       ScrollTrigger.create({
         trigger: footerRef.current,
-        start: 'top 95%',
+        start: 'top 50%',
         end: 'bottom bottom',
         onEnter: () => document.body.classList.add('nav-theme-dark'),
+        onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
       });
 
@@ -220,13 +206,13 @@ export default function Footer() {
           {/* ========================================================================= */}
           {/* CENTER EDITORIAL: SIGNATURE + ARCH CANOPY CENTERED HEADING                */}
           {/* ========================================================================= */}
-          <div className="relative w-full max-w-5xl mx-auto text-center flex flex-col items-center justify-center mb-0 overflow-visible z-10">
+          <div className="relative w-full max-w-5xl mx-auto text-center flex flex-col items-center justify-center mb-6 sm:mb-8 md:mb-0 overflow-visible z-10">
             <div className="relative inline-flex flex-col items-center justify-center text-center overflow-visible">
 
               {/* 🏎️ Live Handwritten SVG Signature in Glowing Modena Yellow (#FFE500) */}
               <div
                 ref={sigWrapperRef}
-                className="absolute -top-12 sm:-top-16 md:-top-22 -left-6 sm:-left-12 md:-left-14 w-48 sm:w-64 md:w-80 pointer-events-none z-20 overflow-visible"
+                className="absolute -top-10 sm:-top-16 md:-top-22 -left-4 sm:-left-12 md:-left-14 w-40 sm:w-64 md:w-80 pointer-events-none z-20 overflow-visible"
               >
                 <svg
                   viewBox="80 10 820 720"
@@ -254,14 +240,14 @@ export default function Footer() {
               </div>
 
               {/* ✨ Kinetic Editorial Mask Reveal Heading */}
-              <h2 className="relative z-10 font-racing font-black text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight uppercase leading-[0.92] text-white text-center overflow-visible">
+              <h2 className="relative z-10 font-racing font-black text-3xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight uppercase leading-[0.92] text-white text-center overflow-visible">
                 <div className="overflow-hidden py-1">
                   <span
                     ref={headingLine1Ref}
                     className="block tracking-[-0.03em] will-change-transform"
                   >
                     ALWAYS{' '}
-                    <span className="font-editorial italic font-normal text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-[#FFE500] tracking-normal lowercase">
+                    <span className="font-editorial italic font-normal text-2xl sm:text-5xl md:text-6xl lg:text-7xl text-[#FFE500] tracking-normal lowercase">
                       pushing
                     </span>
                   </span>
@@ -279,77 +265,129 @@ export default function Footer() {
           </div>
 
           {/* ========================================================================= */}
-          {/* 3-COLUMN ASSET STACKING: PAGES | DRIVER HERO OVERLAP | FOLLOW ON          */}
+          {/* ASSET STACKING:                                                          */}
+          {/* - Desktop: 3 Columns (Pages | Driver Hero | Follow On)                   */}
+          {/* - Mobile: Clean 2-Row Layout (Links on top, Driver Hero at the BOTTOM)   */}
           {/* ========================================================================= */}
-          <div className="relative w-full grid grid-cols-1 md:grid-cols-3 items-end justify-between min-h-[440px] sm:min-h-[500px] md:min-h-[580px]">
+          <div className="relative w-full flex flex-col md:grid md:grid-cols-3 items-center md:items-end justify-between min-h-[440px] sm:min-h-[500px] md:min-h-[580px] mt-6 md:mt-0">
 
-            {/* LEFT COLUMN: PAGES NAVIGATION (Telemetry Focus + Sibling Dimming) */}
-            <div className="relative z-20 flex flex-col items-center md:items-start text-center md:text-left mb-12 sm:mb-16 md:mb-24">
-              <span
-                ref={pagesHeadingRef}
-                className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-5 block will-change-transform"
-              >
-                PAGES
-              </span>
-              <ul
-                ref={pagesListRef}
-                className="flex flex-col gap-2.5 sm:gap-3.5 text-base sm:text-lg md:text-xl font-racing font-black tracking-tight uppercase"
-              >
-                {pageLinks.map((item) => {
-                  const isHovered = hoveredPage === item.label;
-                  const isOtherHovered = hoveredPage !== null && !isHovered;
+            {/* MOBILE ONLY: 2-COLUMN NAVIGATION WRAPPER (PAGES on Left, FOLLOW ON on Right) */}
+            <div className="flex md:contents w-full justify-between items-start px-2 sm:px-6 mb-8 md:mb-0">
+              
+              {/* 1. PAGES NAVIGATION */}
+              <div className="relative z-20 flex flex-col items-start text-left md:mb-24">
+                <span
+                  ref={pagesHeadingRef}
+                  className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-4 sm:mb-5 block will-change-transform"
+                >
+                  PAGES
+                </span>
+                <ul
+                  ref={pagesListRef}
+                  className="flex flex-col gap-2 sm:gap-3.5 text-sm sm:text-lg md:text-xl font-racing font-black tracking-tight uppercase"
+                >
+                  {pageLinks.map((item) => {
+                    const isHovered = hoveredPage === item.label;
+                    const isOtherHovered = hoveredPage !== null && !isHovered;
 
-                  return (
-                    <li key={item.label} className="pages-nav-item overflow-visible py-0.5 pr-8">
-                      <a
-                        href={item.href}
-                        target={item.external ? '_blank' : undefined}
-                        rel={item.external ? 'noopener noreferrer' : undefined}
-                        onMouseEnter={() => setHoveredPage(item.label)}
-                        onMouseLeave={() => setHoveredPage(null)}
-                        className={`inline-flex items-center gap-2 transition-all duration-300 ease-out will-change-transform ${isHovered
-                          ? 'text-[#FFE500] translate-x-3 sm:translate-x-4 scale-[1.03] drop-shadow-[0_0_16px_rgba(255,229,0,0.85)]'
-                          : isOtherHovered
-                            ? 'text-neutral-600 opacity-30 scale-[0.97] blur-[0.3px]'
-                            : item.external
-                              ? 'text-[#FFE500] opacity-100 hover:text-white'
-                              : 'text-neutral-300 opacity-100'
-                          }`}
-                      >
-                        {/* Telemetry Accent Pip on Hover */}
-                        <span
-                          className={`font-mono text-xs text-[#E10600] font-bold transition-all duration-300 ${isHovered
-                            ? 'opacity-100 inline-block -ml-1 mr-1'
-                            : 'opacity-0 w-0 -ml-2 overflow-hidden'
+                    return (
+                      <li key={item.label} className="pages-nav-item overflow-visible py-0.5 pr-4 sm:pr-8">
+                        <a
+                          href={item.href}
+                          target={item.external ? '_blank' : undefined}
+                          rel={item.external ? 'noopener noreferrer' : undefined}
+                          onMouseEnter={() => setHoveredPage(item.label)}
+                          onMouseLeave={() => setHoveredPage(null)}
+                          className={`inline-flex items-center gap-1.5 sm:gap-2 transition-all duration-300 ease-out will-change-transform ${isHovered
+                            ? 'text-[#FFE500] translate-x-2 sm:translate-x-4 scale-[1.03] drop-shadow-[0_0_16px_rgba(255,229,0,0.85)]'
+                            : isOtherHovered
+                              ? 'text-neutral-600 opacity-30 scale-[0.97] blur-[0.3px]'
+                              : item.external
+                                ? 'text-[#FFE500] opacity-100 hover:text-white'
+                                : 'text-neutral-300 opacity-100'
                             }`}
                         >
-                          //
-                        </span>
-                        <span>{item.label}</span>
-                        {item.external && (
-                          <ArrowUpRight
-                            className={`w-4 h-4 transition-transform duration-300 ${isHovered ? 'translate-x-0.5 -translate-y-0.5' : ''
+                          <span
+                            className={`font-mono text-[10px] sm:text-xs text-[#E10600] font-bold transition-all duration-300 ${isHovered
+                              ? 'opacity-100 inline-block -ml-1 mr-1'
+                              : 'opacity-0 w-0 -ml-2 overflow-hidden'
                               }`}
-                          />
-                        )}
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
+                          >
+                            //
+                          </span>
+                          <span>{item.label}</span>
+                          {item.external && (
+                            <ArrowUpRight
+                              className={`w-3.5 sm:w-4 h-3.5 sm:h-4 transition-transform duration-300 ${isHovered ? 'translate-x-0.5 -translate-y-0.5' : ''
+                                }`}
+                            />
+                          )}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              {/* 2. FOLLOW ON LINKS */}
+              <div className="relative z-20 flex flex-col items-end text-right md:mb-24">
+                <span
+                  ref={followHeadingRef}
+                  className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-4 sm:mb-5 block will-change-transform"
+                >
+                  FOLLOW ON
+                </span>
+                <ul
+                  ref={followListRef}
+                  className="flex flex-col gap-2 sm:gap-3.5 text-sm sm:text-lg md:text-xl font-racing font-black tracking-tight uppercase"
+                >
+                  {followLinks.map((item) => {
+                    const isHovered = hoveredFollow === item.label;
+                    const isOtherHovered = hoveredFollow !== null && !isHovered;
+
+                    return (
+                      <li key={item.label} className="follow-nav-item overflow-visible py-0.5 pl-4 sm:pl-8">
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onMouseEnter={() => setHoveredFollow(item.label)}
+                          onMouseLeave={() => setHoveredFollow(null)}
+                          className={`inline-flex items-center gap-1.5 sm:gap-2 transition-all duration-300 ease-out will-change-transform ${isHovered
+                            ? 'text-[#FFE500] -translate-x-2 sm:-translate-x-4 scale-[1.03] drop-shadow-[0_0_16px_rgba(255,229,0,0.85)]'
+                            : isOtherHovered
+                              ? 'text-neutral-600 opacity-30 scale-[0.97] blur-[0.3px]'
+                              : 'text-neutral-300 opacity-100'
+                            }`}
+                        >
+                          <span>{item.label}</span>
+                          <span
+                            className={`font-mono text-[10px] sm:text-xs text-[#E10600] font-bold transition-all duration-300 ${isHovered
+                              ? 'opacity-100 inline-block -mr-1 ml-1'
+                              : 'opacity-0 w-0 -mr-2 overflow-hidden'
+                              }`}
+                          >
+                            //
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
             </div>
 
-            {/* CENTER COLUMN: FOREGROUND DRIVER HERO */}
-            <div className="relative w-full h-full flex flex-col items-center justify-end z-20 -mt-28 sm:-mt-40 md:-mt-52 lg:-mt-64 pointer-events-none">
-              {/* Lebar dinaikkan sedikit lagi agar helm & bahu lebih kokoh dan dominan */}
-              <div className="relative w-[420px] sm:w-[530px] md:w-[640px] lg:w-[750px] xl:w-[800px] flex flex-col items-center pointer-events-auto">
+            {/* 3. CENTER / BOTTOM HERO DRIVER PHOTO (Placed safely at bottom on mobile, center on desktop) */}
+            <div className="relative w-full h-full flex flex-col items-center justify-end z-20 mt-4 sm:mt-0 md:-mt-52 lg:-mt-64 pointer-events-none order-last md:order-none">
+              <div className="relative w-[320px] sm:w-[500px] md:w-[640px] lg:w-[750px] xl:w-[800px] flex flex-col items-center pointer-events-auto">
 
                 {/* Authentic Cutout: Charles Leclerc with Monaco Helmet & Fleece Jacket extending to bottom */}
                 <div ref={driverHeroRef} className="w-full will-change-transform">
                   <img
                     src="/images/leclerc-footer.png"
                     alt="Charles Leclerc Monaco Helmet & Signature Jacket"
-                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-14 sm:-mb-18 md:-mb-22"
+                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-8 sm:-mb-14 md:-mb-22"
                     loading="eager"
                     decoding="async"
                   />
@@ -358,69 +396,21 @@ export default function Footer() {
                 {/* Pill Button: BUSINESS ENQUIRIES across chest (z-30) with Sheen Sweep */}
                 <div
                   ref={ctaRef}
-                  className="absolute bottom-14 sm:bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap will-change-transform"
+                  className="absolute bottom-10 sm:bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap will-change-transform"
                 >
                   <MagneticEffect factor={0.25}>
                     <a
                       href="mailto:business@charlesleclerc.com"
-                      className="group relative inline-flex items-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-[#FFE500] hover:bg-[#fff04d] text-black font-racing font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_10px_30px_rgba(255,229,0,0.5)] transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
+                      className="group relative inline-flex items-center gap-2 sm:gap-2.5 px-5 sm:px-7 py-2 sm:py-3 rounded-full bg-[#FFE500] hover:bg-[#fff04d] text-black font-racing font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_10px_30px_rgba(255,229,0,0.5)] transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
                     >
                       {/* Diagonal light sheen sweep on hover */}
                       <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/45 to-transparent pointer-events-none" />
                       <span className="relative z-10">BUSINESS ENQUIRIES</span>
-                      <ArrowUpRight className="relative z-10 w-4 h-4 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ArrowUpRight className="relative z-10 w-3.5 sm:w-4 h-3.5 sm:h-4 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
                   </MagneticEffect>
                 </div>
               </div>
-            </div>
-
-            {/* RIGHT COLUMN: FOLLOW ON (Telemetry Focus + Sibling Dimming) */}
-            <div className="relative z-20 flex flex-col items-center md:items-end text-center md:text-right mb-12 sm:mb-16 md:mb-24">
-              <span
-                ref={followHeadingRef}
-                className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-5 block will-change-transform"
-              >
-                FOLLOW ON
-              </span>
-              <ul
-                ref={followListRef}
-                className="flex flex-col gap-2.5 sm:gap-3.5 text-base sm:text-lg md:text-xl font-racing font-black tracking-tight uppercase"
-              >
-                {followLinks.map((item) => {
-                  const isHovered = hoveredFollow === item.label;
-                  const isOtherHovered = hoveredFollow !== null && !isHovered;
-
-                  return (
-                    <li key={item.label} className="follow-nav-item overflow-visible py-0.5 pl-8">
-                      <a
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onMouseEnter={() => setHoveredFollow(item.label)}
-                        onMouseLeave={() => setHoveredFollow(null)}
-                        className={`inline-flex items-center gap-2 transition-all duration-300 ease-out will-change-transform ${isHovered
-                          ? 'text-[#FFE500] -translate-x-3 sm:-translate-x-4 scale-[1.03] drop-shadow-[0_0_16px_rgba(255,229,0,0.85)]'
-                          : isOtherHovered
-                            ? 'text-neutral-600 opacity-30 scale-[0.97] blur-[0.3px]'
-                            : 'text-neutral-300 opacity-100'
-                          }`}
-                      >
-                        <span>{item.label}</span>
-                        {/* Telemetry Accent Pip on Hover */}
-                        <span
-                          className={`font-mono text-xs text-[#E10600] font-bold transition-all duration-300 ${isHovered
-                            ? 'opacity-100 inline-block -mr-1 ml-1'
-                            : 'opacity-0 w-0 -mr-2 overflow-hidden'
-                            }`}
-                        >
-                          //
-                        </span>
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
 
           </div>
@@ -452,7 +442,7 @@ export default function Footer() {
         {/* ========================================================================= */}
         {/* CLEAN LUXURY LEGAL STRIP AT BASE OF CATHEDRAL CARD (FULL WIDTH CORNERS)   */}
         {/* ========================================================================= */}
-        <div className="relative z-30 w-full px-8 sm:px-12 md:px-16 lg:px-24 pt-4 pb-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs font-mono-telemetry text-neutral-400 uppercase tracking-wider">
+        <div className="relative z-30 w-full px-6 sm:px-12 md:px-16 lg:px-24 pt-4 pb-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] sm:text-xs font-mono-telemetry text-neutral-400 uppercase tracking-wider text-center sm:text-left">
           <div>
             <span>
               © {new Date().getFullYear()} Charles Leclerc. All rights reserved
