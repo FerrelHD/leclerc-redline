@@ -9,4 +9,17 @@ export default defineConfig({
     port: 3000,
     open: false,
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-framework': ['react', 'react-dom'],
+          'vendor-motion': ['framer-motion', 'lenis'],
+          'vendor-gsap': ['gsap'],
+          'vendor-icons': ['lucide-react'],
+        },
+      },
+    },
+  },
 });
