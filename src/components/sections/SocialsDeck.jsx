@@ -9,9 +9,9 @@ gsap.registerPlugin(ScrollTrigger);
 const socialCards = [
   {
     id: 0,
-    title: 'Monza 2019 Tifosi Triumph',
+    title: 'Spa 2019 First F1 Victory',
     tag: '@scuderiaferrari',
-    image: '/images/leclerc gallery/Monza 2019 Potrait.jpg',
+    image: '/images/leclerc gallery/SPA 2019 Leclerc Potrait.jpg',
   },
   {
     id: 1,
@@ -53,11 +53,14 @@ const socialCards = [
 
 export default function SocialsDeck() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isFanned, setIsFanned] = useState(false);
   const sectionRef = useRef(null);
+  const deckContainerRef = useRef(null);
 
-  // Switch navbar to dark theme throughout this section and into footer
+  // Switch navbar to dark theme and trigger deck fan-out on scroll
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // 1. Maintain white navbar text throughout this section and into footer
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top 50%',
@@ -65,6 +68,14 @@ export default function SocialsDeck() {
         onEnter:     () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
+      });
+
+      // 2. Fanned Deck Deal: Triggers right when the cards deck is clearly inside the screen
+      ScrollTrigger.create({
+        trigger: deckContainerRef.current,
+        start: 'top 60%', // Mengipas saat tumpukan kartu sudah benar-benar masuk dan terlihat di layar
+        onEnter:     () => setIsFanned(true),
+        onLeaveBack: () => setIsFanned(false),
       });
     }, sectionRef);
 
@@ -100,87 +111,104 @@ export default function SocialsDeck() {
 
       {/* 
         Interactive Fan Deck:
-        - 100% 3D GPU Depth Plane (preserve-3d + translateZ): eliminates 2D popping
-        - Wide Accordion Spread: Neighbor cards push away smoothly
+        - Fan-Out Deal on Enter: Starts as 1 card in center, fans out smoothly when clearly scrolled into view
+        - Mobile Responsive: Tight spread on mobile so all 7 cards remain visible within the screen
+        - Consistent natural deck stacking order (zIndex = defaultZ)
+        - Wide Accordion Spread: Neighbor cards push away cleanly and return directly without overlapping/glitching
+        - Subpixel Anti-Aliasing Lock: isolate + WebKit backface fix prevents border flickering
       */}
       <div 
+        ref={deckContainerRef}
         onMouseLeave={() => setHoveredIndex(null)}
-        className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[460px] sm:min-h-[540px] md:min-h-[600px] px-2"
-        style={{ perspective: 1200 }}
+        className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[440px] sm:min-h-[540px] md:min-h-[600px] px-2"
       >
-        <div 
-          className="relative flex items-center justify-center w-full min-h-[400px] sm:min-h-[480px] md:min-h-[540px]"
-          style={{ transformStyle: 'preserve-3d' }}
-        >
+        <div className="relative flex items-center justify-center w-full min-h-[380px] sm:min-h-[480px] md:min-h-[540px]">
           {socialCards.map((card, i) => {
             const offsetFromCenter = i - 3;
             const absOffset = Math.abs(offsetFromCenter);
 
-            const defaultX = offsetFromCenter * 115;
-            const defaultRotate = offsetFromCenter * 7.5;
-            const defaultY = absOffset * 16;
+            // Responsive spacing: adapt spread so all 7 cards remain visible on mobile viewports
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+            const spreadDistance = isMobile ? 38 : 115;
+            const defaultX = offsetFromCenter * spreadDistance;
+            const defaultRotate = offsetFromCenter * (isMobile ? 5.5 : 7.5);
+            const defaultY = absOffset * (isMobile ? 10 : 16);
             const defaultZ = 25 - absOffset * 2;
 
-            const isHovered = hoveredIndex === i;
-            const hasHover = hoveredIndex !== null;
+            const isHovered = isFanned && hoveredIndex === i;
+            const hasHover = isFanned && hoveredIndex !== null;
 
-            // Wide Accordion shift logic (from smooth original):
-            let targetX = defaultX;
-            let targetY = defaultY;
-            let targetRotate = defaultRotate;
+            // Target coordinates: if not fanned yet, stay stacked as 1 card at center
+            let targetX = isFanned ? defaultX : 0;
+            let targetY = isFanned ? defaultY : 0;
+            let targetRotate = isFanned ? defaultRotate : 0;
             let targetScale = 1.0;
 
             if (hasHover) {
               if (isHovered) {
-                targetY = defaultY - 36;
+                targetY = defaultY - (isMobile ? 24 : 36);
                 targetRotate = 0;
-                targetScale = 1.12;
+                targetScale = isMobile ? 1.08 : 1.12;
               } else if (i < hoveredIndex) {
-                const pushDistance = (hoveredIndex - i === 1) ? -125 : -70;
+                const pushDistance = isMobile
+                  ? ((hoveredIndex - i === 1) ? -48 : -24)
+                  : ((hoveredIndex - i === 1) ? -125 : -70);
                 targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate - 4;
-                targetScale = 0.95;
+                targetRotate = defaultRotate - (isMobile ? 2 : 4);
+                targetScale = isMobile ? 0.94 : 0.95;
               } else if (i > hoveredIndex) {
-                const pushDistance = (i - hoveredIndex === 1) ? 125 : 70;
+                const pushDistance = isMobile
+                  ? ((i - hoveredIndex === 1) ? 48 : 24)
+                  : ((i - hoveredIndex === 1) ? 125 : 70);
                 targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate + 4;
-                targetScale = 0.95;
+                targetRotate = defaultRotate + (isMobile ? 2 : 4);
+                targetScale = isMobile ? 0.94 : 0.95;
               }
             }
+
+            // Elegant, unhurried fan-out stagger from inside to outside
+            const staggerDelay = (!hasHover && hoveredIndex === null) ? absOffset * 0.075 : 0;
 
             return (
               <motion.div
                 key={card.id}
-                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseEnter={() => isFanned && setHoveredIndex(i)}
+                onClick={() => isFanned && setHoveredIndex(hoveredIndex === i ? null : i)}
                 animate={{
                   x: targetX,
                   y: targetY,
-                  rotateZ: targetRotate,
+                  rotate: targetRotate,
                   scale: targetScale,
-                  z: isHovered ? 80 : 0,
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 280,
-                  damping: 24,
-                  mass: 0.6,
+                  stiffness: 180, // Lebih tenang dan halus, tidak terburu-buru
+                  damping: 26,
+                  mass: 0.8,
+                  delay: staggerDelay,
                 }}
                 className="absolute cursor-pointer select-none origin-bottom will-change-transform"
                 style={{
-                  zIndex: isHovered ? 40 : defaultZ,
-                  transformStyle: 'preserve-3d',
-                  width: 'clamp(145px, 16vw, 250px)',
+                  zIndex: defaultZ,
+                  width: 'clamp(115px, 25vw, 250px)',
                   aspectRatio: '9/16',
                   transformOrigin: '50% 90%',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
+                  transform: 'translateZ(0)',
                 }}
               >
-                {/* Card Container: ZERO OUTLINE / ZERO BORDER */}
+                {/* Card Container: ZERO OUTLINE / ZERO BORDER / ISOLATED STACK */}
                 <div
-                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-950 transition-shadow duration-300 ${
+                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0A0A] isolate transition-shadow duration-300 ${
                     isHovered
-                      ? 'shadow-[0_35px_80px_rgba(0,0,0,0.9)] ring-1 ring-white/15'
+                      ? 'shadow-[0_35px_80px_rgba(0,0,0,0.9)]'
                       : 'shadow-2xl'
                   }`}
+                  style={{
+                    WebkitMaskImage: '-webkit-radial-gradient(white, black)',
+                    maskImage: 'radial-gradient(white, black)',
+                  }}
                 >
                   <img
                     src={card.image}
@@ -191,12 +219,12 @@ export default function SocialsDeck() {
                   />
 
                   {/* Vignette Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent pointer-events-none" />
 
                   {/* Instagram Badge */}
-                  <div className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white pointer-events-none">
+                  <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white pointer-events-none">
                     <svg
-                      className="w-3.5 h-3.5"
+                      className="w-3 sm:w-3.5 h-3 sm:h-3.5"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -211,11 +239,11 @@ export default function SocialsDeck() {
                   </div>
 
                   {/* Caption & Tag */}
-                  <div className="absolute bottom-4 left-4 right-4 text-white pointer-events-none">
-                    <p className="font-mono-telemetry text-[9px] tracking-wider text-[#E10600] uppercase font-bold mb-0.5">
+                  <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 text-white pointer-events-none">
+                    <p className="font-mono-telemetry text-[8px] sm:text-[9px] tracking-wider text-[#E10600] uppercase font-bold mb-0.5">
                       {card.tag}
                     </p>
-                    <p className="font-racing font-bold text-xs sm:text-sm leading-snug line-clamp-1">
+                    <p className="font-racing font-bold text-[11px] sm:text-xs md:text-sm leading-snug line-clamp-1">
                       {card.title}
                     </p>
                   </div>

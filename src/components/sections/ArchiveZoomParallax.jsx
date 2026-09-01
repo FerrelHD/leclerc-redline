@@ -56,6 +56,14 @@ export default function ArchiveZoomParallax() {
     { clamp: true }
   );
 
+  // Seamless transition to solid black as footer slides up to eliminate white background bleeding
+  const stickyBgColor = useTransform(
+    scrollYProgress,
+    [0.35, 0.65],
+    ['#F9F9FB', '#000000'],
+    { clamp: true }
+  );
+
   const pictures = [
     {
       id: 'center',
@@ -149,8 +157,10 @@ export default function ArchiveZoomParallax() {
 
       {/* Sticky Parallax Container (h-[260vh]) */}
       <div ref={containerRef} className="relative h-[260vh] w-full">
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#F9F9FB]">
-
+        <motion.div
+          style={{ backgroundColor: stickyBgColor }}
+          className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center"
+        >
           <motion.div
             style={{
               opacity: canvasOpacity,
@@ -187,8 +197,7 @@ export default function ArchiveZoomParallax() {
               ))}
             </div>
           </motion.div>
-
-        </div>
+        </motion.div>
       </div>
     </section>
   );
