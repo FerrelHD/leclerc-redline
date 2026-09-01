@@ -19,7 +19,7 @@ export default function ArchiveZoomParallax() {
         onEnter: () => document.body.classList.remove('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.add('nav-theme-dark'),
         onEnterBack: () => document.body.classList.remove('nav-theme-dark'),
-        onLeave: () => document.body.classList.remove('nav-theme-dark'),
+        onLeave: () => document.body.classList.add('nav-theme-dark'),
       });
     }, sectionRef);
 

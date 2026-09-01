@@ -349,7 +349,7 @@ export default function Footer() {
                   <img
                     src="/images/leclerc-footer.png"
                     alt="Charles Leclerc Monaco Helmet & Signature Jacket"
-                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_30px_100px_rgba(0,0,0,0.98)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-14 sm:-mb-18 md:-mb-22"
+                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-14 sm:-mb-18 md:-mb-22"
                     loading="eager"
                     decoding="async"
                   />

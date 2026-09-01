@@ -57,7 +57,7 @@ export default function FaceHelmetReveal() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: '+=800', // Reduced from 1400 so it unpins faster
+          end: '+=1400',
           pin: true,
           anticipatePin: 1,
           scrub: 0.6,

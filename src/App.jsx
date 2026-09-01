@@ -36,7 +36,7 @@ export default function App() {
 
     // Tick Lenis inside GSAP's RAF so both share the same frame loop
     gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(500, 33);
+    gsap.ticker.lagSmoothing(0);
 
     // Push scroll position to ScrollTrigger on every Lenis tick
     lenis.on('scroll', ScrollTrigger.update);
@@ -114,13 +114,16 @@ export default function App() {
       {/* UNIFIED SOCIALS & MOTORSPORT LUXURY FOOTER (SINGLE SEAMLESS BACKGROUND)   */}
       {/* ========================================================================= */}
       <div className="relative z-30 -mt-[100vh] w-full bg-[#000000] text-white rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-40px_100px_rgba(0,0,0,0.98)] border-t border-white/[0.08] overflow-hidden">
-        {/* EXPANSIVE FERRARI RED BACKLIGHT (WIDENED & EXTENDED ALL THE WAY TO THE BOTTOM EDGE) */}
+        {/* EXPANSIVE FERRARI RED BACKLIGHT (SEAMLESS FEATHERED AMBIENCE, 0% HARD EDGES) */}
         <div
-          className="absolute inset-x-0 top-[500px] sm:top-[560px] md:top-[620px] bottom-0 w-full pointer-events-none z-0"
+          className="absolute inset-0 w-full pointer-events-none z-0"
           style={{
             background:
-              'radial-gradient(ellipse 1800px 90% at 50% 25%, rgba(220, 38, 38, 0.48) 0%, rgba(220, 38, 38, 0.22) 40%, rgba(180, 20, 20, 0.08) 70%, transparent 95%)',
-            filter: 'blur(90px)',
+              'radial-gradient(ellipse 1800px 950px at 50% 640px, rgba(220, 38, 38, 0.38) 0%, rgba(220, 38, 38, 0.16) 42%, rgba(180, 20, 20, 0.04) 72%, transparent 100%)',
+            WebkitMaskImage:
+              'linear-gradient(to bottom, transparent 150px, black 500px, black 100%)',
+            maskImage:
+              'linear-gradient(to bottom, transparent 150px, black 500px, black 100%)',
           }}
         />
         {/* Lower Ambient Floor Fill to Illuminate Bottom Rounded Corners */}
@@ -128,8 +131,7 @@ export default function App() {
           className="absolute inset-x-0 bottom-0 h-[700px] w-full pointer-events-none z-0"
           style={{
             background:
-              'radial-gradient(ellipse 1600px 550px at 50% 100%, rgba(220, 38, 38, 0.32) 0%, rgba(180, 20, 20, 0.12) 50%, transparent 85%)',
-            filter: 'blur(80px)',
+              'radial-gradient(ellipse 1600px 550px at 50% 100%, rgba(220, 38, 38, 0.28) 0%, rgba(180, 20, 20, 0.10) 45%, transparent 80%)',
           }}
         />
 

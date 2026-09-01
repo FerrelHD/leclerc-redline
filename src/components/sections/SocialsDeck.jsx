@@ -53,13 +53,11 @@ const socialCards = [
 
 export default function SocialsDeck() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [isFanned, setIsFanned] = useState(false);
   const sectionRef = useRef(null);
 
-  // Switch navbar to dark theme and trigger deck fan-out on scroll
+  // Switch navbar to dark theme throughout this section and into footer
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Maintain white navbar text throughout this section and into footer
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top 50%',
@@ -67,14 +65,6 @@ export default function SocialsDeck() {
         onEnter:     () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
-      });
-
-      // 2. Fanned Deck Deal: Start as 1 single card, fan out when scrolled well into view
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top 45%',
-        onEnter:     () => setIsFanned(true),
-        onLeaveBack: () => setIsFanned(false),
       });
     }, sectionRef);
 
@@ -87,31 +77,7 @@ export default function SocialsDeck() {
       ref={sectionRef}
       className="relative z-10 w-full pt-28 pb-8 sm:pb-12 px-4 sm:px-8 md:px-12 bg-transparent text-white"
     >
-      {/* 1:1 Exact SVG Grain Filter feathered smoothly at bottom to blend 100% into footer */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]">
-        <svg
-          className="h-full w-full object-cover object-center"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <filter id="leclerc-portfolio-noise">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.65"
-              numOctaves="1"
-              stitchTiles="stitch"
-            />
-            <feBlend mode="screen" />
-          </filter>
-          <rect
-            width="100%"
-            height="100%"
-            filter="url(#leclerc-portfolio-noise)"
-            opacity="0.05"
-          />
-        </svg>
-      </div>
-
-      {/* 2. Atmospheric Scuderia Radial Glow */}
+      {/* Atmospheric Scuderia Radial Glow */}
       <div
         className="absolute inset-0 pointer-events-none opacity-25 z-0"
         style={{
@@ -134,15 +100,18 @@ export default function SocialsDeck() {
 
       {/* 
         Interactive Fan Deck:
-        - Pure 2D GPU Transforms (x, y, rotate, scale): Eliminates 3D clipping and polygon intersection ("saling tembus")
-        - Deterministic Layering (zIndex): Hovered card sits on top (zIndex: 50), immediately returns to natural fan order on unhover without delay or glitch
-        - Wide Accordion Spread: Neighbor cards push away cleanly
+        - 100% 3D GPU Depth Plane (preserve-3d + translateZ): eliminates 2D popping
+        - Wide Accordion Spread: Neighbor cards push away smoothly
       */}
       <div 
         onMouseLeave={() => setHoveredIndex(null)}
         className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[460px] sm:min-h-[540px] md:min-h-[600px] px-2"
+        style={{ perspective: 1200 }}
       >
-        <div className="relative flex items-center justify-center w-full min-h-[400px] sm:min-h-[480px] md:min-h-[540px]">
+        <div 
+          className="relative flex items-center justify-center w-full min-h-[400px] sm:min-h-[480px] md:min-h-[540px]"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
           {socialCards.map((card, i) => {
             const offsetFromCenter = i - 3;
             const absOffset = Math.abs(offsetFromCenter);
@@ -153,35 +122,53 @@ export default function SocialsDeck() {
             const defaultZ = 25 - absOffset * 2;
 
             const isHovered = hoveredIndex === i;
-            // Dynamic Fan-out Deal + Natural Peek Hover Logic:
-            // 1. Initial State: All cards stacked at (x: 0, y: 0, rotate: 0) directly behind center card (1 card visible).
-            // 2. Scrolled in ("udah mulai masuk banget"): Cards fan out smoothly from behind center card with cascading delay!
-            // 3. Hover: Elevated peek upward (targetY - 32) without changing zIndex.
-            const targetX = isFanned ? defaultX : 0;
-            const targetY = isFanned ? (isHovered ? defaultY - 32 : defaultY) : 0;
-            const targetRotate = isFanned ? defaultRotate : 0;
-            const targetScale = isHovered ? 1.02 : 1.0;
+            const hasHover = hoveredIndex !== null;
+
+            // Wide Accordion shift logic (from smooth original):
+            let targetX = defaultX;
+            let targetY = defaultY;
+            let targetRotate = defaultRotate;
+            let targetScale = 1.0;
+
+            if (hasHover) {
+              if (isHovered) {
+                targetY = defaultY - 36;
+                targetRotate = 0;
+                targetScale = 1.12;
+              } else if (i < hoveredIndex) {
+                const pushDistance = (hoveredIndex - i === 1) ? -125 : -70;
+                targetX = defaultX + pushDistance;
+                targetRotate = defaultRotate - 4;
+                targetScale = 0.95;
+              } else if (i > hoveredIndex) {
+                const pushDistance = (i - hoveredIndex === 1) ? 125 : 70;
+                targetX = defaultX + pushDistance;
+                targetRotate = defaultRotate + 4;
+                targetScale = 0.95;
+              }
+            }
 
             return (
               <motion.div
                 key={card.id}
-                onMouseEnter={() => isFanned && setHoveredIndex(i)}
+                onMouseEnter={() => setHoveredIndex(i)}
                 animate={{
                   x: targetX,
                   y: targetY,
-                  rotate: targetRotate,
+                  rotateZ: targetRotate,
                   scale: targetScale,
+                  z: isHovered ? 80 : 0,
                 }}
                 transition={{
                   type: 'spring',
                   stiffness: 280,
                   damping: 24,
                   mass: 0.6,
-                  delay: isFanned && hoveredIndex === null ? absOffset * 0.05 : 0,
                 }}
                 className="absolute cursor-pointer select-none origin-bottom will-change-transform"
                 style={{
-                  zIndex: defaultZ,
+                  zIndex: isHovered ? 40 : defaultZ,
+                  transformStyle: 'preserve-3d',
                   width: 'clamp(145px, 16vw, 250px)',
                   aspectRatio: '9/16',
                   transformOrigin: '50% 90%',
@@ -189,9 +176,9 @@ export default function SocialsDeck() {
               >
                 {/* Card Container: ZERO OUTLINE / ZERO BORDER */}
                 <div
-                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-950 transition-all duration-300 ${
+                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-950 transition-shadow duration-300 ${
                     isHovered
-                      ? 'shadow-[0_30px_70px_rgba(0,0,0,0.95)] ring-1 ring-white/20'
+                      ? 'shadow-[0_35px_80px_rgba(0,0,0,0.9)] ring-1 ring-white/15'
                       : 'shadow-2xl'
                   }`}
                 >
@@ -199,7 +186,8 @@ export default function SocialsDeck() {
                     src={card.image}
                     alt={card.title}
                     className="w-full h-full object-cover filter contrast-[1.03]"
-                    loading="lazy"
+                    loading="eager"
+                    decoding="async"
                   />
 
                   {/* Vignette Overlay */}
