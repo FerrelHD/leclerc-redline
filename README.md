@@ -1,12 +1,12 @@
 # 🏎️ Charles Leclerc #16 – Scuderia Ferrari HP Official Showcase
 
-![Charles Leclerc Website Preview](public/images/preview.png)
+![Charles Leclerc Website Preview](public/images/New-Preview-Leclerc.png)
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![GSAP](https://img.shields.io/badge/GSAP-ScrollTrigger-88CE02?style=for-the-badge&logo=greensock&logoColor=white)](https://greensock.com/scrolltrigger/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?style=for-the-badge&logo=framer&logoColor=blue)](https://www.framer.com/motion/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
 An ultra-luxury, high-performance web experience showcasing Formula 1 driver **Charles Leclerc (#16)** and Scuderia Ferrari HP. Built with creative development techniques, bespoke fluid vector physics, hardware-accelerated Canvas 2D rendering, and cinematic scroll choreography inspired by world-class driver platforms like *landonorris.com*.
 
