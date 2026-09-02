@@ -200,7 +200,7 @@ export default function Footer() {
         - Solid dark charcoal surface (#0c0c0c)
         =============================================================================
       */}
-      <div className="relative z-10 mx-auto w-[calc(100%-16px)] sm:w-[calc(100%-32px)] md:w-[calc(100%-48px)] max-w-[1860px] rounded-t-[140px] sm:rounded-t-[180px] md:rounded-t-[220px] rounded-b-[40px] sm:rounded-b-[50px] md:rounded-b-[60px] bg-[#0c0c0c] border-t border-white/10 shadow-[0_-20px_60px_rgba(220,38,38,0.25)] filter drop-shadow-[0_25px_60px_rgba(0,0,0,0.98)] overflow-hidden">
+      <div className="relative z-10 mx-auto w-[calc(100%-16px)] sm:w-[calc(100%-32px)] md:w-[calc(100%-48px)] max-w-[1860px] rounded-t-[140px] sm:rounded-t-[180px] md:rounded-t-[220px] rounded-b-[40px] sm:rounded-b-[50px] md:rounded-b-[60px] bg-[#0f0404]/90 backdrop-blur-sm border-t border-red-500/20 shadow-[0_-25px_70px_rgba(220,38,38,0.35)] filter drop-shadow-[0_25px_60px_rgba(0,0,0,0.98)] overflow-hidden">
 
         {/* SUBTLE INNER GLOW (Highlights the cathedral arch curve from within) */}
         <div className="absolute inset-x-0 top-0 h-44 sm:h-56 rounded-t-[140px] sm:rounded-t-[180px] md:rounded-t-[220px] bg-gradient-to-b from-white/5 via-red-600/[0.03] to-transparent pointer-events-none" />

@@ -111,27 +111,21 @@ export default function App() {
       </main>
 
       {/* ========================================================================= */}
-      {/* UNIFIED SOCIALS & MOTORSPORT LUXURY FOOTER (SINGLE SEAMLESS BACKGROUND)   */}
+      {/* UNIFIED SOCIALS & MOTORSPORT LUXURY FOOTER                                */}
       {/* ========================================================================= */}
-      <div className="relative z-30 -mt-[100vh] w-full bg-[#000000] text-white rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-40px_100px_rgba(0,0,0,0.98)] border-t border-white/[0.08] overflow-hidden">
-        {/* EXPANSIVE FERRARI RED BACKLIGHT (SEAMLESS FEATHERED AMBIENCE, 0% HARD EDGES) */}
+      <div className="relative z-30 -mt-[100vh] w-full bg-[#050000] text-white rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-40px_100px_rgba(0,0,0,0.98)] border-t border-white/[0.08] overflow-hidden">
+
+        {/* SUBTLE FLAT DOME + FULL-BLEED RED FLOW TO BOTTOM */}
         <div
-          className="absolute inset-0 w-full pointer-events-none z-0"
+          className="absolute inset-0 w-full h-full pointer-events-none z-0"
           style={{
-            background:
-              'radial-gradient(ellipse 1800px 950px at 50% 640px, rgba(220, 38, 38, 0.38) 0%, rgba(220, 38, 38, 0.16) 42%, rgba(180, 20, 20, 0.04) 72%, transparent 100%)',
-            WebkitMaskImage:
-              'linear-gradient(to bottom, transparent 150px, black 500px, black 100%)',
-            maskImage:
-              'linear-gradient(to bottom, transparent 150px, black 500px, black 100%)',
-          }}
-        />
-        {/* Lower Ambient Floor Fill to Illuminate Bottom Rounded Corners */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-[700px] w-full pointer-events-none z-0"
-          style={{
-            background:
-              'radial-gradient(ellipse 1600px 550px at 50% 100%, rgba(220, 38, 38, 0.28) 0%, rgba(180, 20, 20, 0.10) 45%, transparent 80%)',
+            background: `
+              /* 1. Lengkungan merah SANGAT LANDAI di puncak kartu (lebar 240% biar ga ngebulet) */
+              radial-gradient(ellipse 240% 700px at 50% 640px, rgba(225, 6, 0, 0.46) 0%, rgba(185, 12, 12, 0.28) 45%, transparent 75%),
+
+              /* 2. Merah pekat mengalir penuh sampai ke paling bawah (TIDAK balik ke hitam) */
+              linear-gradient(to bottom, transparent 0%, transparent 480px, rgba(160, 10, 10, 0.35) 650px, rgba(145, 8, 8, 0.48) 950px, rgba(115, 6, 6, 0.52) 100%)
+            `,
           }}
         />
 

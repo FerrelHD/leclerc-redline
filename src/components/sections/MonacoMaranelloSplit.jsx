@@ -7,62 +7,105 @@ import MagneticEffect from '../ui/MagneticEffect';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MonacoMaranelloSplit() {
-  const sectionRef   = useRef(null);
-  const leftImgRef   = useRef(null);
-  const leftTextRef  = useRef(null);
-  const rightImgRef  = useRef(null);
+  const sectionRef = useRef(null);
+  const leftImgRef = useRef(null);
+  const leftTextRef = useRef(null);
+  const rightImgRef = useRef(null);
   const rightTextRef = useRef(null);
 
   useEffect(() => {
+    // Tidak memakai scoping sectionRef agar selector bisa membaca #archive-parallax di luar komponen
     const ctx = gsap.context(() => {
       // 1. Navbar Theme Switcher
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top 50%',
-        end:   'bottom 50%',
-        onEnter:     () => document.body.classList.remove('nav-theme-dark'),
+        end: 'bottom 50%',
+        onEnter: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.remove('nav-theme-dark'),
       });
 
-      // 2. Timeline Bersama: Bidirectional Scrub (Scroll turun -> Masuk, Scroll naik -> Mundur/Reverse)
-      const tl = gsap.timeline({
+      // 2. TIMELINE MASUK: Helm & teks meluncur dari tepi luar ke posisi tengah
+      const enterTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 85%',
-          end: 'top 25%',
+          start: 'top 75%',
+          end: 'top 10%',
           scrub: 0.8,
           invalidateOnRefresh: true,
         },
       });
 
-      tl.fromTo(
-        leftImgRef.current,
-        { xPercent: -100, opacity: 0 },
-        { xPercent: -28, opacity: 1, ease: 'power2.out' },
-        0
-      )
-      .fromTo(
-        leftTextRef.current,
-        { x: -50, opacity: 0 },
-        { x: 0, opacity: 1, ease: 'power2.out' },
-        0
-      )
-      .fromTo(
-        rightImgRef.current,
-        { xPercent: 100, opacity: 0 },
-        { xPercent: 28, opacity: 1, ease: 'power2.out' },
-        0
-      )
-      .fromTo(
-        rightTextRef.current,
-        { x: 50, opacity: 0 },
-        { x: 0, opacity: 1, ease: 'power2.out' },
-        0
-      );
+      enterTl
+        .fromTo(
+          leftImgRef.current,
+          { xPercent: -100, opacity: 0 },
+          { xPercent: -28, opacity: 1, ease: 'power2.out' },
+          0
+        )
+        .fromTo(
+          leftTextRef.current,
+          { x: -50, opacity: 0 },
+          { x: 0, opacity: 1, ease: 'power2.out' },
+          0
+        )
+        .fromTo(
+          rightImgRef.current,
+          { xPercent: 100, opacity: 0 },
+          { xPercent: 28, opacity: 1, ease: 'power2.out' },
+          0
+        )
+        .fromTo(
+          rightTextRef.current,
+          { x: 50, opacity: 0 },
+          { x: 0, opacity: 1, ease: 'power2.out' },
+          0
+        );
+
+      // 3. TIMELINE REVERSE: Begitu kartu Archive nongol dari bawah, elemen langsung mundur ke samping
+      const archiveTarget = document.getElementById('archive-parallax');
+
+      if (archiveTarget) {
+        const exitTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: archiveTarget,
+            start: 'top bottom', // Begitu lengkungan kartu arsip pertama kali nongol di bawah layar
+            end: 'top 55%',      // Begitu kartu naik 45%, animasi mundur sudah tuntas (terlihat jelas di layar)
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        exitTl
+          .fromTo(
+            leftImgRef.current,
+            { xPercent: -28, opacity: 1 },
+            { xPercent: -100, opacity: 0, ease: 'power2.in' },
+            0
+          )
+          .fromTo(
+            leftTextRef.current,
+            { x: 0, opacity: 1 },
+            { x: -80, opacity: 0, ease: 'power2.in' },
+            0
+          )
+          .fromTo(
+            rightImgRef.current,
+            { xPercent: 28, opacity: 1 },
+            { xPercent: 100, opacity: 0, ease: 'power2.in' },
+            0
+          )
+          .fromTo(
+            rightTextRef.current,
+            { x: 0, opacity: 1 },
+            { x: 80, opacity: 0, ease: 'power2.in' },
+            0
+          );
+      }
 
       const t = setTimeout(() => ScrollTrigger.refresh(), 300);
       return () => clearTimeout(t);
-    }, sectionRef);
+    });
 
     return () => ctx.revert();
   }, []);
@@ -71,7 +114,7 @@ export default function MonacoMaranelloSplit() {
     <section
       id="monaco-maranello"
       ref={sectionRef}
-      className="relative w-full min-h-screen lg:h-screen lg:min-h-[640px] lg:max-h-[1080px] bg-white text-[#0A0A0B] z-20 overflow-hidden flex items-center justify-center select-none py-24 sm:py-28 lg:py-0"
+      className="sticky top-0 w-full h-screen bg-white text-[#0A0A0B] z-10 overflow-hidden flex items-center justify-center select-none py-24 sm:py-28 lg:py-0"
     >
       <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.04]">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -87,7 +130,6 @@ export default function MonacoMaranelloSplit() {
       <div className="relative z-10 w-full h-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-0">
         {/* Sisi Kiri: Monaco Home */}
         <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-end px-6 lg:pr-20 xl:pr-28 group">
-          {/* Gambar Kiri — Mundur ke tepi luar kiri agar tidak menabrak teks */}
           <div
             ref={leftImgRef}
             className="absolute left-0 bottom-0 h-[40vh] sm:h-[50vh] lg:h-[80vh] max-h-[700px] pointer-events-none flex items-end justify-start will-change-transform z-0"
@@ -100,7 +142,6 @@ export default function MonacoMaranelloSplit() {
             />
           </div>
 
-          {/* Teks Kiri */}
           <div
             ref={leftTextRef}
             className="relative z-10 flex flex-col items-center text-center max-w-[200px] sm:max-w-[230px] lg:max-w-[220px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
@@ -127,7 +168,6 @@ export default function MonacoMaranelloSplit() {
 
         {/* Sisi Kanan: First Win Spa */}
         <div className="relative w-full lg:w-1/2 min-h-[48vh] sm:min-h-[54vh] lg:h-full flex items-center justify-center lg:justify-start px-6 lg:pl-20 xl:pl-28 group">
-          {/* Teks Kanan */}
           <div
             ref={rightTextRef}
             className="relative z-10 flex flex-col items-center text-center max-w-[200px] sm:max-w-[230px] lg:max-w-[220px] -translate-y-2 sm:-translate-y-6 lg:-translate-y-12 will-change-transform"
@@ -151,7 +191,6 @@ export default function MonacoMaranelloSplit() {
             </div>
           </div>
 
-          {/* Gambar Kanan — Mundur ke tepi luar kanan agar simetris & tidak menabrak teks */}
           <div
             ref={rightImgRef}
             className="absolute right-0 bottom-0 h-[40vh] sm:h-[50vh] lg:h-[80vh] max-h-[700px] pointer-events-none flex items-end justify-end will-change-transform z-0"

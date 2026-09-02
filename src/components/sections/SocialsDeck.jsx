@@ -65,7 +65,7 @@ export default function SocialsDeck() {
         trigger: sectionRef.current,
         start: 'top 50%',
         end: 'bottom bottom',
-        onEnter:     () => document.body.classList.add('nav-theme-dark'),
+        onEnter: () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
       });
@@ -74,7 +74,7 @@ export default function SocialsDeck() {
       ScrollTrigger.create({
         trigger: deckContainerRef.current,
         start: 'top 60%', // Mengipas saat tumpukan kartu sudah benar-benar masuk dan terlihat di layar
-        onEnter:     () => setIsFanned(true),
+        onEnter: () => setIsFanned(true),
         onLeaveBack: () => setIsFanned(false),
       });
     }, sectionRef);
@@ -88,13 +88,6 @@ export default function SocialsDeck() {
       ref={sectionRef}
       className="relative z-10 w-full pt-28 pb-8 sm:pb-12 px-4 sm:px-8 md:px-12 bg-transparent text-white"
     >
-      {/* Atmospheric Scuderia Radial Glow */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-25 z-0"
-        style={{
-          background: 'radial-gradient(circle at 50% 15%, rgba(225,6,0,0.22) 0%, transparent 65%)',
-        }}
-      />
 
       {/* Editorial Header */}
       <div className="relative z-10 max-w-4xl mx-auto text-center mb-12 sm:mb-16">
@@ -117,7 +110,7 @@ export default function SocialsDeck() {
         - Wide Accordion Spread: Neighbor cards push away cleanly and return directly without overlapping/glitching
         - Subpixel Anti-Aliasing Lock: isolate + WebKit backface fix prevents border flickering
       */}
-      <div 
+      <div
         ref={deckContainerRef}
         onMouseLeave={() => setHoveredIndex(null)}
         className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[440px] sm:min-h-[540px] md:min-h-[600px] px-2"
@@ -200,11 +193,10 @@ export default function SocialsDeck() {
               >
                 {/* Card Container: ZERO OUTLINE / ZERO BORDER / ISOLATED STACK */}
                 <div
-                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0A0A] isolate transition-shadow duration-300 ${
-                    isHovered
-                      ? 'shadow-[0_35px_80px_rgba(0,0,0,0.9)]'
-                      : 'shadow-2xl'
-                  }`}
+                  className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0A0A0A] isolate transition-shadow duration-300 ${isHovered
+                    ? 'shadow-[0_35px_80px_rgba(0,0,0,0.9)]'
+                    : 'shadow-2xl'
+                    }`}
                   style={{
                     WebkitMaskImage: '-webkit-radial-gradient(white, black)',
                     maskImage: 'radial-gradient(white, black)',

@@ -24,10 +24,10 @@ export default function StorytellingScroll() {
         trigger: sectionRef.current,
         start: 'top 50%',
         end: 'bottom 50%',
-        onEnter:     () => document.body.classList.add('nav-theme-dark'),
+        onEnter: () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
-        onLeave:     () => document.body.classList.remove('nav-theme-dark'),
+        onLeave: () => document.body.classList.remove('nav-theme-dark'),
       });
 
       // 2. Left Sticky Header Reveal
@@ -130,22 +130,22 @@ export default function StorytellingScroll() {
   }, []);
 
   return (
-    <section 
+    <section
       id="story"
       ref={sectionRef}
-      className="relative w-full bg-[#080809] text-[#F8F9FA] z-30 pt-28 pb-32 md:pt-36 md:pb-44 px-6 sm:px-10 md:px-16 lg:px-24 border-t border-white/[0.04]"
+      className="relative w-full min-h-screen flex flex-col justify-center bg-[#080809] text-[#F8F9FA] z-20 pt-28 pb-32 md:pt-36 md:pb-44 px-6 sm:px-10 md:px-16 lg:px-24 border-t border-white/[0.04] shadow-[0_35px_60px_-15px_rgba(0,0,0,0.95)]"
     >
       <div className="w-full max-w-7xl mx-auto">
-        
+
         {/* Responsive Flex Layout: Dijamin Tidak Akan Bertabrakan */}
         <div className="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-16 xl:gap-20">
-          
+
           {/* ============================================================ */}
           {/* LEFT COLUMN: Dedicated Width, Sticky, Zero-Collision Header */}
           {/* ============================================================ */}
           <div className="w-full lg:w-[320px] xl:w-[360px] shrink-0 lg:sticky lg:top-32 lg:self-start">
             <div className="about-header-item space-y-4">
-              
+
               {/* Profile Tag */}
               <div className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
@@ -173,7 +173,7 @@ export default function StorytellingScroll() {
           {/* RIGHT COLUMN: Large Editorial Narrative & Count-Up Stats     */}
           {/* ============================================================ */}
           <div className="w-full lg:flex-1 lg:max-w-2xl space-y-12 sm:space-y-14">
-            
+
             {/* 1. Main Bio Paragraph with Blur-to-Focus Reveal */}
             <div className="about-bio-text">
               <p className="font-sans font-light text-xl sm:text-2xl md:text-3xl lg:text-[2rem] text-[#F8F9FA] leading-snug sm:leading-relaxed tracking-tight text-balance">

@@ -48,21 +48,15 @@ export default function ArchiveZoomParallax() {
   const scaleBottomCenter = useTransform(scrollYProgress, [0, 0.36, 0.42, 0.72, 1], [1, 2.6, 2.6, 1.7, 1.7], { clamp: true });
   const scaleBottomRight = useTransform(scrollYProgress, [0, 0.36, 0.42, 0.72, 1], [1, 2.5, 2.5, 1.6, 1.6], { clamp: true });
 
-  // Smooth Fade Out synced with the overlap rise (0.42 to 0.72)
+  // Smooth Fade Out synced with the overlap rise (habis lebih awal di 0.54)
   const canvasOpacity = useTransform(
     scrollYProgress,
-    [0, 0.42, 0.72, 1],
+    [0, 0.36, 0.54, 1],
     [1, 1, 0, 0],
     { clamp: true }
   );
 
-  // Seamless transition to solid black as footer slides up to eliminate white background bleeding
-  const stickyBgColor = useTransform(
-    scrollYProgress,
-    [0.35, 0.65],
-    ['#F9F9FB', '#000000'],
-    { clamp: true }
-  );
+  // Background beralih ke hitam pekat lebih cepat (0.30 -> 0.44)
 
   const pictures = [
     {
@@ -141,7 +135,7 @@ export default function ArchiveZoomParallax() {
     <section
       id="archive-parallax"
       ref={sectionRef}
-      className="relative bg-[#F9F9FB] w-full text-[#0A0A0A] transition-colors duration-500"
+      className="relative z-20 bg-[#F9F9FB] w-full text-[#0A0A0A] rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-35px_80px_rgba(0,0,0,0.14)] border-t border-black/[0.05] transition-colors duration-500"
     >
       {/* Clean Editorial Header */}
       <div className="relative min-h-[35vh] flex flex-col items-center justify-center text-center px-6 pt-24 pb-6 overflow-hidden">
@@ -158,7 +152,6 @@ export default function ArchiveZoomParallax() {
       {/* Sticky Parallax Container (h-[260vh]) */}
       <div ref={containerRef} className="relative h-[260vh] w-full">
         <motion.div
-          style={{ backgroundColor: stickyBgColor }}
           className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center"
         >
           <motion.div
