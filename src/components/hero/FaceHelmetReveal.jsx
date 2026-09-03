@@ -61,6 +61,7 @@ export default function FaceHelmetReveal() {
           pin: true,
           anticipatePin: 1,
           scrub: 0.6,
+          invalidateOnRefresh: true,
           onUpdate: (self) => {
             setScrollProgress(self.progress);
             if (self.progress > 0.08) {
@@ -80,15 +81,15 @@ export default function FaceHelmetReveal() {
 
       const getCropInset = () => {
         const w = window.innerWidth;
-        if (w < 640) return 'inset(0% 4% 0% 4% round 16px)';
-        if (w < 1024) return 'inset(0% 14% 0% 14% round 20px)';
+        if (w < 640) return 'inset(0% 6% 0% 6% round 18px)';
+        if (w < 768) return 'inset(0% 16% 0% 16% round 20px)';
         return 'inset(0% 26% 0% 26% round 24px)';
       };
 
       const getZoomScale = () => {
         const w = window.innerWidth;
-        if (w < 640) return 0.88;
-        if (w < 1024) return 0.80;
+        if (w < 640) return 0.82;
+        if (w < 768) return 0.76;
         return 0.72;
       };
 
@@ -96,8 +97,8 @@ export default function FaceHelmetReveal() {
       tl.to(
         heroCardRef.current,
         {
-          scale: getZoomScale(),
-          clipPath: getCropInset(),
+          scale: () => getZoomScale(),
+          clipPath: () => getCropInset(),
           backgroundColor: '#FFFFFF',
           boxShadow: '0 40px 120px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.15)',
           ease: 'power2.inOut',
