@@ -14,7 +14,6 @@ export default function MonacoMaranelloSplit() {
   const rightTextRef = useRef(null);
 
   useEffect(() => {
-    // Tidak memakai scoping sectionRef agar selector bisa membaca #archive-parallax di luar komponen
     const ctx = gsap.context(() => {
       // 1. Navbar Theme Switcher
       ScrollTrigger.create({
@@ -25,7 +24,13 @@ export default function MonacoMaranelloSplit() {
         onEnterBack: () => document.body.classList.remove('nav-theme-dark'),
       });
 
-      // 2. TIMELINE MASUK: Helm & teks meluncur dari tepi luar ke posisi tengah
+      // 2. Set Posisi Awal Eksplisit (Sekali saja saat mount)
+      gsap.set(leftImgRef.current, { xPercent: -100, opacity: 0 });
+      gsap.set(rightImgRef.current, { xPercent: 100, opacity: 0 });
+      gsap.set(leftTextRef.current, { x: -50, opacity: 0 });
+      gsap.set(rightTextRef.current, { x: 50, opacity: 0 });
+
+      // 3. TIMELINE MASUK: Meluncur masuk ke tengah saat scroll ke section Monaco
       const enterTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -37,68 +42,44 @@ export default function MonacoMaranelloSplit() {
       });
 
       enterTl
-        .fromTo(
-          leftImgRef.current,
-          { xPercent: -100, opacity: 0 },
-          { xPercent: -28, opacity: 1, ease: 'power2.out' },
-          0
-        )
-        .fromTo(
-          leftTextRef.current,
-          { x: -50, opacity: 0 },
-          { x: 0, opacity: 1, ease: 'power2.out' },
-          0
-        )
-        .fromTo(
-          rightImgRef.current,
-          { xPercent: 100, opacity: 0 },
-          { xPercent: 28, opacity: 1, ease: 'power2.out' },
-          0
-        )
-        .fromTo(
-          rightTextRef.current,
-          { x: 50, opacity: 0 },
-          { x: 0, opacity: 1, ease: 'power2.out' },
-          0
-        );
+        .to(leftImgRef.current, { xPercent: -28, opacity: 1, ease: 'power2.out' }, 0)
+        .to(leftTextRef.current, { x: 0, opacity: 1, ease: 'power2.out' }, 0)
+        .to(rightImgRef.current, { xPercent: 28, opacity: 1, ease: 'power2.out' }, 0)
+        .to(rightTextRef.current, { x: 0, opacity: 1, ease: 'power2.out' }, 0);
 
-      // 3. TIMELINE REVERSE: Begitu kartu Archive nongol dari bawah, elemen langsung mundur ke samping
+      // 4. TIMELINE KELUAR (REVERSE): Meluncur mundur ke luar saat ArchiveZoomParallax menimpa
       const archiveTarget = document.getElementById('archive-parallax');
 
       if (archiveTarget) {
         const exitTl = gsap.timeline({
           scrollTrigger: {
             trigger: archiveTarget,
-            start: 'top bottom', // Begitu lengkungan kartu arsip pertama kali nongol di bawah layar
-            end: 'top 55%',      // Begitu kartu naik 45%, animasi mundur sudah tuntas (terlihat jelas di layar)
+            start: 'top bottom', // Saat puncak Archive mulai nongol di bawah layar
+            end: 'top 50%',      // Selesai mundur sebelum Archive menutup penuh
             scrub: 0.6,
             invalidateOnRefresh: true,
           },
         });
 
         exitTl
-          .fromTo(
+          .to(
             leftImgRef.current,
-            { xPercent: -28, opacity: 1 },
-            { xPercent: -100, opacity: 0, ease: 'power2.in' },
+            { xPercent: -100, opacity: 0, ease: 'power2.in', immediateRender: false },
             0
           )
-          .fromTo(
+          .to(
             leftTextRef.current,
-            { x: 0, opacity: 1 },
-            { x: -80, opacity: 0, ease: 'power2.in' },
+            { x: -80, opacity: 0, ease: 'power2.in', immediateRender: false },
             0
           )
-          .fromTo(
+          .to(
             rightImgRef.current,
-            { xPercent: 28, opacity: 1 },
-            { xPercent: 100, opacity: 0, ease: 'power2.in' },
+            { xPercent: 100, opacity: 0, ease: 'power2.in', immediateRender: false },
             0
           )
-          .fromTo(
+          .to(
             rightTextRef.current,
-            { x: 0, opacity: 1 },
-            { x: 80, opacity: 0, ease: 'power2.in' },
+            { x: 80, opacity: 0, ease: 'power2.in', immediateRender: false },
             0
           );
       }
@@ -137,7 +118,7 @@ export default function MonacoMaranelloSplit() {
             <img
               src="/images/leclerc monaco side.png"
               alt="Monaco Helmet"
-              className="h-full w-auto max-w-none object-contain object-bottom drop-shadow-2xl"
+              className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
               onError={e => { e.currentTarget.src = '/images/charles-helmet-monaco.png'; }}
             />
           </div>
@@ -198,7 +179,7 @@ export default function MonacoMaranelloSplit() {
             <img
               src="/images/leclerc first win side-Photoroom.png"
               alt="Spa 2019 Helmet"
-              className="h-full w-auto max-w-none object-contain object-bottom drop-shadow-2xl"
+              className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
               onError={e => { e.currentTarget.src = '/images/leclerc first win side.png'; }}
             />
           </div>
