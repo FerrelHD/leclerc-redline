@@ -21,16 +21,15 @@ export default function StorytellingScroll() {
         onLeave: () => document.body.classList.remove('nav-theme-dark'),
       });
 
-      // 2. Cutout Frame & Car Cinematic Entrance
+      // 2. Cutout Frame Entrance (Animates wrapper without altering SVG coordinate geometry)
       gsap.fromTo(
         '.story-frame',
-        { opacity: 0, y: 35, scale: 0.96 },
+        { opacity: 0, y: 24 },
         {
           opacity: 1,
           y: 0,
-          scale: 1,
-          duration: 1.1,
-          ease: 'power3.out',
+          duration: 0.9,
+          ease: 'power2.out',
           scrollTrigger: {
             trigger: '.story-frame',
             start: 'top 85%',
@@ -38,18 +37,6 @@ export default function StorytellingScroll() {
           },
         }
       );
-
-      // Micro-parallax on the F1 car inside the viewport
-      gsap.to('.story-car-image', {
-        y: -15,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.story-frame',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.2,
-        },
-      });
 
       // 3. Header Telemetry Badges Stagger Drop
       gsap.fromTo(
@@ -244,7 +231,6 @@ export default function StorytellingScroll() {
                 </clipPath>
               </defs>
               <image
-                className="story-car-image will-change-transform"
                 clipPath="url(#clip-inverted)"
                 preserveAspectRatio="xMidYMid slice"
                 width="100%"
