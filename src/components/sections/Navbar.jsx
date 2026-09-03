@@ -1,17 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import MenuOverlay from './MenuOverlay';
 import MagneticEffect from '../ui/MagneticEffect';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showLogo, setShowLogo] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Hilang saat di-scroll melewati 80px (sesuaikan dengan tinggi hero jika perlu)
+      if (window.scrollY > 80) {
+        setShowLogo(false);
+      } else {
+        setShowLogo(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 select-none pointer-events-none">
         <div className="w-full px-4 sm:px-6 md:px-12 h-16 sm:h-20 flex items-center justify-between pointer-events-auto">
-          
-          {/* Left: Editorial CHARLES LECLERC Brand Typography (Auto Contrast via CSS) */}
+
+          {/* Left: Editorial CHARLES LECLERC Brand Typography */}
           <a href="#" className="flex flex-col group leading-tight nav-text transition-colors duration-500">
             <span className="font-editorial text-lg sm:text-2xl md:text-3xl tracking-tight leading-none font-semibold">
               CHARLES
@@ -21,17 +36,21 @@ export default function Navbar() {
             </span>
           </a>
 
-          {/* Center: Modern Slanted CL Monogram (Auto Contrast) */}
-          <div className="hidden sm:flex absolute left-1/2 -translate-x-1/2 top-4 sm:top-5 items-center justify-center pointer-events-none nav-text transition-colors duration-500">
+          {/* Center: Modern Slanted CL Monogram (Hilang saat scroll dengan blur & opacity) */}
+          <div
+            className={`hidden sm:flex absolute left-1/2 -translate-x-1/2 top-4 sm:top-5 items-center justify-center pointer-events-none nav-text transition-all duration-500 ease-out ${showLogo
+                ? 'opacity-100 blur-0 scale-100'
+                : 'opacity-0 blur-md scale-90 -translate-y-2'
+              }`}
+          >
             <div className="font-racing font-black italic text-2xl sm:text-3xl md:text-4xl tracking-tighter flex items-center leading-none">
               <span>C</span>
               <span className="-ml-0.5">L</span>
             </div>
           </div>
 
-          {/* Right: Monaco Scarlet Red Store Button & Contrast Hamburger Menu */}
+          {/* Right: Store Button & Hamburger Menu */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Official Store Button */}
             <MagneticEffect factor={0.2}>
               <a
                 href="https://store.ferrari.com/"
@@ -44,7 +63,6 @@ export default function Navbar() {
               </a>
             </MagneticEffect>
 
-            {/* Minimalist Dual-Bar Hamburger Button (Auto Contrast) */}
             <MagneticEffect factor={0.3}>
               <button
                 onClick={() => setMenuOpen(true)}
@@ -60,7 +78,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Fullscreen Interactive Menu Drawer Overlay */}
       <MenuOverlay isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
     </>
   );
