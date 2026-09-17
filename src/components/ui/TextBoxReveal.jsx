@@ -9,7 +9,7 @@ export default function TextBoxReveal({
   boxColor = "#E10600",
   className = "",
   as = "div",
-  once = false,
+  once = true,
 }) {
   const Component = as;
   const content = text || children;

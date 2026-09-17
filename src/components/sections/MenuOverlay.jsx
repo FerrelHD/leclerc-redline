@@ -21,6 +21,26 @@ function MenuItemLink({ item, isActive, onSelect, onHover }) {
       }`}
     >
       <div className="relative inline-flex overflow-hidden">
+        {/* Red Box Wipe (Sweeps in from Left, Sweeps out to Right only on Hover) */}
+        <motion.div
+          key={isHovered ? 'hovered' : 'idle'}
+          initial={{ scaleX: 0, originX: 0 }}
+          animate={
+            isHovered
+              ? {
+                  scaleX: [0, 1, 1, 0],
+                  originX: [0, 0, 1, 1],
+                }
+              : { scaleX: 0 }
+          }
+          transition={{
+            duration: 0.4,
+            times: [0, 0.45, 0.55, 1],
+            ease: [0.77, 0, 0.175, 1],
+          }}
+          className="absolute inset-0 z-20 pointer-events-none bg-[#E10600]"
+        />
+
         {/* Base Layer (Slides up and away on hover) */}
         <div className="flex">
           {letters.map((char, i) => (
@@ -304,43 +324,39 @@ export default function MenuOverlay({ isOpen, onClose }) {
               {/* RIGHT COLUMN: Restored Racing Typography Menu (HOME, ON TRACK, OFF TRACK, CALENDAR) */}
               <div className="w-full lg:col-span-7 flex flex-col items-start lg:items-end justify-center text-left lg:text-right gap-4 sm:gap-6">
                 
-                {/* Menu Links with Staggered Per-Character Bouncy Roll-Up Animation */}
+                {/* Menu Links with Staggered Per-Character Bouncy Roll-Up Animation & Hover Block Wipe */}
                 <nav className="flex flex-col gap-2 md:gap-3">
-                  {menuItems.map((item, index) => {
+                  {menuItems.map((item) => {
                     const isActive = activeItem === item.label;
                     return (
                       <div
                         key={item.label}
                         className="relative inline-flex items-center justify-start lg:justify-end"
                       >
-                        <TextBoxReveal delay={0.16 + index * 0.05} duration={0.35} boxColor="#E10600">
-                          <MenuItemLink
-                            item={item}
-                            isActive={isActive}
-                            onSelect={() => {
-                              setActiveItem(item.label);
-                              onClose();
-                            }}
-                            onHover={() => setActiveItem(item.label)}
-                          />
-                        </TextBoxReveal>
+                        <MenuItemLink
+                          item={item}
+                          isActive={isActive}
+                          onSelect={() => {
+                            setActiveItem(item.label);
+                            onClose();
+                          }}
+                          onHover={() => setActiveItem(item.label)}
+                        />
                       </div>
                     );
                   })}
                 </nav>
 
                 {/* Scuderia Ferrari Laurel Wreath + Helmet Badge */}
-                <div className="flex flex-col items-start lg:items-end mt-2 text-left lg:text-right">
-                  <TextBoxReveal delay={0.42} duration={0.35} boxColor="#E10600">
-                    <div className="flex items-center gap-2 text-neutral-300">
-                      <svg viewBox="0 0 60 40" className="w-11 h-7" fill="none">
-                        <path d="M 12,28 C 8,22 8,14 14,8 C 15,12 16,16 18,20" stroke="#E10600" strokeWidth="1.5" strokeLinecap="round" />
-                        <path d="M 48,28 C 52,22 52,14 46,8 C 45,12 44,16 42,20" stroke="#E10600" strokeWidth="1.5" strokeLinecap="round" />
-                        <ellipse cx="30" cy="18" rx="10" ry="9" stroke="#FFFFFF" strokeWidth="1.5" />
-                        <path d="M 22,18 C 24,14 36,14 38,18 Z" fill="#E10600" />
-                        <line x1="20" y1="22" x2="40" y2="22" stroke="#FFFFFF" strokeWidth="1.4" />
-                      </svg>
-                      <span className="text-[10px] font-mono-telemetry uppercase tracking-wider text-neutral-300 font-bold">
+                <div className="flex flex-col items-start lg:items-end mt-3 text-left lg:text-right">
+                  <TextBoxReveal delay={0.42} duration={0.35} boxColor="#E10600" once>
+                    <div className="flex items-center gap-2.5 text-neutral-300">
+                      <img
+                        src="/images/racing%20helmet%20laurel%20emblem.png"
+                        alt="Racing Helmet Laurel Emblem"
+                        className="h-8 sm:h-9 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                      />
+                      <span className="text-[10px] sm:text-[11px] font-mono-telemetry uppercase tracking-wider text-neutral-300 font-bold">
                         SCUDERIA FERRARI SINCE 2019
                       </span>
                     </div>
