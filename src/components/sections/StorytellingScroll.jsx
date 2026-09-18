@@ -248,10 +248,10 @@ export default function StorytellingScroll() {
               <div className="story-stat-item flex items-center gap-2 text-xs sm:text-sm">
                 <span
                   className="stat-count text-[#E10600] font-racing font-bold text-base sm:text-xl md:text-2xl"
-                  data-target="8"
+                  data-target="9"
                   data-pad="true"
                 >
-                  08
+                  09
                 </span>
                 <span className="text-neutral-400 font-mono-telemetry uppercase text-[11px] sm:text-xs">
                   Grand Prix Wins
@@ -261,10 +261,10 @@ export default function StorytellingScroll() {
               <div className="story-stat-item flex items-center gap-2 text-xs sm:text-sm">
                 <span
                   className="stat-count text-[#E10600] font-racing font-bold text-base sm:text-xl md:text-2xl"
-                  data-target="26"
+                  data-target="27"
                   data-pad="false"
                 >
-                  26
+                  27
                 </span>
                 <span className="text-neutral-400 font-mono-telemetry uppercase text-[11px] sm:text-xs">
                   Pole Positions
@@ -277,10 +277,10 @@ export default function StorytellingScroll() {
               <div className="story-stat-item flex items-baseline lg:justify-end gap-1.5 sm:gap-2 mb-0.5">
                 <span
                   className="stat-count text-[#E10600] font-racing font-bold text-xl sm:text-2xl lg:text-3xl"
-                  data-target="43"
+                  data-target="54"
                   data-pad="false"
                 >
-                  43
+                  54
                 </span>
                 <span className="text-white font-racing uppercase tracking-tight text-base sm:text-lg lg:text-xl">
                   PODIUMS
@@ -289,10 +289,10 @@ export default function StorytellingScroll() {
               <div className="story-stat-item flex items-center lg:justify-end gap-1.5 text-xs text-neutral-400 font-mono-telemetry">
                 <span
                   className="stat-count text-white font-bold"
-                  data-target="10"
+                  data-target="13"
                   data-pad="false"
                 >
-                  10
+                  13
                 </span>
                 <span className="text-neutral-400 uppercase text-[11px] sm:text-xs">
                   Fastest Laps

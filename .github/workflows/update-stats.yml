@@ -1,0 +1,37 @@
+name: Auto Update Charles Leclerc Stats
+
+on:
+  schedule:
+    # Run every Monday at 06:00 UTC (after race weekend)
+    - cron: '0 6 * * 1'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch and update Leclerc stats
+        run: node scripts/update-stats.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/charlesData.js src/components/sections/StorytellingScroll.jsx
+          if git diff --staged --quiet; then
+            echo "No stats changes detected. Everything is up to date."
+          else
+            git commit -m "chore: auto-update Charles Leclerc F1 career stats"
+            git push origin main
+          fi

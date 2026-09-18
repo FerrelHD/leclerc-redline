@@ -12,11 +12,12 @@ export const driverProfile = {
     status: "HOME RACE"
   },
   stats: {
-    poles: "26",
-    podiums: "43",
-    wins: "8",
+    poles: "27",
+    podiums: "54",
+    wins: "9",
     firstEntry: "2018",
-    points: "1450+"
+    fastestLaps: "13",
+    points: "1839"
   }
 };
 
