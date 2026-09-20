@@ -23,9 +23,12 @@ const sponsorList = [
 
 const pageLinks = [
   { label: 'HOME', href: '#hero' },
-  { label: 'ON TRACK', href: '#story' },
-  { label: 'OFF TRACK', href: '#archive-parallax' },
+  { label: 'STORY', href: '#story' },
+  { label: 'PODIUMS', href: '#podiums' },
+  { label: 'DUAL IDENTITY', href: '#monaco-maranello' },
   { label: 'CALENDAR', href: '#calendar' },
+  { label: 'ARCHIVE', href: '#archive-parallax' },
+  { label: 'SOCIALS', href: '#socials-deck' },
   { label: 'STORE', href: 'https://store.ferrari.com/', external: true },
 ];
 
@@ -293,7 +296,7 @@ export default function Footer() {
               </span>
               <ul
                 ref={pagesListRef}
-                className="flex flex-col gap-2.5 sm:gap-3.5 text-base sm:text-lg md:text-xl font-racing font-black tracking-tight uppercase"
+                className="flex flex-col gap-2 sm:gap-2.5 text-sm sm:text-base md:text-lg font-racing font-black tracking-tight uppercase"
               >
                 {pageLinks.map((item) => {
                   const isHovered = hoveredPage === item.label;
@@ -305,6 +308,15 @@ export default function Footer() {
                         href={item.href}
                         target={item.external ? '_blank' : undefined}
                         rel={item.external ? 'noopener noreferrer' : undefined}
+                        onClick={(e) => {
+                          if (!item.external) {
+                            e.preventDefault();
+                            const target = document.querySelector(item.href);
+                            if (target) {
+                              target.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }
+                        }}
                         onMouseEnter={() => setHoveredPage(item.label)}
                         onMouseLeave={() => setHoveredPage(null)}
                         className={`inline-flex items-center gap-2 transition-all duration-300 ease-out will-change-transform ${isHovered
