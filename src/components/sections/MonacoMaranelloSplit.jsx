@@ -47,15 +47,15 @@ export default function MonacoMaranelloSplit() {
         .to(rightImgRef.current, { xPercent: 28, opacity: 1, ease: 'power2.out' }, 0)
         .to(rightTextRef.current, { x: 0, opacity: 1, ease: 'power2.out' }, 0);
 
-      // 4. TIMELINE KELUAR (REVERSE): Meluncur mundur ke luar saat ArchiveZoomParallax menimpa
-      const archiveTarget = document.getElementById('archive-parallax');
+      // 4. TIMELINE KELUAR (REVERSE): Meluncur mundur ke luar saat section berikutnya menimpa
+      const nextTarget = document.getElementById('calendar') || document.getElementById('archive-parallax');
 
-      if (archiveTarget) {
+      if (nextTarget) {
         const exitTl = gsap.timeline({
           scrollTrigger: {
-            trigger: archiveTarget,
-            start: 'top bottom', // Saat puncak Archive mulai nongol di bawah layar
-            end: 'top 50%',      // Selesai mundur sebelum Archive menutup penuh
+            trigger: nextTarget,
+            start: 'top bottom', // Saat puncak section berikutnya mulai nongol di bawah layar
+            end: 'top 50%',      // Selesai mundur sebelum section berikutnya menutup penuh
             scrub: 0.6,
             invalidateOnRefresh: true,
           },
@@ -139,7 +139,7 @@ export default function MonacoMaranelloSplit() {
             </div>
             <div className="overflow-visible mt-4 sm:mt-5 flex justify-center">
               <MagneticEffect factor={0.25}>
-                <a href="#hero" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
+                <a href="#podiums" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
                   <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
                 </a>
               </MagneticEffect>
@@ -165,7 +165,7 @@ export default function MonacoMaranelloSplit() {
             </div>
             <div className="overflow-visible mt-4 sm:mt-5 flex justify-center">
               <MagneticEffect factor={0.25}>
-                <a href="#hero" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
+                <a href="#podiums" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
                   <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
                 </a>
               </MagneticEffect>

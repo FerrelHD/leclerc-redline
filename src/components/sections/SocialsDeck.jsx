@@ -12,42 +12,49 @@ const socialCards = [
     title: 'Spa 2019 First F1 Victory',
     tag: '@scuderiaferrari',
     image: '/images/leclerc gallery/SPA 2019 Leclerc Potrait.jpg',
+    url: 'https://www.instagram.com/scuderiaferrari/',
   },
   {
     id: 1,
     title: 'Maranello Paddock Walk',
     tag: '@scuderiaferrari',
     image: '/images/leclerc2.jpg',
+    url: 'https://www.instagram.com/scuderiaferrari/',
   },
   {
     id: 2,
     title: 'Spielberg Red Bull Ring Win',
     tag: '@charles_leclerc',
     image: '/images/leclerc gallery/Austria 2022 Potrait.jpg',
+    url: 'https://www.instagram.com/charles_leclerc/',
   },
   {
     id: 3,
     title: 'Gladiator in Red #16',
     tag: '@charles_leclerc',
     image: '/images/leclercmain.jpg',
+    url: 'https://www.instagram.com/charles_leclerc/',
   },
   {
     id: 4,
     title: 'Monaco GP Home Victory 2024',
     tag: '@charles_leclerc',
     image: '/images/celebration.jpg',
+    url: 'https://www.instagram.com/charles_leclerc/',
   },
   {
     id: 5,
     title: 'Bahrain Grand Slam Victory',
     tag: '@scuderiaferrari',
     image: '/images/leclerc gallery/Bahrain 2022 Potrait.jpg',
+    url: 'https://www.instagram.com/scuderiaferrari/',
   },
   {
     id: 6,
     title: 'Behind The Visor',
     tag: '@charles_leclerc',
     image: '/images/leclerc3.jpg',
+    url: 'https://www.instagram.com/charles_leclerc/',
   },
 ];
 
@@ -166,7 +173,14 @@ export default function SocialsDeck() {
               <motion.div
                 key={card.id}
                 onMouseEnter={() => isFanned && setHoveredIndex(i)}
-                onClick={() => isFanned && setHoveredIndex(hoveredIndex === i ? null : i)}
+                onClick={() => {
+                  if (!isFanned) return;
+                  if (hoveredIndex === i && card.url) {
+                    window.open(card.url, '_blank', 'noopener,noreferrer');
+                  } else {
+                    setHoveredIndex(hoveredIndex === i ? null : i);
+                  }
+                }}
                 animate={{
                   x: targetX,
                   y: targetY,
@@ -212,6 +226,14 @@ export default function SocialsDeck() {
 
                   {/* Vignette Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent pointer-events-none" />
+
+                  {/* Tap to Open Indicator — visible only when card is expanded/hovered */}
+                  {isHovered && (
+                    <div className="absolute top-2.5 sm:top-3.5 left-2.5 sm:left-3.5 flex items-center gap-1 pointer-events-none">
+                      <ArrowUpRight className="w-2.5 h-2.5 text-white/70" />
+                      <span className="font-mono-telemetry text-[7px] sm:text-[8px] text-white/70 uppercase tracking-wider">open</span>
+                    </div>
+                  )}
 
                   {/* Instagram Badge */}
                   <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white pointer-events-none">

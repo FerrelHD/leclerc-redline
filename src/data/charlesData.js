@@ -6,10 +6,10 @@ export const driverProfile = {
   country: "Monaco",
   flag: "🇲🇨",
   nextRace: {
-    name: "MONACO GP",
-    circuit: "Circuit de Monaco",
-    date: "MAY 2026",
-    status: "HOME RACE"
+    name: "AZERBAIJAN GP",
+    circuit: "Baku City Circuit",
+    date: "20 SEP 2026",
+    status: "RACE DAY"
   },
   stats: {
     poles: "27",

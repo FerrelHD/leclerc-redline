@@ -111,6 +111,9 @@ export default function MenuOverlay({ isOpen, onClose }) {
     { label: 'STORY', href: '#story' },
     { label: 'PODIUMS', href: '#podiums' },
     { label: 'DUAL IDENTITY', href: '#monaco-maranello' },
+    { label: 'CALENDAR', href: '#calendar' },
+    { label: 'ARCHIVE', href: '#archive-parallax' },
+    { label: 'SOCIALS', href: '#socials-deck' },
   ];
 
   // Responsive ease-out for opening, snappy ease-in for closing

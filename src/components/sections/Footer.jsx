@@ -25,7 +25,7 @@ const pageLinks = [
   { label: 'HOME', href: '#hero' },
   { label: 'ON TRACK', href: '#story' },
   { label: 'OFF TRACK', href: '#archive-parallax' },
-  { label: 'CALENDAR', href: '#podiums' },
+  { label: 'CALENDAR', href: '#calendar' },
   { label: 'STORE', href: 'https://store.ferrari.com/', external: true },
 ];
 

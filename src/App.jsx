@@ -8,6 +8,7 @@ import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
 import StorytellingScroll from './components/sections/StorytellingScroll';
 import PodiumGallery from './components/sections/PodiumGallery';
 import MonacoMaranelloSplit from './components/sections/MonacoMaranelloSplit';
+import F1Calendar from './components/sections/F1Calendar';
 import ArchiveZoomParallax from './components/sections/ArchiveZoomParallax';
 import SocialsDeck from './components/sections/SocialsDeck';
 import Footer from './components/sections/Footer';
@@ -105,7 +106,10 @@ export default function App() {
         {/* Section 4: Dual Identity - Monaco Roots vs Maranello Spirit */}
         <MonacoMaranelloSplit />
 
-        {/* Section 5: The Raw Archive - 3D Editorial Zoom Parallax */}
+        {/* Section 5: Official F1 2026 World Championship Calendar */}
+        <F1Calendar />
+
+        {/* Section 6: The Raw Archive - 3D Editorial Zoom Parallax */}
         <ArchiveZoomParallax />
 
       </main>

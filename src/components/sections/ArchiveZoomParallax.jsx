@@ -63,6 +63,7 @@ export default function ArchiveZoomParallax() {
       id: 'center',
       src: '/images/leclercmain.jpg',
       alt: 'Charles Leclerc Center Focus',
+      label: 'CHARLES LECLERC // #16',
       scale: scaleCenter,
       wrapperStyle: { width: '23vw', height: '34vh' },
       imgStyle: 'object-top object-cover',
@@ -73,6 +74,7 @@ export default function ArchiveZoomParallax() {
       id: 'top',
       src: '/images/pitstop.jpg',
       alt: 'Scuderia Ferrari Pitstop',
+      label: 'SF PIT CREW // MARANELLO',
       scale: scaleTop,
       wrapperStyle: { width: '34vw', height: '28vh', top: '-34vh', left: '0vw' },
       imgStyle: 'object-center object-cover',
@@ -83,6 +85,7 @@ export default function ArchiveZoomParallax() {
       id: 'left',
       src: '/images/steering-wheel.jpg',
       alt: 'F1 Steering Wheel Cockpit',
+      label: 'COCKPIT // STEERING WHEEL',
       scale: scaleLeft,
       wrapperStyle: { width: '18vw', height: '44vh', top: '-8vh', left: '-31vw' },
       imgStyle: 'object-center object-cover',
@@ -93,6 +96,7 @@ export default function ArchiveZoomParallax() {
       id: 'right',
       src: '/images/sparks.jpg',
       alt: 'Ferrari SF-24 Sparks',
+      label: 'FERRARI SF-24 // SPARKS',
       scale: scaleRight,
       wrapperStyle: { width: '24vw', height: '26vh', top: '-2vh', left: '32vw' },
       imgStyle: 'object-center object-cover',
@@ -103,6 +107,7 @@ export default function ArchiveZoomParallax() {
       id: 'bottom-left',
       src: '/images/monaco-track.jpg',
       alt: 'Ferrari F1 Car Track Action',
+      label: 'MONACO // ON TRACK',
       scale: scaleBottomLeft,
       wrapperStyle: { width: '32vw', height: '24vh', top: '30vh', left: '-28vw' },
       imgStyle: 'object-[50%_90%] object-cover',
@@ -113,6 +118,7 @@ export default function ArchiveZoomParallax() {
       id: 'bottom-center',
       src: '/images/celebration.jpg',
       alt: 'Charles Podium Triumph',
+      label: 'PODIUM // MONACO 2024',
       scale: scaleBottomCenter,
       wrapperStyle: { width: '20vw', height: '25vh', top: '31vh', left: '6vw' },
       imgStyle: 'object-center object-cover',
@@ -123,6 +129,7 @@ export default function ArchiveZoomParallax() {
       id: 'bottom-right',
       src: '/images/tifosi.jpg',
       alt: 'Tifosi Red Sea Monza',
+      label: 'TIFOSI // MONZA',
       scale: scaleBottomRight,
       wrapperStyle: { width: '16vw', height: '18vh', top: '25vh', left: '29vw' },
       imgStyle: 'object-center object-cover',
@@ -170,7 +177,7 @@ export default function ArchiveZoomParallax() {
                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
                 >
                   <div
-                    className={`relative pointer-events-auto overflow-hidden bg-white ${pic.shadow}`}
+                    className={`group relative pointer-events-auto overflow-hidden bg-white ${pic.shadow}`}
                     style={{
                       ...pic.wrapperStyle,
                       zIndex: pic.zIndex,
@@ -185,6 +192,12 @@ export default function ArchiveZoomParallax() {
                       loading="eager"
                       decoding="async"
                     />
+                    {/* Telemetry label — fades in on hover */}
+                    <div className="absolute inset-x-0 bottom-0 px-2 py-1.5 bg-gradient-to-t from-black/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="font-mono-telemetry text-[8px] text-white/85 uppercase tracking-widest leading-none">
+                        {pic.label}
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               ))}
