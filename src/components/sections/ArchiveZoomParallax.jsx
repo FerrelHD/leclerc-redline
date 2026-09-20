@@ -282,33 +282,33 @@ export default function ArchiveZoomParallax() {
             {/* 4 Optical Corner Viewfinder Brackets */}
             <div
               ref={bracketTL}
-              className="absolute top-8 left-8 sm:top-12 sm:left-12 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-l-2 border-[#E10600] will-change-transform z-20"
+              className="absolute top-6 left-6 sm:top-10 sm:left-10 w-7 h-7 sm:w-9 sm:h-9 border-t-2 border-l-2 border-[#E10600] will-change-transform z-20"
             />
             <div
               ref={bracketTR}
-              className="absolute top-8 right-8 sm:top-12 sm:right-12 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-r-2 border-[#E10600] will-change-transform z-20"
+              className="absolute top-6 right-6 sm:top-10 sm:right-10 w-7 h-7 sm:w-9 sm:h-9 border-t-2 border-r-2 border-[#E10600] will-change-transform z-20"
             />
             <div
               ref={bracketBL}
-              className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-l-2 border-[#E10600] will-change-transform z-20"
+              className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10 w-7 h-7 sm:w-9 sm:h-9 border-b-2 border-l-2 border-[#E10600] will-change-transform z-20"
             />
             <div
               ref={bracketBR}
-              className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-r-2 border-[#E10600] will-change-transform z-20"
+              className="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 w-7 h-7 sm:w-9 sm:h-9 border-b-2 border-r-2 border-[#E10600] will-change-transform z-20"
             />
 
-            {/* Telemetry HUD Data Blocks */}
+            {/* Telemetry HUD Data Blocks (Spaced comfortably inside viewfinder brackets) */}
             <div
               ref={hudDataRef}
               className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-between pointer-events-none z-20 will-change-transform text-[9px] sm:text-[11px] font-mono-telemetry tracking-[0.25em] text-neutral-400"
             >
               {/* Top Telemetry Row */}
               <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5 pl-5 pt-2 sm:pl-8 sm:pt-3">
                   <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
                   <span className="text-white font-bold tracking-[0.28em]">REC [RAW 4K // 120 FPS]</span>
                 </div>
-                <div className="text-right">
+                <div className="text-right pr-5 pt-2 sm:pr-8 sm:pt-3">
                   <span className="text-[#E10600] font-bold">APERTURE:</span> ƒ/1.2 → ƒ/16<br />
                   <span className="text-neutral-500 text-[8px] sm:text-[9px]">SHUTTER 1/8000s · ISO 50</span>
                 </div>
@@ -316,11 +316,11 @@ export default function ArchiveZoomParallax() {
 
               {/* Bottom Telemetry Row */}
               <div className="flex justify-between items-end">
-                <div>
+                <div className="pl-5 pb-2 sm:pl-8 sm:pb-3">
                   <span className="text-[#E10600] font-bold">TRACKING:</span> AF-C LOCKED<br />
                   <span className="text-white font-semibold">CHARLES LECLERC // #16</span>
                 </div>
-                <div className="text-right">
+                <div className="text-right pr-5 pb-2 sm:pr-8 sm:pb-3">
                   <span className="text-neutral-400">FRAME #016</span><br />
                   <span className="text-[#E10600] font-bold">EXP ARMED</span>
                 </div>
