@@ -229,12 +229,12 @@ export default function MenuOverlay({ isOpen, onClose }) {
             {/* Center Stage: Masonry Photo Collage (Left) & Restored Racing Menu Navigation (Right) */}
             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center my-auto">
               
-              {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Lando Norris Editorial Style) */}
-              <div className="hidden md:grid lg:col-span-5 grid-cols-2 gap-3 lg:gap-4 max-w-[320px] lg:max-w-[360px] xl:max-w-[400px]">
+              {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Editorial Sharp Grid) */}
+              <div className="hidden md:grid lg:col-span-5 grid-cols-2 gap-4 lg:gap-5 max-w-[380px] lg:max-w-[460px] xl:max-w-[520px] w-full">
                 
                 {/* Column 1 (Cards 1 & 3): Drifting gently up & down */}
                 <motion.div
-                  className="flex flex-col gap-3.5 lg:gap-5"
+                  className="flex flex-col gap-4 lg:gap-5"
                   animate={{
                     y: [-6, 6, -6],
                   }}
@@ -249,15 +249,15 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.18 }}
-                    whileHover={{ scale: 1.03, y: -4 }}
-                    className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    whileHover={{ scale: 1.02, y: -3 }}
+                    className="relative aspect-[4/5] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc1.jpg"
                       alt="Charles Leclerc Helmet"
-                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-[#101114]/20 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
 
                   {/* Card 3: Charles Cockpit Close-up (Square) */}
@@ -265,21 +265,21 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
-                    whileHover={{ scale: 1.03, y: -4 }}
-                    className="relative aspect-square rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    whileHover={{ scale: 1.02, y: -3 }}
+                    className="relative aspect-square overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc3.jpg"
                       alt="Charles Leclerc Cockpit"
-                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-[#101114]/20 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
                 </motion.div>
 
                 {/* Column 2 (Cards 2 & 4): Staggered Downward Offset & Reverse Drift */}
                 <motion.div
-                  className="flex flex-col gap-3.5 lg:gap-5 -translate-y-6 sm:-translate-y-8"
+                  className="flex flex-col gap-4 lg:gap-5 -translate-y-6 sm:-translate-y-8"
                   animate={{
                     y: [6, -6, 6],
                   }}
@@ -294,15 +294,15 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.24 }}
-                    whileHover={{ scale: 1.03, y: -4 }}
-                    className="relative aspect-square rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    whileHover={{ scale: 1.02, y: -3 }}
+                    className="relative aspect-square overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc2.jpg"
                       alt="Charles Leclerc Cockpit Stand"
-                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-[#101114]/20 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
 
                   {/* Card 4: Charles Helmet Motion (Tall Portrait) */}
@@ -310,15 +310,15 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.36 }}
-                    whileHover={{ scale: 1.03, y: -4 }}
-                    className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#181A20] border border-white/10 hover:border-[#E10600]/60 shadow-xl cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    whileHover={{ scale: 1.02, y: -3 }}
+                    className="relative aspect-[4/5] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc4.jpg"
                       alt="Charles Leclerc Helmet Motion"
-                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
+                      className="w-full h-full object-cover grayscale contrast-[1.1] group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-105 transition-all duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-[#101114]/25 group-hover:bg-transparent transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-[#101114]/20 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
                 </motion.div>
 

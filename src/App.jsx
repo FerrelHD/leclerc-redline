@@ -12,7 +12,6 @@ import F1Calendar from './components/sections/F1Calendar';
 import ArchiveZoomParallax from './components/sections/ArchiveZoomParallax';
 import SocialsDeck from './components/sections/SocialsDeck';
 import Footer from './components/sections/Footer';
-import CustomCursor from './components/ui/CustomCursor';
 import LoadingScreen from './components/ui/LoadingScreen';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -80,9 +79,6 @@ export default function App() {
     <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA]">
       {/* Luxury Motorsport Telemetry Preloader (Aperture Iris Entrance) */}
       <LoadingScreen onLoaded={() => ScrollTrigger.refresh()} />
-
-      {/* Precision Dynamic Cursor */}
-      <CustomCursor />
 
       {/* Noise Texture Overlay */}
       <div className="noise-overlay" />

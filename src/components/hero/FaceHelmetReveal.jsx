@@ -224,7 +224,7 @@ export default function FaceHelmetReveal() {
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative w-full h-full overflow-hidden bg-[#FFFFFF] flex flex-col justify-between origin-center cursor-crosshair"
+          className="relative w-full h-full overflow-hidden bg-[#FFFFFF] flex flex-col justify-between origin-center"
           style={{
             clipPath: 'inset(0% 0% 0% 0% round 0px)',
           }}

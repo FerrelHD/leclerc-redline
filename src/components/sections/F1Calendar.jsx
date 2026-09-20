@@ -209,7 +209,7 @@ export default function F1Calendar() {
     }
   }, [hoveredRace?.round]);
 
-  // Navbar Theme Synchronization
+  // Navbar Theme Synchronization (White text on Red background)
   useEffect(() => {
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
@@ -240,29 +240,29 @@ export default function F1Calendar() {
     <section
       id="calendar"
       ref={sectionRef}
-      className="relative z-20 w-full bg-[#080809] text-[#F8F9FA] pt-24 sm:pt-32 pb-28 sm:pb-36 px-6 sm:px-10 md:px-14 lg:px-20 select-none border-t border-white/[0.08]"
+      className="relative z-20 w-full bg-[#C50500] text-white pt-24 sm:pt-32 pb-28 sm:pb-36 px-6 sm:px-10 md:px-14 lg:px-20 select-none border-t border-white/10"
     >
       <div className="relative z-10 w-full">
         
         {/* ================================================================= */}
-        {/* CLEAN MODERN MOTORSPORT HEADER                                   */}
+        {/* ROSSO CORSA MOTORSPORT HEADER                                     */}
         {/* ================================================================= */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-12 border-b border-white/[0.08]">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-12 border-b border-white/20">
           <div className="max-w-xl">
             <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-2 h-2 rounded-full bg-[#E10600] shadow-[0_0_8px_#E10600] animate-pulse" />
-              <span className="font-mono-telemetry text-xs tracking-[0.28em] uppercase text-[#E10600] font-bold">
+              <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#ffffff] animate-pulse" />
+              <span className="font-mono-telemetry text-xs tracking-[0.28em] uppercase text-white/90 font-bold">
                 FIA FORMULA ONE // SEASON 2026
               </span>
             </div>
 
-            <h2 className="font-condensed font-extrabold text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight uppercase leading-none bg-gradient-to-b from-[#FFFFFF] via-[#E5E7EB] to-[#6B7280] bg-clip-text text-transparent drop-shadow-[0_4px_16px_rgba(255,255,255,0.08)]">
+            <h2 className="font-condensed font-extrabold text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight uppercase leading-none text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
               CALENDAR
             </h2>
 
             <div className="mt-3 flex items-center gap-3">
-              <span className="h-[2px] w-6 bg-[#E10600]" />
-              <span className="font-mono-telemetry text-xs sm:text-sm uppercase tracking-[0.24em] text-neutral-400 font-medium">
+              <span className="h-[2px] w-8 bg-[#FFE500]" />
+              <span className="font-mono-telemetry text-xs sm:text-sm uppercase tracking-[0.24em] text-white/80 font-medium">
                 24 GRAND PRIX // RACING SCHEDULE
               </span>
             </div>
@@ -270,13 +270,13 @@ export default function F1Calendar() {
 
           {/* Filter Bar & Season Stats */}
           <div className="flex flex-wrap items-center gap-4 text-xs font-mono-telemetry">
-            <div className="flex items-center gap-3 text-neutral-400">
-              <span className="text-[#E10600] font-semibold">{upcomingCount} UPCOMING</span>
-              <span className="text-white/20">•</span>
+            <div className="flex items-center gap-3 text-white/85">
+              <span className="text-[#FFE500] font-bold">{upcomingCount} UPCOMING</span>
+              <span className="text-white/30">•</span>
               <span>{completedCount} FINISHED</span>
             </div>
 
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-white/[0.03] border border-white/[0.08]">
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-black/20 border border-white/20 backdrop-blur-sm">
               {[
                 { key: 'UPCOMING', label: 'UPCOMING' },
                 { key: 'ALL', label: 'ALL' },
@@ -287,8 +287,8 @@ export default function F1Calendar() {
                   onClick={() => setActiveFilter(key)}
                   className={`px-3.5 py-1.5 rounded font-mono-telemetry text-[11px] uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                     activeFilter === key
-                      ? 'bg-white text-black font-bold shadow-md'
-                      : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
+                      ? 'bg-white text-[#C50500] font-black shadow-md'
+                      : 'text-white/75 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   {label}
@@ -299,32 +299,32 @@ export default function F1Calendar() {
         </div>
 
         {/* ========================================================================= */}
-        {/* PILIHAN 2: PURE HOLOGRAPHIC FLOATING SVG TRACK (Cardless)                */}
+        {/* PURE HOLOGRAPHIC FLOATING SVG TRACK (Cardless Minimalist White Vector)   */}
         {/* ========================================================================= */}
         {!isCoarsePointer && (
           <div
             ref={floatingTrackRef}
             className="pointer-events-none fixed top-0 left-0 z-50 -translate-x-1/2 -translate-y-1/2 opacity-0 will-change-transform"
-            style={{ width: '340px' }}
+            style={{ width: '320px' }}
           >
-            {/* Pure Floating Ambient Glow (No Card / Cardless) */}
+            {/* Pure Floating Technical Minimalist Track */}
             <div className="relative flex flex-col items-center justify-center p-4">
               
-              {/* Radial red atmospheric bloom */}
-              <div className="absolute inset-0 -z-10 rounded-full bg-[radial-gradient(circle,rgba(225,6,0,0.28)_0%,rgba(0,0,0,0)_70%)] blur-2xl pointer-events-none" />
+              {/* Subtle diffused shadow backing */}
+              <div className="absolute inset-4 -z-10 rounded-full bg-black/30 blur-2xl pointer-events-none" />
 
-              {/* Vektor SVG Sirkuit F1 Asli */}
+              {/* Vektor SVG Sirkuit F1 Asli (Pure White Technical Line) */}
               {hoveredRace && (
                 <div ref={trackSvgInnerRef} className="w-full flex flex-col items-center">
-                  <div className="w-64 h-64 flex items-center justify-center">
+                  <div className="w-60 h-60 flex items-center justify-center">
                     <svg
                       viewBox={hoveredRace.viewBox}
-                      className="w-full h-full max-h-56 filter drop-shadow-[0_0_16px_rgba(225,6,0,0.85)] drop-shadow-[0_0_3px_#E10600]"
+                      className="w-full h-full max-h-52 filter drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
                     >
                       <path
                         d={hoveredRace.svgPath}
                         fill="none"
-                        stroke="#E10600"
+                        stroke="#FFFFFF"
                         strokeWidth={hoveredRace.strokeWidth || 9}
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -334,13 +334,13 @@ export default function F1Calendar() {
 
                   {/* Minimal Floating Telemetry HUD Ribbon */}
                   <div className="mt-2 text-center pointer-events-none">
-                    <div className="font-racing font-bold text-xs uppercase tracking-widest text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                    <div className="font-racing font-bold text-xs uppercase tracking-widest text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
                       {hoveredRace.circuit}
                     </div>
-                    <div className="font-mono-telemetry text-[10px] text-neutral-300 tracking-wider mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    <div className="font-mono-telemetry text-[10px] text-white/80 tracking-wider mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
                       {hoveredRace.specs?.length} • {hoveredRace.specs?.turns} TURNS • {hoveredRace.specs?.laps} LAPS
                     </div>
-                    <div className="font-mono-telemetry text-[10px] text-[#FFE500] font-semibold tracking-wider mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    <div className="font-mono-telemetry text-[10px] text-[#FFE500] font-bold tracking-wider mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                       {hoveredRace.specs?.stat}
                     </div>
                   </div>
@@ -351,13 +351,13 @@ export default function F1Calendar() {
         )}
 
         {/* ========================================================================= */}
-        {/* MASSIVE EDITORIAL LIST (Velour Productions Style - Full Width)             */}
+        {/* MASSIVE EDITORIAL LIST (Scuderia Red Editorial Sheet)                     */}
         {/* ========================================================================= */}
         <div
           ref={listContainerRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleListLeave}
-          className="relative w-full mt-4 divide-y divide-white/[0.08] group/calendar"
+          className="relative w-full mt-4 divide-y divide-white/20 group/calendar"
         >
           {displayRaces.map((race) => {
             const isNext = race.originalIndex === nextRaceIdx && race.status !== 'TODAY';
@@ -375,11 +375,11 @@ export default function F1Calendar() {
                     : 'opacity-100'
                 }`}
               >
-                {/* Sisi Kiri: Round Index & Giant Condensed Typography (Anti-Patah Single Line) */}
+                {/* Sisi Kiri: Round Index & Giant Condensed Typography */}
                 <div className="flex items-center gap-4 sm:gap-6 md:gap-10 min-w-0">
                   {/* Round number */}
                   <span className={`font-mono-telemetry text-xs sm:text-sm tracking-widest font-bold shrink-0 transition-colors duration-200 ${
-                    isHovered ? 'text-[#E10600]' : 'text-neutral-500'
+                    isHovered ? 'text-black' : 'text-white/60'
                   }`}>
                     {String(race.round).padStart(2, '0')}
                   </span>
@@ -388,22 +388,22 @@ export default function F1Calendar() {
                   <h3
                     className={`font-condensed font-extrabold text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.2rem] uppercase leading-none whitespace-nowrap tracking-tight transition-colors duration-200 ${
                       isHovered
-                        ? 'text-[#E10600]'
-                        : 'text-[#EDEDED]'
+                        ? 'text-black'
+                        : 'text-white'
                     }`}
                   >
                     {race.name}
                   </h3>
                 </div>
 
-                {/* Sisi Kanan: Clean Minimalist Metadata Menempel di Ujung Kanan */}
+                {/* Sisi Kanan: Clean Minimalist Metadata */}
                 <div className="flex items-center gap-6 sm:gap-10 md:gap-14 font-mono-telemetry text-xs sm:text-sm shrink-0 md:ml-auto md:pl-8 text-right justify-between md:justify-end">
                   {/* Circuit & Date */}
                   <div className="text-left md:text-right">
                     <div className="text-white font-semibold text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap">
                       {formatRaceDate(race.raceDate)}
                     </div>
-                    <div className="text-neutral-400 text-[11px] sm:text-xs uppercase tracking-wide mt-0.5 whitespace-nowrap">
+                    <div className="text-white/75 text-[11px] sm:text-xs uppercase tracking-wide mt-0.5 whitespace-nowrap">
                       {race.location}
                     </div>
                   </div>
@@ -411,20 +411,20 @@ export default function F1Calendar() {
                   {/* Status / Highlight Pill */}
                   <div className="text-right min-w-[100px] sm:min-w-[125px] whitespace-nowrap">
                     {isRaceDay ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#E10600]/15 text-[#E10600] font-bold text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#E10600]/30">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-ping" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white text-[#C50500] font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C50500] animate-ping" />
                         LIVE GP
                       </span>
                     ) : isNext ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#FFE500]/10 text-[#FFE500] font-bold text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#FFE500]/30">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-black text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-wider border border-white/20">
                         NEXT RACE
                       </span>
                     ) : isCompleted ? (
-                      <span className="text-neutral-500 text-[11px] sm:text-xs uppercase tracking-wider font-medium">
+                      <span className="text-white/60 text-[11px] sm:text-xs uppercase tracking-wider font-medium">
                         {race.specs?.stat?.split('(')[0] || 'FINISHED'}
                       </span>
                     ) : (
-                      <div className="text-neutral-400 text-[11px] sm:text-xs">
+                      <div className="text-white/80 text-[11px] sm:text-xs">
                         <CountdownTimer targetDate={race.raceDate} />
                       </div>
                     )}
@@ -432,27 +432,27 @@ export default function F1Calendar() {
 
                   {/* Arrow Indicator */}
                   <div className={`hidden sm:block transition-all duration-200 ${
-                    isHovered ? 'text-[#E10600] translate-x-1 -translate-y-1' : 'text-neutral-600'
+                    isHovered ? 'text-black translate-x-1 -translate-y-1' : 'text-white/40'
                   }`}>
                     <ArrowUpRight className="w-5 h-5" />
                   </div>
                 </div>
 
-                {/* Mobile Touch Inline SVG Thumbnail (Hanya tampil pada pointer: coarse) */}
+                {/* Mobile Touch Inline SVG Thumbnail */}
                 {isCoarsePointer && (
-                  <div className="mt-2 w-full flex items-center justify-between pt-3 border-t border-white/[0.04]">
-                    <span className="font-mono-telemetry text-[11px] text-neutral-400">
+                  <div className="mt-2 w-full flex items-center justify-between pt-3 border-t border-white/15">
+                    <span className="font-mono-telemetry text-[11px] text-white/80">
                       {race.circuit} • {race.specs?.stat}
                     </span>
                     <div className="w-14 h-14 shrink-0 flex items-center justify-center">
                       <svg
                         viewBox={race.viewBox}
-                        className="w-full h-full filter drop-shadow-[0_0_4px_rgba(225,6,0,0.5)]"
+                        className="w-full h-full filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                       >
                         <path
                           d={race.svgPath}
                           fill="none"
-                          stroke="#E10600"
+                          stroke="#FFFFFF"
                           strokeWidth={race.strokeWidth || 9}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -467,7 +467,7 @@ export default function F1Calendar() {
         </div>
 
         {/* Footer Minimal Indicator */}
-        <div className="mt-14 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-neutral-500 font-mono-telemetry text-xs gap-3">
+        <div className="mt-14 pt-6 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between text-white/70 font-mono-telemetry text-xs gap-3">
           <span>SCUDERIA FERRARI HP // CHARLES LECLERC #16</span>
           <span className="uppercase tracking-widest text-[10px]">
             HOVER GRAND PRIX TO REVEAL CIRCUIT TELEMETRY
