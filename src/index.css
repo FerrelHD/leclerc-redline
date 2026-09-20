@@ -46,6 +46,13 @@
   text-transform: uppercase;
 }
 
+.font-condensed {
+  font-family: 'Big Shoulders Display', 'Bebas Neue', 'Impact', sans-serif;
+  letter-spacing: -0.01em;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .font-mono-telemetry {
   font-family: 'JetBrains Mono', 'Courier New', monospace;
 }

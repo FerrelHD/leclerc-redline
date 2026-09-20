@@ -1,13 +1,10 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Flag, Zap, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { F1_CALENDAR } from '../../data/f1Calendar';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const ACTIVE_ROW_TEXT_COLOR = '#000000';
-const INACTIVE_ROW_TEXT_COLOR = '#ffffff';
 
 /**
  * Essential FIA circuit specs and Charles Leclerc career highlights
@@ -94,13 +91,19 @@ function CountdownTimer({ targetDate }) {
 
 export default function F1Calendar() {
   const sectionRef = useRef(null);
-  const tableRef = useRef(null);
-  const highlightRef = useRef(null);
-  const trackSvgRef = useRef(null);
-  const rowRefs = useRef({});
-  const activeIndexRef = useRef(null);
+  const listContainerRef = useRef(null);
+  const floatingTrackRef = useRef(null);
+  const trackSvgInnerRef = useRef(null);
 
-  const [activeFilter, setActiveFilter] = useState('ALL');
+  // User requested default filter to be UPCOMING
+  const [activeFilter, setActiveFilter] = useState('UPCOMING');
+  const [hoveredRace, setHoveredRace] = useState(null);
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+
+  // Mouse tracking coordinates with smooth lerp
+  const targetPos = useRef({ x: 0, y: 0 });
+  const currentPos = useRef({ x: 0, y: 0 });
+  const isPointerInside = useRef(false);
 
   const now = useMemo(() => new Date(), []);
 
@@ -118,12 +121,14 @@ export default function F1Calendar() {
   }, [now]);
 
   const completedCount = useMemo(() => raceStatuses.filter((s) => s === 'COMPLETED').length, [raceStatuses]);
+  const upcomingCount = useMemo(() => raceStatuses.filter((s) => s === 'UPCOMING' || s === 'TODAY').length, [raceStatuses]);
+
   const nextRaceIdx = useMemo(() => {
     const idx = raceStatuses.findIndex((s) => s === 'TODAY' || s === 'UPCOMING');
     return idx !== -1 ? idx : 0;
   }, [raceStatuses]);
 
-  // Filtered dataset enriched with essential specs
+  // Filtered dataset enriched with specs
   const displayRaces = useMemo(() => {
     return F1_CALENDAR.map((race, originalIndex) => ({
       ...race,
@@ -142,28 +147,67 @@ export default function F1Calendar() {
     });
   }, [activeFilter, raceStatuses]);
 
-  // Active race projected on the right stage
-  const [activeStageRace, setActiveStageRace] = useState(() => {
-    const defaultIdx = nextRaceIdx !== -1 ? nextRaceIdx : 0;
-    const defaultRace = F1_CALENDAR[defaultIdx];
-    return {
-      ...defaultRace,
-      originalIndex: defaultIdx,
-      status: raceStatuses[defaultIdx],
-      specs: CIRCUIT_SPECS[defaultRace.round],
-    };
-  });
-
-  // Track vector transition animation when active race changes
+  // Touch screen detection
   useEffect(() => {
-    if (trackSvgRef.current) {
-      gsap.fromTo(
-        trackSvgRef.current,
-        { opacity: 0.35, scale: 0.96 },
-        { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' }
-      );
+    const mq = window.matchMedia('(pointer: coarse)');
+    const update = () => setIsCoarsePointer(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  // Smooth lerp mouse-following loop for pure floating track
+  useEffect(() => {
+    let frameId;
+    const LERP_FACTOR = 0.15;
+
+    const tick = () => {
+      if (floatingTrackRef.current && isPointerInside.current) {
+        currentPos.current.x += (targetPos.current.x - currentPos.current.x) * LERP_FACTOR;
+        currentPos.current.y += (targetPos.current.y - currentPos.current.y) * LERP_FACTOR;
+
+        gsap.set(floatingTrackRef.current, {
+          x: currentPos.current.x,
+          y: currentPos.current.y,
+        });
+      }
+      frameId = requestAnimationFrame(tick);
+    };
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, []);
+
+  // Animate floating track entry when hovered race changes
+  useEffect(() => {
+    if (!floatingTrackRef.current) return;
+
+    if (hoveredRace) {
+      gsap.to(floatingTrackRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.3,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
+
+      if (trackSvgInnerRef.current) {
+        gsap.fromTo(
+          trackSvgInnerRef.current,
+          { scale: 0.9, opacity: 0.4 },
+          { scale: 1, opacity: 1, duration: 0.28, ease: 'power2.out' }
+        );
+      }
+    } else {
+      gsap.to(floatingTrackRef.current, {
+        opacity: 0,
+        scale: 0.85,
+        duration: 0.25,
+        ease: 'power2.in',
+        overwrite: 'auto',
+      });
     }
-  }, [activeStageRace.round]);
+  }, [hoveredRace?.round]);
 
   // Navbar Theme Synchronization
   useEffect(() => {
@@ -181,132 +225,70 @@ export default function F1Calendar() {
     return () => ctx.revert();
   }, []);
 
-  // Initialize highlight bar
-  useEffect(() => {
-    if (highlightRef.current) {
-      gsap.set(highlightRef.current, {
-        opacity: 0,
-        y: 0,
-        height: 0,
-      });
-    }
-  }, [displayRaces]);
-
-  const setRowTextColor = (index, color) => {
-    const rowEl = rowRefs.current[index];
-    if (!rowEl) return;
-
-    gsap.to(rowEl.querySelectorAll('td'), {
-      color,
-      duration: 0.25,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
-
-    gsap.to(rowEl.querySelectorAll('.sub-text'), {
-      color: color === ACTIVE_ROW_TEXT_COLOR ? '#555555' : 'rgba(255, 255, 255, 0.45)',
-      duration: 0.25,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
+  const handleMouseMove = (e) => {
+    if (isCoarsePointer) return;
+    isPointerInside.current = true;
+    targetPos.current = { x: e.clientX, y: e.clientY };
   };
 
-  const moveHighlightToRow = (rowEl) => {
-    const tableEl = tableRef.current;
-    const highlightEl = highlightRef.current;
-    if (!tableEl || !highlightEl || !rowEl) return;
-
-    const tableBounds = tableEl.getBoundingClientRect();
-    const rowBounds = rowEl.getBoundingClientRect();
-
-    gsap.to(highlightEl, {
-      y: rowBounds.top - tableBounds.top,
-      height: rowBounds.height,
-      opacity: 1,
-      duration: 0.28,
-      ease: 'power3.out',
-      overwrite: 'auto',
-    });
-  };
-
-  const onRowEnter = (rowEl, index, race) => {
-    const prevIndex = activeIndexRef.current;
-    rowRefs.current[index] = rowEl;
-
-    if (prevIndex !== null && prevIndex !== index) {
-      setRowTextColor(prevIndex, INACTIVE_ROW_TEXT_COLOR);
-    }
-
-    activeIndexRef.current = index;
-    setRowTextColor(index, ACTIVE_ROW_TEXT_COLOR);
-    moveHighlightToRow(rowEl);
-    setActiveStageRace(race);
-  };
-
-  const onTableLeave = () => {
-    if (activeIndexRef.current !== null) {
-      setRowTextColor(activeIndexRef.current, INACTIVE_ROW_TEXT_COLOR);
-      activeIndexRef.current = null;
-    }
-
-    if (!highlightRef.current) return;
-    gsap.to(highlightRef.current, {
-      opacity: 0,
-      duration: 0.3,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
+  const handleListLeave = () => {
+    isPointerInside.current = false;
+    setHoveredRace(null);
   };
 
   return (
     <section
       id="calendar"
       ref={sectionRef}
-      className="relative z-20 w-full bg-[#080809] text-[#F8F9FA] pt-24 sm:pt-32 pb-28 sm:pb-36 px-4 sm:px-8 md:px-12 lg:px-16 select-none border-t border-white/[0.08]"
+      className="relative z-20 w-full bg-[#080809] text-[#F8F9FA] pt-24 sm:pt-32 pb-28 sm:pb-36 px-6 sm:px-10 md:px-14 lg:px-20 select-none border-t border-white/[0.08]"
     >
-      <div className="relative z-10 w-full max-w-7xl mx-auto">
+      <div className="relative z-10 w-full">
         
         {/* ================================================================= */}
-        {/* CLEAN HEADER                                                      */}
+        {/* CLEAN MODERN MOTORSPORT HEADER                                   */}
         {/* ================================================================= */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-10 border-b border-white/[0.08]">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-12 border-b border-white/[0.08]">
           <div className="max-w-xl">
-            <div className="flex items-center gap-2 mb-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#E10600]" />
-              <span className="font-mono-telemetry text-xs tracking-[0.25em] uppercase text-[#E10600] font-bold">
-                FIA FORMULA ONE // 2026
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-2 h-2 rounded-full bg-[#E10600] shadow-[0_0_8px_#E10600] animate-pulse" />
+              <span className="font-mono-telemetry text-xs tracking-[0.28em] uppercase text-[#E10600] font-bold">
+                FIA FORMULA ONE // SEASON 2026
               </span>
             </div>
 
-            <h2 className="font-racing font-black text-4xl sm:text-5xl md:text-6xl tracking-tight uppercase text-white leading-none">
-              CHAMPIONSHIP <br />
-              <span className="font-editorial italic font-normal text-3xl sm:text-4xl md:text-5xl text-[#FFE500] lowercase">
-                calendar index
-              </span>
+            <h2 className="font-condensed font-extrabold text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight uppercase leading-none bg-gradient-to-b from-[#FFFFFF] via-[#E5E7EB] to-[#6B7280] bg-clip-text text-transparent drop-shadow-[0_4px_16px_rgba(255,255,255,0.08)]">
+              CALENDAR
             </h2>
+
+            <div className="mt-3 flex items-center gap-3">
+              <span className="h-[2px] w-6 bg-[#E10600]" />
+              <span className="font-mono-telemetry text-xs sm:text-sm uppercase tracking-[0.24em] text-neutral-400 font-medium">
+                24 GRAND PRIX // RACING SCHEDULE
+              </span>
+            </div>
           </div>
 
           {/* Filter Bar & Season Stats */}
           <div className="flex flex-wrap items-center gap-4 text-xs font-mono-telemetry">
             <div className="flex items-center gap-3 text-neutral-400">
-              <span>{completedCount} FINISHED</span>
+              <span className="text-[#E10600] font-semibold">{upcomingCount} UPCOMING</span>
               <span className="text-white/20">•</span>
-              <span>{24 - completedCount} REMAINING</span>
+              <span>{completedCount} FINISHED</span>
             </div>
 
             <div className="flex items-center gap-1 p-1 rounded-lg bg-white/[0.03] border border-white/[0.08]">
               {[
-                { key: 'ALL', label: 'ALL' },
                 { key: 'UPCOMING', label: 'UPCOMING' },
+                { key: 'ALL', label: 'ALL' },
                 { key: 'COMPLETED', label: 'FINISHED' },
               ].map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setActiveFilter(key)}
-                  className={`px-3 py-1 rounded font-mono-telemetry text-[11px] uppercase tracking-wider transition-colors cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded font-mono-telemetry text-[11px] uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                     activeFilter === key
-                      ? 'bg-white text-black font-bold'
-                      : 'text-neutral-400 hover:text-white'
+                      ? 'bg-white text-black font-bold shadow-md'
+                      : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
                   }`}
                 >
                   {label}
@@ -317,242 +299,179 @@ export default function F1Calendar() {
         </div>
 
         {/* ========================================================================= */}
-        {/* SPLIT LAYOUT: Left Table (7 cols) + Right Clean Stage (5 cols)           */}
+        {/* PILIHAN 2: PURE HOLOGRAPHIC FLOATING SVG TRACK (Cardless)                */}
         {/* ========================================================================= */}
-        <div className="mt-8 lg:grid lg:grid-cols-12 lg:gap-10 items-start">
-          
-          {/* SISI KIRI (7 COLS): Swiss Minimalist Table */}
-          <div className="lg:col-span-7 hidden lg:block">
-            <div className="relative w-full overflow-hidden font-mono">
-              {/* Sliding White Row Highlight Pill */}
-              <div
-                ref={highlightRef}
-                className="pointer-events-none absolute inset-x-0 top-0 z-10 bg-white rounded-md shadow-lg"
-              />
-
-              {/* Table */}
-              <div
-                ref={tableRef}
-                className="relative w-full"
-                onMouseLeave={onTableLeave}
-              >
-                <table className="relative z-20 w-full table-fixed border-collapse">
-                  <colgroup>
-                    <col style={{ width: '22%' }} />
-                    <col style={{ width: '38%' }} />
-                    <col style={{ width: '24%' }} />
-                    <col style={{ width: '16%' }} />
-                  </colgroup>
-
-                  <thead>
-                    <tr className="border-b border-white/[0.06] text-neutral-500 font-mono-telemetry text-[10px] uppercase tracking-widest">
-                      <th className="text-left px-3 py-3 font-normal">RND / DATE</th>
-                      <th className="text-left px-3 py-3 font-normal">GRAND PRIX</th>
-                      <th className="text-left px-3 py-3 font-normal">LOCATION</th>
-                      <th className="text-right px-3 py-3 font-normal">STATUS</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {displayRaces.map((race, index) => {
-                      const isNext = race.originalIndex === nextRaceIdx && race.status !== 'TODAY';
-                      const isRaceDay = race.status === 'TODAY';
-                      const isCompleted = race.status === 'COMPLETED';
-                      const isSelected = activeStageRace.round === race.round;
-
-                      return (
-                        <tr
-                          key={race.round}
-                          ref={(el) => { if (el) rowRefs.current[index] = el; }}
-                          onMouseEnter={(e) => onRowEnter(e.currentTarget, index, race)}
-                          onClick={() => setActiveStageRace(race)}
-                          className={`border-b border-white/[0.05] cursor-pointer group ${
-                            isSelected ? 'bg-white/[0.02]' : ''
-                          }`}
-                        >
-                          {/* Round & Date */}
-                          <td className="whitespace-nowrap px-3 py-3.5 font-mono-telemetry text-xs font-semibold">
-                            <span>R{String(race.round).padStart(2, '0')}</span>
-                            <span className="sub-text block text-[10px] text-neutral-400 mt-0.5">
-                              {formatRaceDate(race.raceDate)}
-                            </span>
-                          </td>
-
-                          {/* Grand Prix Title */}
-                          <td className="whitespace-nowrap px-3 py-3.5 font-racing font-bold text-base uppercase tracking-tight">
-                            {race.name}
-                          </td>
-
-                          {/* Location */}
-                          <td className="whitespace-nowrap px-3 py-3.5 font-sans text-xs">
-                            <span className="sub-text block truncate text-neutral-300">
-                              {race.location}
-                            </span>
-                          </td>
-
-                          {/* Status */}
-                          <td className="whitespace-nowrap px-3 py-3.5 text-right font-mono-telemetry text-xs">
-                            {isRaceDay ? (
-                              <span className="text-[#E10600] font-bold text-[10px] uppercase">
-                                LIVE
-                              </span>
-                            ) : isNext ? (
-                              <span className="text-[#FFE500] font-bold text-[10px] uppercase">
-                                NEXT
-                              </span>
-                            ) : isCompleted ? (
-                              <span className="text-neutral-500 text-[10px] uppercase">
-                                DONE
-                              </span>
-                            ) : (
-                              <span className="sub-text text-[10px] text-neutral-400 uppercase">
-                                {formatRaceTime(race.raceDate)}
-                              </span>
-                            )}
-                            <ArrowUpRight className="w-3 h-3 ml-1.5 text-neutral-500 inline-block opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          {/* SISI KANAN (5 COLS): Sticky Preview Stage (Clean & Minimalist) */}
-          <div className="lg:col-span-5 hidden lg:block sticky top-28 self-start">
-            <div className="relative w-full rounded-2xl bg-[#0C0C0E] border border-white/[0.08] p-6 shadow-xl">
+        {!isCoarsePointer && (
+          <div
+            ref={floatingTrackRef}
+            className="pointer-events-none fixed top-0 left-0 z-50 -translate-x-1/2 -translate-y-1/2 opacity-0 will-change-transform"
+            style={{ width: '340px' }}
+          >
+            {/* Pure Floating Ambient Glow (No Card / Cardless) */}
+            <div className="relative flex flex-col items-center justify-center p-4">
               
-              {/* Header: Round & Status */}
-              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] font-mono-telemetry text-xs">
-                <span className="text-neutral-400 uppercase tracking-widest text-[10px]">
-                  CIRCUIT PREVIEW • R{String(activeStageRace.round).padStart(2, '0')}
-                </span>
-                <div>
-                  {activeStageRace.status === 'TODAY' ? (
-                    <span className="text-[#E10600] font-bold text-[10px] uppercase tracking-wider">
-                      ● RACE DAY
-                    </span>
-                  ) : activeStageRace.status === 'COMPLETED' ? (
-                    <span className="text-neutral-500 text-[10px] uppercase">
-                      COMPLETED
-                    </span>
-                  ) : (
-                    <span className="text-[#FFE500] font-bold text-[10px] uppercase tracking-wider">
-                      UPCOMING
-                    </span>
-                  )}
+              {/* Radial red atmospheric bloom */}
+              <div className="absolute inset-0 -z-10 rounded-full bg-[radial-gradient(circle,rgba(225,6,0,0.28)_0%,rgba(0,0,0,0)_70%)] blur-2xl pointer-events-none" />
+
+              {/* Vektor SVG Sirkuit F1 Asli */}
+              {hoveredRace && (
+                <div ref={trackSvgInnerRef} className="w-full flex flex-col items-center">
+                  <div className="w-64 h-64 flex items-center justify-center">
+                    <svg
+                      viewBox={hoveredRace.viewBox}
+                      className="w-full h-full max-h-56 filter drop-shadow-[0_0_16px_rgba(225,6,0,0.85)] drop-shadow-[0_0_3px_#E10600]"
+                    >
+                      <path
+                        d={hoveredRace.svgPath}
+                        fill="none"
+                        stroke="#E10600"
+                        strokeWidth={hoveredRace.strokeWidth || 9}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+
+                  {/* Minimal Floating Telemetry HUD Ribbon */}
+                  <div className="mt-2 text-center pointer-events-none">
+                    <div className="font-racing font-bold text-xs uppercase tracking-widest text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                      {hoveredRace.circuit}
+                    </div>
+                    <div className="font-mono-telemetry text-[10px] text-neutral-300 tracking-wider mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                      {hoveredRace.specs?.length} • {hoveredRace.specs?.turns} TURNS • {hoveredRace.specs?.laps} LAPS
+                    </div>
+                    <div className="font-mono-telemetry text-[10px] text-[#FFE500] font-semibold tracking-wider mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                      {hoveredRace.specs?.stat}
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              {/* Clean Vector Projection Chamber (No Crosshairs, No Watermarks) */}
-              <div className="w-full h-60 my-5 flex items-center justify-center p-4">
-                <div ref={trackSvgRef} className="w-full h-full flex items-center justify-center">
-                  <svg
-                    viewBox={activeStageRace.viewBox}
-                    className="w-full h-full max-h-52 filter drop-shadow-[0_0_10px_rgba(225,6,0,0.4)]"
-                  >
-                    <path
-                      d={activeStageRace.svgPath}
-                      fill="none"
-                      stroke="#E10600"
-                      strokeWidth={activeStageRace.strokeWidth || 9}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Grand Prix Name & Circuit */}
-              <div className="pt-2 border-t border-white/[0.06]">
-                <h3 className="font-racing font-black text-2xl uppercase tracking-tight text-white leading-none">
-                  {activeStageRace.name}
-                </h3>
-                <p className="font-sans text-xs text-neutral-400 mt-1">
-                  {activeStageRace.circuit} — {activeStageRace.location}
-                </p>
-              </div>
-
-              {/* Single Clean Line Telemetry Specs */}
-              <div className="mt-4 py-2.5 px-3 rounded-lg bg-white/[0.02] border border-white/[0.05] flex items-center justify-between font-mono-telemetry text-[11px] text-neutral-300">
-                <span>{activeStageRace.specs?.length}</span>
-                <span className="text-neutral-600">•</span>
-                <span>{activeStageRace.specs?.laps} LAPS</span>
-                <span className="text-neutral-600">•</span>
-                <span>{activeStageRace.specs?.turns} TURNS</span>
-                <span className="text-neutral-600">•</span>
-                <span className="text-[#E10600] font-semibold">{activeStageRace.specs?.stat}</span>
-              </div>
-
-              {/* Schedule & Countdown Footer */}
-              <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between font-mono-telemetry text-xs">
-                <div className="text-neutral-400 text-[11px]">
-                  {formatRaceDate(activeStageRace.raceDate)} • {formatRaceTime(activeStageRace.raceDate)} LOCAL
-                </div>
-
-                <div>
-                  {activeStageRace.status === 'COMPLETED' ? (
-                    <span className="text-neutral-500 text-[11px]">POINTS SECURED</span>
-                  ) : (
-                    <CountdownTimer targetDate={activeStageRace.raceDate} />
-                  )}
-                </div>
-              </div>
-
+              )}
             </div>
           </div>
+        )}
 
+        {/* ========================================================================= */}
+        {/* MASSIVE EDITORIAL LIST (Velour Productions Style - Full Width)             */}
+        {/* ========================================================================= */}
+        <div
+          ref={listContainerRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleListLeave}
+          className="relative w-full mt-4 divide-y divide-white/[0.08] group/calendar"
+        >
+          {displayRaces.map((race) => {
+            const isNext = race.originalIndex === nextRaceIdx && race.status !== 'TODAY';
+            const isRaceDay = race.status === 'TODAY';
+            const isCompleted = race.status === 'COMPLETED';
+            const isHovered = hoveredRace?.round === race.round;
+
+            return (
+              <div
+                key={race.round}
+                onMouseEnter={() => setHoveredRace(race)}
+                className={`py-5 sm:py-7 md:py-8 transition-all duration-300 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                  hoveredRace !== null && !isHovered
+                    ? 'opacity-25'
+                    : 'opacity-100'
+                }`}
+              >
+                {/* Sisi Kiri: Round Index & Giant Condensed Typography (Anti-Patah Single Line) */}
+                <div className="flex items-center gap-4 sm:gap-6 md:gap-10 min-w-0">
+                  {/* Round number */}
+                  <span className={`font-mono-telemetry text-xs sm:text-sm tracking-widest font-bold shrink-0 transition-colors duration-200 ${
+                    isHovered ? 'text-[#E10600]' : 'text-neutral-500'
+                  }`}>
+                    {String(race.round).padStart(2, '0')}
+                  </span>
+
+                  {/* Grand Prix Title (Big Shoulders Display Condensed, Always 1 Line) */}
+                  <h3
+                    className={`font-condensed font-extrabold text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.2rem] uppercase leading-none whitespace-nowrap tracking-tight transition-colors duration-200 ${
+                      isHovered
+                        ? 'text-[#E10600]'
+                        : 'text-[#EDEDED]'
+                    }`}
+                  >
+                    {race.name}
+                  </h3>
+                </div>
+
+                {/* Sisi Kanan: Clean Minimalist Metadata Menempel di Ujung Kanan */}
+                <div className="flex items-center gap-6 sm:gap-10 md:gap-14 font-mono-telemetry text-xs sm:text-sm shrink-0 md:ml-auto md:pl-8 text-right justify-between md:justify-end">
+                  {/* Circuit & Date */}
+                  <div className="text-left md:text-right">
+                    <div className="text-white font-semibold text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap">
+                      {formatRaceDate(race.raceDate)}
+                    </div>
+                    <div className="text-neutral-400 text-[11px] sm:text-xs uppercase tracking-wide mt-0.5 whitespace-nowrap">
+                      {race.location}
+                    </div>
+                  </div>
+
+                  {/* Status / Highlight Pill */}
+                  <div className="text-right min-w-[100px] sm:min-w-[125px] whitespace-nowrap">
+                    {isRaceDay ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#E10600]/15 text-[#E10600] font-bold text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#E10600]/30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-ping" />
+                        LIVE GP
+                      </span>
+                    ) : isNext ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#FFE500]/10 text-[#FFE500] font-bold text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#FFE500]/30">
+                        NEXT RACE
+                      </span>
+                    ) : isCompleted ? (
+                      <span className="text-neutral-500 text-[11px] sm:text-xs uppercase tracking-wider font-medium">
+                        {race.specs?.stat?.split('(')[0] || 'FINISHED'}
+                      </span>
+                    ) : (
+                      <div className="text-neutral-400 text-[11px] sm:text-xs">
+                        <CountdownTimer targetDate={race.raceDate} />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Arrow Indicator */}
+                  <div className={`hidden sm:block transition-all duration-200 ${
+                    isHovered ? 'text-[#E10600] translate-x-1 -translate-y-1' : 'text-neutral-600'
+                  }`}>
+                    <ArrowUpRight className="w-5 h-5" />
+                  </div>
+                </div>
+
+                {/* Mobile Touch Inline SVG Thumbnail (Hanya tampil pada pointer: coarse) */}
+                {isCoarsePointer && (
+                  <div className="mt-2 w-full flex items-center justify-between pt-3 border-t border-white/[0.04]">
+                    <span className="font-mono-telemetry text-[11px] text-neutral-400">
+                      {race.circuit} • {race.specs?.stat}
+                    </span>
+                    <div className="w-14 h-14 shrink-0 flex items-center justify-center">
+                      <svg
+                        viewBox={race.viewBox}
+                        className="w-full h-full filter drop-shadow-[0_0_4px_rgba(225,6,0,0.5)]"
+                      >
+                        <path
+                          d={race.svgPath}
+                          fill="none"
+                          stroke="#E10600"
+                          strokeWidth={race.strokeWidth || 9}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* ========================================================================= */}
-        {/* MOBILE VIEW (< LG): Clean List with Minimal Track SVG                     */}
-        {/* ========================================================================= */}
-        <div className="lg:hidden w-full font-mono text-white mt-6 divide-y divide-white/[0.06]">
-          {displayRaces.map((race) => (
-            <div key={race.round} className="py-4 flex items-center justify-between gap-4">
-              <div className="flex flex-col gap-1 max-w-[70%]">
-                <div className="flex items-center gap-2 font-mono-telemetry text-xs">
-                  <span className="text-[#E10600] font-bold">
-                    R{String(race.round).padStart(2, '0')}
-                  </span>
-                  <span className="text-neutral-400 text-[11px]">
-                    {formatRaceDate(race.raceDate)}
-                  </span>
-                </div>
-
-                <h3 className="font-racing font-bold text-base uppercase text-white tracking-tight">
-                  {race.name}
-                </h3>
-
-                <p className="text-xs text-neutral-400 truncate">
-                  {race.circuit}
-                </p>
-
-                <p className="text-[10px] text-neutral-500 font-mono-telemetry mt-0.5">
-                  {race.specs?.length} • {race.specs?.turns} TURNS • {race.specs?.stat}
-                </p>
-              </div>
-
-              {/* Minimal SVG Track Vector */}
-              <div className="w-18 h-18 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-center p-2 shrink-0">
-                <svg
-                  viewBox={race.viewBox}
-                  className="w-full h-full filter drop-shadow-[0_0_6px_rgba(225,6,0,0.4)]"
-                >
-                  <path
-                    d={race.svgPath}
-                    fill="none"
-                    stroke="#E10600"
-                    strokeWidth={race.strokeWidth || 9}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-          ))}
+        {/* Footer Minimal Indicator */}
+        <div className="mt-14 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-neutral-500 font-mono-telemetry text-xs gap-3">
+          <span>SCUDERIA FERRARI HP // CHARLES LECLERC #16</span>
+          <span className="uppercase tracking-widest text-[10px]">
+            HOVER GRAND PRIX TO REVEAL CIRCUIT TELEMETRY
+          </span>
         </div>
 
       </div>
