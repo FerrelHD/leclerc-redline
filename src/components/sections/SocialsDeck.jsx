@@ -70,17 +70,17 @@ export default function SocialsDeck() {
       // 1. Maintain white navbar text throughout this section and into footer
       ScrollTrigger.create({
         trigger: sectionRef.current,
-        start: 'top 50%',
+        start: 'top 60%',
         end: 'bottom bottom',
         onEnter: () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
       });
 
-      // 2. Fanned Deck Deal: Triggers right when the cards deck is clearly inside the screen
+      // 2. Fanned Deck Deal: Triggers smoothly as soon as the card stack enters comfortable viewing
       ScrollTrigger.create({
         trigger: deckContainerRef.current,
-        start: 'top 60%', // Mengipas saat tumpukan kartu sudah benar-benar masuk dan terlihat di layar
+        start: 'top 72%',
         onEnter: () => setIsFanned(true),
         onLeaveBack: () => setIsFanned(false),
       });
@@ -93,7 +93,7 @@ export default function SocialsDeck() {
     <section
       id="socials-deck"
       ref={sectionRef}
-      className="relative z-10 w-full pt-28 pb-8 sm:pb-12 px-4 sm:px-8 md:px-12 bg-transparent text-white"
+      className="relative z-10 w-full pt-32 sm:pt-36 pb-8 sm:pb-12 px-4 sm:px-8 md:px-12 bg-transparent text-white"
     >
 
       {/* Editorial Header */}

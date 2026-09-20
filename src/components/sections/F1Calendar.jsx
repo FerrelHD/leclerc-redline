@@ -1,10 +1,43 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Calendar, Flag, Clock, CheckCircle2, Zap } from 'lucide-react';
+import { Flag, Zap, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { F1_CALENDAR } from '../../data/f1Calendar';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const ACTIVE_ROW_TEXT_COLOR = '#000000';
+const INACTIVE_ROW_TEXT_COLOR = '#ffffff';
+
+/**
+ * Essential FIA circuit specs and Charles Leclerc career highlights
+ */
+const CIRCUIT_SPECS = {
+  1: { length: '5.28 KM', laps: 58, turns: 14, stat: 'P1 WIN & POLE (2022)' },
+  2: { length: '5.45 KM', laps: 56, turns: 16, stat: 'P4 (2024)' },
+  3: { length: '5.81 KM', laps: 53, turns: 18, stat: 'P3 PODIUM (2022)' },
+  4: { length: '5.41 KM', laps: 57, turns: 15, stat: 'P1 WIN & POLE (2022)' },
+  5: { length: '6.17 KM', laps: 50, turns: 27, stat: 'P2 PODIUM // FL (2022)' },
+  6: { length: '5.41 KM', laps: 57, turns: 19, stat: 'POLE POSITION (2022)' },
+  7: { length: '4.91 KM', laps: 63, turns: 19, stat: 'P3 PODIUM (2024)' },
+  8: { length: '3.34 KM', laps: 78, turns: 19, stat: 'P1 WIN & POLE (2024) 🇲🇨' },
+  9: { length: '4.66 KM', laps: 66, turns: 14, stat: 'POLE POSITION (2022)' },
+  10: { length: '4.36 KM', laps: 70, turns: 14, stat: 'P3 PODIUM (2019)' },
+  11: { length: '4.32 KM', laps: 71, turns: 10, stat: 'P1 WIN (2022)' },
+  12: { length: '5.89 KM', laps: 52, turns: 18, stat: 'P2 PODIUM (2021)' },
+  13: { length: '7.00 KM', laps: 44, turns: 19, stat: 'P1 FIRST F1 WIN (2019)' },
+  14: { length: '4.38 KM', laps: 70, turns: 14, stat: 'P4 (2024)' },
+  15: { length: '4.26 KM', laps: 72, turns: 14, stat: 'P3 PODIUM (2024)' },
+  16: { length: '5.79 KM', laps: 53, turns: 11, stat: 'P1 WIN (2019, 2024) 🇮🇹' },
+  17: { length: '6.00 KM', laps: 51, turns: 20, stat: '4x POLE POSITION (2021-2024)' },
+  18: { length: '4.94 KM', laps: 62, turns: 19, stat: 'POLE POSITION (2019, 2022)' },
+  19: { length: '5.51 KM', laps: 56, turns: 20, stat: 'P1 WIN & POLE (2024)' },
+  20: { length: '4.30 KM', laps: 71, turns: 17, stat: 'POLE POSITION (2019, 2023)' },
+  21: { length: '4.31 KM', laps: 71, turns: 15, stat: 'P4 (2022)' },
+  22: { length: '6.20 KM', laps: 50, turns: 17, stat: 'P2 PODIUM & POLE (2023)' },
+  23: { length: '5.42 KM', laps: 57, turns: 16, stat: 'P2 PODIUM (2024)' },
+  24: { length: '5.28 KM', laps: 58, turns: 16, stat: 'P2 PODIUM (2022, 2023)' },
+};
 
 function formatRaceDate(dateStr) {
   const d = new Date(dateStr);
@@ -46,14 +79,14 @@ function CountdownTimer({ targetDate }) {
 
   if (timeLeft <= 0) {
     return (
-      <span className="font-mono-telemetry font-bold text-[#E10600] animate-pulse">
-        LIGHTS OUT // IN PROGRESS
+      <span className="font-mono-telemetry font-bold text-[#E10600]">
+        LIGHTS OUT
       </span>
     );
   }
 
   return (
-    <span className="font-mono-telemetry font-bold text-[#FFE500] tracking-wider">
+    <span className="font-mono-telemetry font-bold tracking-wider">
       {pad(hours)}H {pad(minutes)}M {pad(seconds)}S
     </span>
   );
@@ -61,336 +94,467 @@ function CountdownTimer({ targetDate }) {
 
 export default function F1Calendar() {
   const sectionRef = useRef(null);
-  const trackRef = useRef(null);
+  const tableRef = useRef(null);
+  const highlightRef = useRef(null);
+  const trackSvgRef = useRef(null);
+  const rowRefs = useRef({});
+  const activeIndexRef = useRef(null);
+
+  const [activeFilter, setActiveFilter] = useState('ALL');
 
   const now = useMemo(() => new Date(), []);
 
-  // Compute status for all races
+  // Compute status for all 24 races
   const raceStatuses = useMemo(() => {
     return F1_CALENDAR.map((race) => {
       const raceDate = new Date(race.raceDate);
       const diffMs = raceDate.getTime() - now.getTime();
       const diffHours = diffMs / (1000 * 60 * 60);
 
-      // Past race if more than 4 hours after race start
-      if (diffHours < -4) {
-        return 'COMPLETED';
-      }
-      // Today / Race weekend if within 24 hours before or during race
-      if (diffHours >= -4 && diffHours <= 24) {
-        return 'TODAY';
-      }
+      if (diffHours < -4) return 'COMPLETED';
+      if (diffHours >= -4 && diffHours <= 24) return 'TODAY';
       return 'UPCOMING';
     });
   }, [now]);
 
-  const completedCount = raceStatuses.filter((s) => s === 'COMPLETED').length;
-  const nextRaceIdx = raceStatuses.findIndex((s) => s === 'TODAY' || s === 'UPCOMING');
+  const completedCount = useMemo(() => raceStatuses.filter((s) => s === 'COMPLETED').length, [raceStatuses]);
+  const nextRaceIdx = useMemo(() => {
+    const idx = raceStatuses.findIndex((s) => s === 'TODAY' || s === 'UPCOMING');
+    return idx !== -1 ? idx : 0;
+  }, [raceStatuses]);
 
+  // Filtered dataset enriched with essential specs
+  const displayRaces = useMemo(() => {
+    return F1_CALENDAR.map((race, originalIndex) => ({
+      ...race,
+      originalIndex,
+      status: raceStatuses[originalIndex],
+      specs: CIRCUIT_SPECS[race.round] || {
+        length: '5.20 KM',
+        laps: 55,
+        turns: 16,
+        stat: 'SCUDERIA FERRARI #16',
+      },
+    })).filter((race) => {
+      if (activeFilter === 'COMPLETED') return race.status === 'COMPLETED';
+      if (activeFilter === 'UPCOMING') return race.status === 'UPCOMING' || race.status === 'TODAY';
+      return true;
+    });
+  }, [activeFilter, raceStatuses]);
+
+  // Active race projected on the right stage
+  const [activeStageRace, setActiveStageRace] = useState(() => {
+    const defaultIdx = nextRaceIdx !== -1 ? nextRaceIdx : 0;
+    const defaultRace = F1_CALENDAR[defaultIdx];
+    return {
+      ...defaultRace,
+      originalIndex: defaultIdx,
+      status: raceStatuses[defaultIdx],
+      specs: CIRCUIT_SPECS[defaultRace.round],
+    };
+  });
+
+  // Track vector transition animation when active race changes
+  useEffect(() => {
+    if (trackSvgRef.current) {
+      gsap.fromTo(
+        trackSvgRef.current,
+        { opacity: 0.35, scale: 0.96 },
+        { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' }
+      );
+    }
+  }, [activeStageRace.round]);
+
+  // Navbar Theme Synchronization
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const getScrollDistance = () => {
-        if (!trackRef.current) return 0;
-        return Math.max(0, trackRef.current.scrollWidth - window.innerWidth + 80);
-      };
-
-      // Native GSAP Horizontal Pin
-      gsap.to(trackRef.current, {
-        x: () => -getScrollDistance(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: () => `+=${window.innerHeight + Math.round(getScrollDistance() * 0.7)}`,
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.5,
-          invalidateOnRefresh: true,
-          anticipatePin: 0,
-          onEnter: () => {
-            document.body.classList.add('nav-theme-dark');
-          },
-          onLeaveBack: () => {
-            document.body.classList.remove('nav-theme-dark');
-          },
-          onEnterBack: () => {
-            document.body.classList.add('nav-theme-dark');
-          },
-          onLeave: () => {
-            document.body.classList.remove('nav-theme-dark');
-          },
-        },
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top 30%',
+        end: 'bottom 30%',
+        onEnter: () => document.body.classList.add('nav-theme-dark'),
+        onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
+        onEnterBack: () => document.body.classList.add('nav-theme-dark'),
       });
-
-      const timer = setTimeout(() => ScrollTrigger.refresh(), 300);
-      return () => clearTimeout(timer);
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
+  // Initialize highlight bar
+  useEffect(() => {
+    if (highlightRef.current) {
+      gsap.set(highlightRef.current, {
+        opacity: 0,
+        y: 0,
+        height: 0,
+      });
+    }
+  }, [displayRaces]);
+
+  const setRowTextColor = (index, color) => {
+    const rowEl = rowRefs.current[index];
+    if (!rowEl) return;
+
+    gsap.to(rowEl.querySelectorAll('td'), {
+      color,
+      duration: 0.25,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+
+    gsap.to(rowEl.querySelectorAll('.sub-text'), {
+      color: color === ACTIVE_ROW_TEXT_COLOR ? '#555555' : 'rgba(255, 255, 255, 0.45)',
+      duration: 0.25,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+  };
+
+  const moveHighlightToRow = (rowEl) => {
+    const tableEl = tableRef.current;
+    const highlightEl = highlightRef.current;
+    if (!tableEl || !highlightEl || !rowEl) return;
+
+    const tableBounds = tableEl.getBoundingClientRect();
+    const rowBounds = rowEl.getBoundingClientRect();
+
+    gsap.to(highlightEl, {
+      y: rowBounds.top - tableBounds.top,
+      height: rowBounds.height,
+      opacity: 1,
+      duration: 0.28,
+      ease: 'power3.out',
+      overwrite: 'auto',
+    });
+  };
+
+  const onRowEnter = (rowEl, index, race) => {
+    const prevIndex = activeIndexRef.current;
+    rowRefs.current[index] = rowEl;
+
+    if (prevIndex !== null && prevIndex !== index) {
+      setRowTextColor(prevIndex, INACTIVE_ROW_TEXT_COLOR);
+    }
+
+    activeIndexRef.current = index;
+    setRowTextColor(index, ACTIVE_ROW_TEXT_COLOR);
+    moveHighlightToRow(rowEl);
+    setActiveStageRace(race);
+  };
+
+  const onTableLeave = () => {
+    if (activeIndexRef.current !== null) {
+      setRowTextColor(activeIndexRef.current, INACTIVE_ROW_TEXT_COLOR);
+      activeIndexRef.current = null;
+    }
+
+    if (!highlightRef.current) return;
+    gsap.to(highlightRef.current, {
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+  };
+
   return (
     <section
       id="calendar"
       ref={sectionRef}
-      className="relative z-20 w-full h-screen bg-[#080809] text-[#F8F9FA] overflow-hidden flex flex-col justify-center select-none rounded-t-[50px] md:rounded-t-[70px] shadow-[0_-35px_80px_rgba(0,0,0,0.85)] border-t border-white/[0.08]"
+      className="relative z-20 w-full bg-[#080809] text-[#F8F9FA] pt-24 sm:pt-32 pb-28 sm:pb-36 px-4 sm:px-8 md:px-12 lg:px-16 select-none border-t border-white/[0.08]"
     >
-      {/* Carbon Grid Background Pattern */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none opacity-20 bg-carbon-grid z-0" />
-
-      {/* Atmospheric Ambient Glow */}
-      <div
-        className="absolute top-0 right-1/4 w-[650px] h-[400px] pointer-events-none opacity-25 z-0"
-        style={{
-          background: 'radial-gradient(circle, rgba(225,6,0,0.3) 0%, transparent 70%)',
-        }}
-      />
-
-      {/* Horizontal Sliding Track */}
-      <div
-        ref={trackRef}
-        className="flex h-full w-[max-content] items-center pt-16 sm:pt-20 pb-8 relative z-10 will-change-transform px-6 sm:px-12 md:px-16 gap-6 sm:gap-8"
-      >
+      <div className="relative z-10 w-full max-w-7xl mx-auto">
+        
         {/* ================================================================= */}
-        {/* INTRO HERO BILLBOARD CARD                                         */}
+        {/* CLEAN HEADER                                                      */}
         {/* ================================================================= */}
-        <div className="w-[320px] sm:w-[380px] md:w-[440px] shrink-0 flex flex-col justify-center gap-5 pr-4 pointer-events-none select-none">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#E10600] animate-pulse" />
-            <span className="font-mono-telemetry text-[11px] sm:text-xs tracking-[0.3em] uppercase text-[#E10600] font-bold">
-              FIA FORMULA ONE // 2026
-            </span>
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-10 border-b border-white/[0.08]">
+          <div className="max-w-xl">
+            <div className="flex items-center gap-2 mb-2.5">
+              <span className="w-2 h-2 rounded-full bg-[#E10600]" />
+              <span className="font-mono-telemetry text-xs tracking-[0.25em] uppercase text-[#E10600] font-bold">
+                FIA FORMULA ONE // 2026
+              </span>
+            </div>
+
+            <h2 className="font-racing font-black text-4xl sm:text-5xl md:text-6xl tracking-tight uppercase text-white leading-none">
+              CHAMPIONSHIP <br />
+              <span className="font-editorial italic font-normal text-3xl sm:text-4xl md:text-5xl text-[#FFE500] lowercase">
+                calendar index
+              </span>
+            </h2>
           </div>
 
-          <h2 className="font-racing font-black text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[0.92] uppercase text-white">
-            CHAMPIONSHIP <br />
-            <span className="font-editorial italic font-normal text-3xl sm:text-4xl md:text-5xl text-[#FFE500] lowercase">
-              calendar
-            </span>
-          </h2>
-
-          <p className="text-neutral-400 font-sans text-xs sm:text-sm font-light leading-relaxed">
-            The full 24-race world tour for Driver #16. Authentic circuit geometry, race status, and telemetry count.
-          </p>
-
-          <div className="flex items-center gap-6 pt-2 border-t border-white/[0.08]">
-            <div className="flex flex-col">
-              <span className="font-racing text-xl sm:text-2xl font-bold text-white leading-none">
-                24
-              </span>
-              <span className="font-mono-telemetry text-[10px] text-neutral-400 uppercase tracking-wider">
-                Grands Prix
-              </span>
+          {/* Filter Bar & Season Stats */}
+          <div className="flex flex-wrap items-center gap-4 text-xs font-mono-telemetry">
+            <div className="flex items-center gap-3 text-neutral-400">
+              <span>{completedCount} FINISHED</span>
+              <span className="text-white/20">•</span>
+              <span>{24 - completedCount} REMAINING</span>
             </div>
 
-            <div className="w-px h-8 bg-white/10" />
-
-            <div className="flex flex-col">
-              <span className="font-racing text-xl sm:text-2xl font-bold text-[#E10600] leading-none">
-                {completedCount}
-              </span>
-              <span className="font-mono-telemetry text-[10px] text-neutral-400 uppercase tracking-wider">
-                Finished
-              </span>
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-white/[0.03] border border-white/[0.08]">
+              {[
+                { key: 'ALL', label: 'ALL' },
+                { key: 'UPCOMING', label: 'UPCOMING' },
+                { key: 'COMPLETED', label: 'FINISHED' },
+              ].map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveFilter(key)}
+                  className={`px-3 py-1 rounded font-mono-telemetry text-[11px] uppercase tracking-wider transition-colors cursor-pointer ${
+                    activeFilter === key
+                      ? 'bg-white text-black font-bold'
+                      : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-
-            <div className="w-px h-8 bg-white/10" />
-
-            <div className="flex flex-col">
-              <span className="font-racing text-xl sm:text-2xl font-bold text-[#FFE500] leading-none">
-                {24 - completedCount}
-              </span>
-              <span className="font-mono-telemetry text-[10px] text-neutral-400 uppercase tracking-wider">
-                Remaining
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-neutral-500 font-mono-telemetry text-[10px] tracking-widest uppercase pt-2">
-            <span>SCROLL TO EXPLORE</span>
-            <span className="text-[#E10600]">→</span>
           </div>
         </div>
 
-        {/* ================================================================= */}
-        {/* 24 RACE CARDS                                                     */}
-        {/* ================================================================= */}
-        {F1_CALENDAR.map((race, idx) => {
-          const status = raceStatuses[idx];
-          const isToday = status === 'TODAY';
-          const isCompleted = status === 'COMPLETED';
-          const isNext = idx === nextRaceIdx && !isToday;
+        {/* ========================================================================= */}
+        {/* SPLIT LAYOUT: Left Table (7 cols) + Right Clean Stage (5 cols)           */}
+        {/* ========================================================================= */}
+        <div className="mt-8 lg:grid lg:grid-cols-12 lg:gap-10 items-start">
+          
+          {/* SISI KIRI (7 COLS): Swiss Minimalist Table */}
+          <div className="lg:col-span-7 hidden lg:block">
+            <div className="relative w-full overflow-hidden font-mono">
+              {/* Sliding White Row Highlight Pill */}
+              <div
+                ref={highlightRef}
+                className="pointer-events-none absolute inset-x-0 top-0 z-10 bg-white rounded-md shadow-lg"
+              />
 
-          const roundStr = String(race.round).padStart(2, '0');
+              {/* Table */}
+              <div
+                ref={tableRef}
+                className="relative w-full"
+                onMouseLeave={onTableLeave}
+              >
+                <table className="relative z-20 w-full table-fixed border-collapse">
+                  <colgroup>
+                    <col style={{ width: '22%' }} />
+                    <col style={{ width: '38%' }} />
+                    <col style={{ width: '24%' }} />
+                    <col style={{ width: '16%' }} />
+                  </colgroup>
 
-          return (
-            <div
-              key={race.round}
-              className={`group relative w-[290px] sm:w-[320px] md:w-[340px] h-[480px] sm:h-[510px] md:h-[540px] shrink-0 rounded-2xl sm:rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 pointer-events-auto overflow-hidden ${
-                isToday
-                  ? 'bg-gradient-to-b from-[#180808] to-[#0D0505] border-2 border-[#E10600] shadow-[0_0_50px_rgba(225,6,0,0.35)] scale-[1.02]'
-                  : isNext
-                  ? 'bg-[#121318]/90 border border-[#FFE500]/50 shadow-[0_10px_35px_rgba(0,0,0,0.6)] hover:border-[#FFE500]'
-                  : isCompleted
-                  ? 'bg-[#0E0F12]/80 border border-white/[0.06] opacity-65 hover:opacity-100 hover:border-white/20'
-                  : 'bg-[#101115]/90 border border-white/[0.08] hover:border-[#E10600]/60 hover:shadow-[0_15px_40px_rgba(0,0,0,0.7)]'
-              }`}
-            >
-              {/* Subtle Card Header Light Streak on Today */}
-              {isToday && (
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#E10600] to-transparent animate-pulse" />
-              )}
+                  <thead>
+                    <tr className="border-b border-white/[0.06] text-neutral-500 font-mono-telemetry text-[10px] uppercase tracking-widest">
+                      <th className="text-left px-3 py-3 font-normal">RND / DATE</th>
+                      <th className="text-left px-3 py-3 font-normal">GRAND PRIX</th>
+                      <th className="text-left px-3 py-3 font-normal">LOCATION</th>
+                      <th className="text-right px-3 py-3 font-normal">STATUS</th>
+                    </tr>
+                  </thead>
 
-              {/* CARD TOP: Round Number & Status Pill */}
-              <div className="flex items-center justify-between w-full relative z-10">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono-telemetry text-[11px] text-neutral-400 font-semibold tracking-wider">
-                    ROUND
-                  </span>
-                  <span
-                    className={`font-racing font-black text-xl leading-none ${
-                      isToday
-                        ? 'text-[#E10600]'
-                        : isNext
-                        ? 'text-[#FFE500]'
-                        : 'text-white'
-                    }`}
-                  >
-                    {roundStr}
-                  </span>
-                </div>
+                  <tbody>
+                    {displayRaces.map((race, index) => {
+                      const isNext = race.originalIndex === nextRaceIdx && race.status !== 'TODAY';
+                      const isRaceDay = race.status === 'TODAY';
+                      const isCompleted = race.status === 'COMPLETED';
+                      const isSelected = activeStageRace.round === race.round;
 
-                {/* Status Badge */}
-                {isToday ? (
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E10600] text-white shadow-[0_0_15px_rgba(225,6,0,0.6)]">
-                    <Zap className="w-3 h-3 fill-current animate-bounce" />
-                    <span className="font-racing font-bold text-[10px] uppercase tracking-wider">
-                      RACE DAY
-                    </span>
-                  </div>
-                ) : isNext ? (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FFE500]/15 border border-[#FFE500]/40 text-[#FFE500]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FFE500] animate-ping" />
-                    <span className="font-mono-telemetry font-bold text-[9px] uppercase tracking-wider">
-                      NEXT UP
-                    </span>
-                  </div>
-                ) : isCompleted ? (
-                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-neutral-400">
-                    <CheckCircle2 className="w-3 h-3 stroke-[2] text-neutral-400" />
-                    <span className="font-mono-telemetry text-[9px] uppercase tracking-wider">
-                      DONE
-                    </span>
-                  </div>
-                ) : (
-                  <div className="px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-neutral-400 font-mono-telemetry text-[9px] uppercase tracking-wider">
-                    UPCOMING
-                  </div>
-                )}
+                      return (
+                        <tr
+                          key={race.round}
+                          ref={(el) => { if (el) rowRefs.current[index] = el; }}
+                          onMouseEnter={(e) => onRowEnter(e.currentTarget, index, race)}
+                          onClick={() => setActiveStageRace(race)}
+                          className={`border-b border-white/[0.05] cursor-pointer group ${
+                            isSelected ? 'bg-white/[0.02]' : ''
+                          }`}
+                        >
+                          {/* Round & Date */}
+                          <td className="whitespace-nowrap px-3 py-3.5 font-mono-telemetry text-xs font-semibold">
+                            <span>R{String(race.round).padStart(2, '0')}</span>
+                            <span className="sub-text block text-[10px] text-neutral-400 mt-0.5">
+                              {formatRaceDate(race.raceDate)}
+                            </span>
+                          </td>
+
+                          {/* Grand Prix Title */}
+                          <td className="whitespace-nowrap px-3 py-3.5 font-racing font-bold text-base uppercase tracking-tight">
+                            {race.name}
+                          </td>
+
+                          {/* Location */}
+                          <td className="whitespace-nowrap px-3 py-3.5 font-sans text-xs">
+                            <span className="sub-text block truncate text-neutral-300">
+                              {race.location}
+                            </span>
+                          </td>
+
+                          {/* Status */}
+                          <td className="whitespace-nowrap px-3 py-3.5 text-right font-mono-telemetry text-xs">
+                            {isRaceDay ? (
+                              <span className="text-[#E10600] font-bold text-[10px] uppercase">
+                                LIVE
+                              </span>
+                            ) : isNext ? (
+                              <span className="text-[#FFE500] font-bold text-[10px] uppercase">
+                                NEXT
+                              </span>
+                            ) : isCompleted ? (
+                              <span className="text-neutral-500 text-[10px] uppercase">
+                                DONE
+                              </span>
+                            ) : (
+                              <span className="sub-text text-[10px] text-neutral-400 uppercase">
+                                {formatRaceTime(race.raceDate)}
+                              </span>
+                            )}
+                            <ArrowUpRight className="w-3 h-3 ml-1.5 text-neutral-500 inline-block opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
+            </div>
+          </div>
 
-              {/* CARD CENTER: Authentic Circuit SVG Vector */}
-              <div className="relative w-full h-[180px] sm:h-[200px] flex items-center justify-center p-3 my-auto overflow-hidden">
-                {/* Subtle Grid / Circuit Backlight */}
-                <div
-                  className={`absolute inset-0 rounded-xl transition-opacity duration-500 ${
-                    isToday
-                      ? 'opacity-30 bg-gradient-to-b from-[#E10600]/20 to-transparent'
-                      : 'opacity-0 group-hover:opacity-20 bg-white/5'
-                  }`}
-                />
-
-                <svg
-                  viewBox={race.viewBox}
-                  className="w-full h-full max-h-[160px] object-contain transition-transform duration-500 group-hover:scale-105"
-                  preserveAspectRatio="xMidYMid meet"
-                >
-                  <path
-                    d={race.svgPath}
-                    stroke={
-                      isToday
-                        ? '#E10600'
-                        : isNext
-                        ? '#FFE500'
-                        : isCompleted
-                        ? '#555A64'
-                        : '#FFFFFF'
-                    }
-                    strokeWidth={race.strokeWidth}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill="none"
-                    className="transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(225,6,0,0.7)]"
-                  />
-                </svg>
-              </div>
-
-              {/* CARD BOTTOM: Race Information & Live Telemetry */}
-              <div className="relative z-10 flex flex-col gap-2 pt-3 border-t border-white/[0.08]">
+          {/* SISI KANAN (5 COLS): Sticky Preview Stage (Clean & Minimalist) */}
+          <div className="lg:col-span-5 hidden lg:block sticky top-28 self-start">
+            <div className="relative w-full rounded-2xl bg-[#0C0C0E] border border-white/[0.08] p-6 shadow-xl">
+              
+              {/* Header: Round & Status */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] font-mono-telemetry text-xs">
+                <span className="text-neutral-400 uppercase tracking-widest text-[10px]">
+                  CIRCUIT PREVIEW • R{String(activeStageRace.round).padStart(2, '0')}
+                </span>
                 <div>
-                  <h3
-                    className={`font-racing font-black text-lg sm:text-xl uppercase tracking-tight leading-tight line-clamp-1 ${
-                      isToday ? 'text-white' : 'text-neutral-100'
-                    }`}
-                  >
-                    {race.name}
-                  </h3>
-                  <p className="font-mono-telemetry text-[11px] text-neutral-400 uppercase tracking-wide truncate mt-0.5">
-                    {race.circuit}
-                  </p>
-                  <div className="flex items-center gap-1.5 text-neutral-400 font-sans text-xs mt-0.5">
-                    <Flag className="w-3 h-3 text-[#E10600] shrink-0" />
-                    <span className="truncate">{race.location}</span>
-                  </div>
-                </div>
-
-                {/* Date & Time / Countdown Strip */}
-                <div
-                  className={`mt-2 p-2.5 rounded-xl flex items-center justify-between text-xs ${
-                    isToday
-                      ? 'bg-black/60 border border-[#E10600]/40 shadow-inner'
-                      : 'bg-black/40 border border-white/[0.04]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5 text-neutral-400" />
-                    <span className="font-mono-telemetry text-[11px] text-neutral-300 font-semibold">
-                      {formatRaceDate(race.raceDate)}
+                  {activeStageRace.status === 'TODAY' ? (
+                    <span className="text-[#E10600] font-bold text-[10px] uppercase tracking-wider">
+                      ● RACE DAY
                     </span>
-                  </div>
-
-                  {isToday ? (
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3 h-3 text-[#FFE500] animate-spin" />
-                      <CountdownTimer targetDate={race.raceDate} />
-                    </div>
+                  ) : activeStageRace.status === 'COMPLETED' ? (
+                    <span className="text-neutral-500 text-[10px] uppercase">
+                      COMPLETED
+                    </span>
                   ) : (
-                    <div className="flex items-center gap-1 text-neutral-400 font-mono-telemetry text-[10px]">
-                      <span>{formatRaceTime(race.raceDate)}</span>
-                      <span className="text-neutral-600">LOC</span>
-                    </div>
+                    <span className="text-[#FFE500] font-bold text-[10px] uppercase tracking-wider">
+                      UPCOMING
+                    </span>
                   )}
                 </div>
               </div>
-            </div>
-          );
-        })}
 
-        {/* ================================================================= */}
-        {/* OUTRO SEASON FINALE CARD                                          */}
-        {/* ================================================================= */}
-        <div className="w-[280px] sm:w-[320px] shrink-0 flex flex-col justify-center items-start gap-4 pl-4 pointer-events-none select-none opacity-70">
-          <span className="font-mono-telemetry text-[10px] tracking-[0.3em] uppercase text-[#FFE500] font-bold">
-            ABU DHABI 2026
-          </span>
-          <h3 className="font-racing font-extrabold text-2xl sm:text-3xl text-white uppercase tracking-tight leading-tight">
-            THE WORLD <br />
-            TITLE HUNT
-          </h3>
-          <p className="font-sans text-xs text-neutral-400 leading-relaxed">
-            Every point, every pole, every fastest lap counts. For Charles Leclerc, the mission remains absolute: bringing the championship trophy home to Maranello.
-          </p>
+              {/* Clean Vector Projection Chamber (No Crosshairs, No Watermarks) */}
+              <div className="w-full h-60 my-5 flex items-center justify-center p-4">
+                <div ref={trackSvgRef} className="w-full h-full flex items-center justify-center">
+                  <svg
+                    viewBox={activeStageRace.viewBox}
+                    className="w-full h-full max-h-52 filter drop-shadow-[0_0_10px_rgba(225,6,0,0.4)]"
+                  >
+                    <path
+                      d={activeStageRace.svgPath}
+                      fill="none"
+                      stroke="#E10600"
+                      strokeWidth={activeStageRace.strokeWidth || 9}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Grand Prix Name & Circuit */}
+              <div className="pt-2 border-t border-white/[0.06]">
+                <h3 className="font-racing font-black text-2xl uppercase tracking-tight text-white leading-none">
+                  {activeStageRace.name}
+                </h3>
+                <p className="font-sans text-xs text-neutral-400 mt-1">
+                  {activeStageRace.circuit} — {activeStageRace.location}
+                </p>
+              </div>
+
+              {/* Single Clean Line Telemetry Specs */}
+              <div className="mt-4 py-2.5 px-3 rounded-lg bg-white/[0.02] border border-white/[0.05] flex items-center justify-between font-mono-telemetry text-[11px] text-neutral-300">
+                <span>{activeStageRace.specs?.length}</span>
+                <span className="text-neutral-600">•</span>
+                <span>{activeStageRace.specs?.laps} LAPS</span>
+                <span className="text-neutral-600">•</span>
+                <span>{activeStageRace.specs?.turns} TURNS</span>
+                <span className="text-neutral-600">•</span>
+                <span className="text-[#E10600] font-semibold">{activeStageRace.specs?.stat}</span>
+              </div>
+
+              {/* Schedule & Countdown Footer */}
+              <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between font-mono-telemetry text-xs">
+                <div className="text-neutral-400 text-[11px]">
+                  {formatRaceDate(activeStageRace.raceDate)} • {formatRaceTime(activeStageRace.raceDate)} LOCAL
+                </div>
+
+                <div>
+                  {activeStageRace.status === 'COMPLETED' ? (
+                    <span className="text-neutral-500 text-[11px]">POINTS SECURED</span>
+                  ) : (
+                    <CountdownTimer targetDate={activeStageRace.raceDate} />
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
+
+        {/* ========================================================================= */}
+        {/* MOBILE VIEW (< LG): Clean List with Minimal Track SVG                     */}
+        {/* ========================================================================= */}
+        <div className="lg:hidden w-full font-mono text-white mt-6 divide-y divide-white/[0.06]">
+          {displayRaces.map((race) => (
+            <div key={race.round} className="py-4 flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-1 max-w-[70%]">
+                <div className="flex items-center gap-2 font-mono-telemetry text-xs">
+                  <span className="text-[#E10600] font-bold">
+                    R{String(race.round).padStart(2, '0')}
+                  </span>
+                  <span className="text-neutral-400 text-[11px]">
+                    {formatRaceDate(race.raceDate)}
+                  </span>
+                </div>
+
+                <h3 className="font-racing font-bold text-base uppercase text-white tracking-tight">
+                  {race.name}
+                </h3>
+
+                <p className="text-xs text-neutral-400 truncate">
+                  {race.circuit}
+                </p>
+
+                <p className="text-[10px] text-neutral-500 font-mono-telemetry mt-0.5">
+                  {race.specs?.length} • {race.specs?.turns} TURNS • {race.specs?.stat}
+                </p>
+              </div>
+
+              {/* Minimal SVG Track Vector */}
+              <div className="w-18 h-18 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-center p-2 shrink-0">
+                <svg
+                  viewBox={race.viewBox}
+                  className="w-full h-full filter drop-shadow-[0_0_6px_rgba(225,6,0,0.4)]"
+                >
+                  <path
+                    d={race.svgPath}
+                    fill="none"
+                    stroke="#E10600"
+                    strokeWidth={race.strokeWidth || 9}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );

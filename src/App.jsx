@@ -78,8 +78,8 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA]">
-      {/* Luxury Motorsport Telemetry Preloader */}
-      <LoadingScreen />
+      {/* Luxury Motorsport Telemetry Preloader (Aperture Iris Entrance) */}
+      <LoadingScreen onLoaded={() => ScrollTrigger.refresh()} />
 
       {/* Precision Dynamic Cursor */}
       <CustomCursor />

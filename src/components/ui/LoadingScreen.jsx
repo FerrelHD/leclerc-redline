@@ -6,84 +6,121 @@ export default function LoadingScreen({ onLoaded }) {
   const [isCompleted, setIsCompleted] = useState(false);
 
   const containerRef = useRef(null);
-  const pathRef = useRef(null);
-  const textRef = useRef(null);
+  const apertureRingRef = useRef(null);
+  const centerContentRef = useRef(null);
+  const progressCircleRef = useRef(null);
+  const flashRef = useRef(null);
 
   useEffect(() => {
     // Prevent scrolling while loading
     document.body.style.overflow = 'hidden';
 
-    // Window size for SVG curved liquid path
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const curve = h * (w < 768 ? 0.18 : 0.28);
+    // Circumference for r=38 is 2 * PI * 38 ≈ 238.76
+    const CIRCUMFERENCE = 238.76;
 
-    const initialPath = `M0 0 L${w} 0 L${w} ${h} Q${w / 2} ${h + curve} 0 ${h} L0 0`;
-    const flatPath = `M0 0 L${w} 0 L${w} ${h} Q${w / 2} ${h} 0 ${h} L0 0`;
-    const exitPath = `M0 0 L${w} 0 L${w} 0 Q${w / 2} -${curve} 0 0 L0 0`;
-
-    if (pathRef.current) {
-      pathRef.current.setAttribute('d', initialPath);
-    }
-
-    // Number counter animation (0 to 100%)
+    // Number counter animation (0 to 100%) with micro-pause on Charles's #16
     const counterObj = { val: 0 };
-    const counterTl = gsap.to(counterObj, {
-      val: 100,
-      duration: 1.8,
-      ease: 'power2.inOut',
+    const counterTl = gsap.timeline();
+
+    // Stage 1: 0 to 16
+    counterTl.to(counterObj, {
+      val: 16,
+      duration: 0.5,
+      ease: 'power1.in',
       onUpdate: () => {
-        setProgress(Math.round(counterObj.val));
+        const v = Math.round(counterObj.val);
+        setProgress(v);
+        if (progressCircleRef.current) {
+          const offset = CIRCUMFERENCE - (v / 100) * CIRCUMFERENCE;
+          progressCircleRef.current.style.strokeDashoffset = String(offset);
+        }
       },
     });
 
-    // Reveal sequence
-    const tl = gsap.timeline({
-      delay: 2.1,
+    // Stage 2: Micro-pause at #16
+    counterTl.to({}, { duration: 0.18 });
+
+    // Stage 3: 16 to 100
+    counterTl.to(counterObj, {
+      val: 100,
+      duration: 0.95,
+      ease: 'power2.out',
+      onUpdate: () => {
+        const v = Math.round(counterObj.val);
+        setProgress(v);
+        if (progressCircleRef.current) {
+          const offset = CIRCUMFERENCE - (v / 100) * CIRCUMFERENCE;
+          progressCircleRef.current.style.strokeDashoffset = String(offset);
+        }
+      },
+    });
+
+    // Exit Iris Opening Sequence at 100%
+    const exitTl = gsap.timeline({
+      delay: 1.8,
+      onStart: () => {
+        if (onLoaded) onLoaded();
+      },
       onComplete: () => {
         setIsCompleted(true);
         document.body.style.overflow = '';
-        if (onLoaded) onLoaded();
       },
     });
 
-    // 1. Fade out text
-    tl.to(textRef.current, {
-      opacity: 0,
-      y: -30,
-      duration: 0.45,
-      ease: 'power2.in',
-    });
+    // 1. Soft exposure flash
+    if (flashRef.current) {
+      exitTl.to(flashRef.current, { opacity: 0.6, duration: 0.1, ease: 'power2.in' }, 0);
+      exitTl.to(flashRef.current, { opacity: 0, duration: 0.25, ease: 'power2.out' }, 0.1);
+    }
 
-    // 2. Liquid curve wipe exit to top
-    tl.to(
-      containerRef.current,
-      {
-        yPercent: -100,
-        duration: 0.9,
-        ease: 'power3.inOut',
-      },
-      '-=0.1'
-    );
+    // 2. Fade center content (#16 & percentage)
+    if (centerContentRef.current) {
+      exitTl.to(centerContentRef.current, { opacity: 0, scale: 0.85, duration: 0.25, ease: 'power2.in' }, 0.05);
+    }
 
-    if (pathRef.current) {
-      tl.to(
-        pathRef.current,
+    // 3. Aperture ring expands and rotates outwards
+    if (apertureRingRef.current) {
+      exitTl.to(
+        apertureRingRef.current,
         {
-          attr: { d: flatPath },
-          duration: 0.45,
-          ease: 'power2.inOut',
+          scale: 12,
+          rotation: 60,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.inOut',
         },
-        '<10%'
+        0.08
       );
     }
 
+    // 4. Iris Aperture expands from center to 150vmax using universal radial-gradient mask
+    const radiusProxy = { r: 0 };
+    const maxRadius = Math.max(window.innerWidth, window.innerHeight) * 1.4;
+
+    exitTl.to(
+      radiusProxy,
+      {
+        r: maxRadius,
+        duration: 0.85,
+        ease: 'power3.inOut',
+        onUpdate: () => {
+          if (containerRef.current) {
+            const hole = radiusProxy.r;
+            const maskVal = `radial-gradient(circle at 50% 50%, transparent ${hole}px, black ${hole + 2}px)`;
+            containerRef.current.style.webkitMaskImage = maskVal;
+            containerRef.current.style.maskImage = maskVal;
+          }
+        },
+      },
+      0.08
+    );
+
     return () => {
       counterTl.kill();
-      tl.kill();
+      exitTl.kill();
       document.body.style.overflow = '';
     };
-  }, []);
+  }, [onLoaded]);
 
   if (isCompleted) return null;
 
@@ -91,53 +128,75 @@ export default function LoadingScreen({ onLoaded }) {
     <div
       ref={containerRef}
       id="loading-screen"
-      className="fixed inset-0 z-[9999] w-full h-full bg-[#080809] flex flex-col items-center justify-center select-none pointer-events-auto cursor-wait"
+      className="fixed inset-0 z-[9999] w-full h-full bg-[#080809] flex flex-col items-center justify-center select-none pointer-events-auto cursor-wait overflow-hidden"
     >
-      {/* Background SVG Liquid Path */}
-      <svg className="absolute inset-0 w-full h-[120%] pointer-events-none fill-[#080809]">
-        <path ref={pathRef} />
-      </svg>
-
-      {/* Center Content */}
+      {/* Exposure Flash */}
       <div
-        ref={textRef}
-        className="relative z-10 flex flex-col items-center justify-center text-center px-6"
-      >
-        {/* Monogram Badge */}
-        <div className="flex items-center gap-2 mb-6 font-mono-telemetry text-xs uppercase tracking-[0.35em] text-[#E10600]">
-          <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
-          <span>SCUDERIA FERRARI // #16</span>
+        ref={flashRef}
+        className="absolute inset-0 bg-white pointer-events-none z-30 opacity-0"
+      />
+
+      {/* Top Telemetry Header */}
+      <div className="absolute top-8 sm:top-12 inset-x-0 px-8 sm:px-12 flex items-center justify-between font-mono-telemetry text-[11px] text-neutral-500 uppercase tracking-widest pointer-events-none">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-pulse" />
+          <span className="text-white font-medium">SCUDERIA FERRARI HP</span>
         </div>
+        <span>CAR #16 // CHARLES LECLERC</span>
+      </div>
 
-        {/* Brand Typography */}
-        <h1 className="font-racing font-black text-5xl sm:text-7xl md:text-8xl tracking-tight uppercase text-white leading-none mb-3">
-          CHARLES <span className="text-[#E10600]">LECLERC</span>
-        </h1>
-
-        <p className="font-editorial italic text-lg sm:text-2xl text-neutral-400 font-light mb-10">
-          The Pursuit of Pure Speed
-        </p>
-
-        {/* Live Counter & Telemetry Bar */}
-        <div className="w-64 sm:w-80 flex flex-col gap-3">
-          <div className="flex items-center justify-between font-mono-telemetry text-xs text-neutral-400">
-            <span>INITIALIZING TELEMETRY...</span>
-            <span className="text-white font-bold">{progress}%</span>
-          </div>
-
-          {/* Progress Line */}
-          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#E10600] transition-all duration-75 ease-out shadow-[0_0_12px_#E10600]"
-              style={{ width: `${progress}%` }}
+      {/* Center Iris Assembly */}
+      <div ref={centerContentRef} className="relative z-20 flex flex-col items-center justify-center">
+        
+        {/* Aperture Reticle Ring */}
+        <div
+          ref={apertureRingRef}
+          className="relative w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center"
+        >
+          {/* Circular Progress Stroke */}
+          <svg className="w-24 h-24 sm:w-28 sm:h-28 -rotate-90">
+            <circle
+              cx="50%"
+              cy="50%"
+              r="38"
+              className="stroke-white/10 fill-none stroke-[2]"
             />
-          </div>
+            <circle
+              ref={progressCircleRef}
+              cx="50%"
+              cy="50%"
+              r="38"
+              className="stroke-[#E10600] fill-none stroke-[2.5] transition-all"
+              strokeDasharray="238.76"
+              strokeDashoffset="238.76"
+              strokeLinecap="round"
+            />
+          </svg>
 
-          <div className="flex items-center justify-between font-mono-telemetry text-[10px] text-neutral-500 mt-1">
-            <span>MONACO 🇲🇨 / MARANELLO 🇮🇹</span>
-            <span>2026 RACE READY</span>
+          {/* Center Driver Number Badge */}
+          <div className="absolute flex flex-col items-center justify-center">
+            <span className="font-racing font-black text-2xl sm:text-3xl text-white leading-none">
+              16
+            </span>
           </div>
         </div>
+
+        {/* Status Percentage Counter */}
+        <div className="mt-5 flex flex-col items-center justify-center text-center">
+          <span className="font-mono-telemetry text-xs sm:text-sm text-neutral-300 font-bold uppercase tracking-[0.25em]">
+            SYSTEM READY // <span className="text-[#E10600]">{progress}%</span>
+          </span>
+          <span className="mt-1 font-mono-telemetry text-[9px] text-neutral-500 uppercase tracking-[0.2em]">
+            APERTURE EXPOSURE INITIALIZING
+          </span>
+        </div>
+
+      </div>
+
+      {/* Bottom Telemetry Footer */}
+      <div className="absolute bottom-8 sm:bottom-12 inset-x-0 px-8 sm:px-12 flex items-center justify-between font-mono-telemetry text-[10px] text-neutral-600 uppercase tracking-widest pointer-events-none">
+        <span>MONACO 🇲🇨 / MARANELLO 🇮🇹</span>
+        <span>STATUS: ARMED</span>
       </div>
     </div>
   );
