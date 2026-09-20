@@ -1,41 +1,14 @@
 // Built using Hyperiux Vault: https://vault.hyperiux.com
 
 import React, { useEffect, useRef, useState } from "react";
-import type { MouseEvent as ReactMouseEvent } from "react";
 import gsap from "gsap";
-
-export interface InteractiveListItem {
-  client: string;
-  platform?: string;
-  services: string;
-  img: string;
-  badge?: string;
-  circuit?: string;
-  date?: string;
-  status?: string;
-}
-
-export interface InteractiveListPreviewProps {
-  items?: InteractiveListItem[];
-  /** Scale multiplier for the hover preview image. */
-  imageSize?: number;
-  /** Preview image reveal / hide duration (seconds). */
-  duration?: number;
-  /** Highlight bar + row text transition smoothing (seconds). */
-  smoothness?: number;
-  /** Pointer-follow smoothing; higher tracks faster. */
-  lerp?: number;
-  /** Background color of the list surface. */
-  bgColor?: string;
-  className?: string;
-}
 
 const DEFAULT_IMAGE_Z_INDEX = 10;
 const DEFAULT_IMAGE_SIZE = 1;
 const DEFAULT_DURATION = 0.6;
 const DEFAULT_SMOOTHNESS = 0.35;
 const DEFAULT_LERP = 0.18;
-const DEFAULT_ITEMS: InteractiveListItem[] = [
+const DEFAULT_ITEMS = [
   { client: "AURORA UI", platform: "NEXT.JS", services: "Motion Design, GSAP, Page Transitions, UI Systems", img: "/images/monaco-track.jpg" },
   { client: "NEON FLOW", platform: "REACT", services: "Interactive UI, Scroll Animations, Effects Library", img: "/images/sparks.jpg" },
   { client: "GLASSMORPH", platform: "NEXT.JS", services: "Glass UI, Components, Motion Architecture", img: "/images/pitstop.jpg" },
@@ -57,7 +30,7 @@ const IMAGE_VISIBLE_CLIP_PATH = "inset(0%)";
 const IMAGE_VISIBILITY_HIDDEN = "hidden";
 const IMAGE_VISIBILITY_VISIBLE = "visible";
 
-function clampNumber(value: number, min: number, max: number, fallback: number) {
+function clampNumber(value, min, max, fallback) {
   const number = Number(value);
   if (!Number.isFinite(number)) return fallback;
   return Math.min(Math.max(number, min), max);
@@ -71,15 +44,15 @@ export default function InteractiveListPreview({
   lerp = DEFAULT_LERP,
   bgColor = "transparent",
   className = "",
-}: InteractiveListPreviewProps) {
-  const imageRefs = useRef<any[]>([]);
-  const imageContainerRef = useRef<any>(null);
-  const tableRef = useRef<any>(null);
-  const highlightRef = useRef<any>(null);
-  const rowRefs = useRef<Record<number, any>>({});
-  const pendingLeaveRef = useRef<Record<number, boolean>>({});
-  const tweenGenerationRef = useRef<Record<number, number>>({});
-  const activeIndexRef = useRef<number | null>(null);
+}) {
+  const imageRefs = useRef([]);
+  const imageContainerRef = useRef(null);
+  const tableRef = useRef(null);
+  const highlightRef = useRef(null);
+  const rowRefs = useRef({});
+  const pendingLeaveRef = useRef({});
+  const tweenGenerationRef = useRef({});
+  const activeIndexRef = useRef(null);
   const zIndexRef = useRef(DEFAULT_IMAGE_Z_INDEX);
   const pointerTargetRef = useRef({ x: 0, y: 0 });
   const pointerCurrentRef = useRef({ x: 0, y: 0 });
@@ -97,7 +70,7 @@ export default function InteractiveListPreview({
     const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     if (!mq) return;
 
-    const onChange = (event: MediaQueryListEvent) => {
+    const onChange = (event) => {
       reduceMotionRef.current = event.matches;
       if (event.matches && imageContainerRef.current) {
         gsap.killTweensOf(imageContainerRef.current);
@@ -126,7 +99,7 @@ export default function InteractiveListPreview({
   }, []);
 
   useEffect(() => {
-    let frameId: number;
+    let frameId;
 
     const tick = () => {
       const imageContainer = imageContainerRef.current;
@@ -153,7 +126,7 @@ export default function InteractiveListPreview({
   }, [safeLerp]);
 
   useEffect(() => {
-    imageRefs.current.forEach((imageElement: any) => {
+    imageRefs.current.forEach((imageElement) => {
       if (!imageElement) return;
 
       if (reduceMotionRef.current) {
@@ -180,18 +153,18 @@ export default function InteractiveListPreview({
     });
   }, []);
 
-  const getNextTweenGeneration = (index: number) => {
+  const getNextTweenGeneration = (index) => {
     tweenGenerationRef.current[index] =
       (tweenGenerationRef.current[index] || 0) + 1;
 
     return tweenGenerationRef.current[index];
   };
 
-  const setImageRef = (index: number, element: HTMLDivElement | null) => {
+  const setImageRef = (index, element) => {
     imageRefs.current[index] = element;
   };
 
-  const setRowTextColor = (index: number, color: string) => {
+  const setRowTextColor = (index, color) => {
     const rowElement = rowRefs.current[index];
 
     if (!rowElement) return;
@@ -212,7 +185,7 @@ export default function InteractiveListPreview({
     });
   };
 
-  const moveHighlightToRow = (rowElement: HTMLTableRowElement | null) => {
+  const moveHighlightToRow = (rowElement) => {
     const tableElement = tableRef.current;
     const highlightElement = highlightRef.current;
 
@@ -231,7 +204,7 @@ export default function InteractiveListPreview({
     });
   };
 
-  const animateImageOut = (index: number) => {
+  const animateImageOut = (index) => {
     const imageElement = imageRefs.current[index];
 
     if (!imageElement) return;
@@ -257,7 +230,7 @@ export default function InteractiveListPreview({
     });
   };
 
-  const onRowEnter = (rowElement: HTMLTableRowElement, index: number) => {
+  const onRowEnter = (rowElement, index) => {
     const imageElement = imageRefs.current[index];
 
     if (!imageElement) return;
@@ -333,7 +306,7 @@ export default function InteractiveListPreview({
     moveHighlightToRow(rowElement);
   };
 
-  const onRowLeave = (index: number) => {
+  const onRowLeave = (index) => {
     const imageElement = imageRefs.current[index];
 
     if (!imageElement) return;
@@ -364,7 +337,7 @@ export default function InteractiveListPreview({
     pointerTargetRef.current = { x: 0, y: 0 };
   };
 
-  const onMouseMove = (event: ReactMouseEvent<HTMLDivElement>) => {
+  const onMouseMove = (event) => {
     // Reduced-motion: no cursor parallax on the preview images.
     if (reduceMotionRef.current) return;
     if (!imageContainerRef.current) return;
@@ -399,7 +372,7 @@ export default function InteractiveListPreview({
             className="pointer-events-none absolute inset-0 z-20"
             style={{ mixBlendMode: "difference" }}
           >
-            {items.map((item: any, index: number) => (
+            {items.map((item, index) => (
               <div
                 key={`${item.client}-${index}`}
                 ref={(element) => setImageRef(index, element)}
@@ -434,7 +407,7 @@ export default function InteractiveListPreview({
               </colgroup>
 
               <tbody>
-                {items.map((item: any, index: number) => (
+                {items.map((item, index) => (
                   <tr
                     key={`${item.client}-${index}`}
                     className="border-b border-white/[0.08] transition-colors cursor-pointer"
@@ -479,7 +452,7 @@ export default function InteractiveListPreview({
 
       {isCoarsePointer && (
         <div style={{ backgroundColor: bgColor }} className={`w-full font-mono text-white ${className}`}>
-          {items.map((item: any, index: number) => (
+          {items.map((item, index) => (
             <div key={`${item.client}-${index}`} className="flex border-b border-white/10">
               <div className="flex w-1/2 flex-col justify-between gap-3 p-4">
                 <div className="flex flex-col gap-1">
