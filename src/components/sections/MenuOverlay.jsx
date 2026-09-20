@@ -180,37 +180,37 @@ export default function MenuOverlay({ isOpen, onClose }) {
             />
           </svg>
 
-          {/* 2. MENU CONTENT CONTAINER (Monaco Riviera Palette with Restored Racing Font) */}
+          {/* 2. MENU CONTENT CONTAINER (Adaptive Across All Devices) */}
           <motion.div
             variants={contentVariants}
             initial="initial"
             animate="animate"
             exit="exit"
-            className="relative z-[9999] w-full h-screen overflow-hidden flex flex-col justify-between px-8 md:px-16 py-6 md:py-8 text-white max-w-[1700px] mx-auto"
+            className="relative z-[9999] w-full min-h-screen h-[100dvh] overflow-y-auto lg:overflow-hidden flex flex-col justify-between px-5 sm:px-8 md:px-12 lg:px-16 py-4 sm:py-6 md:py-8 text-white max-w-[1700px] mx-auto"
           >
             {/* Top Bar: Brand Typography & Close Button */}
-            <div className="w-full flex items-center justify-between z-10">
+            <div className="w-full flex items-center justify-between z-10 shrink-0">
               {/* Left: Brand Monogram */}
               <div className="flex flex-col">
                 <TextBoxReveal delay={0.15} duration={0.35} boxColor="#E10600">
-                  <span className="font-editorial text-2xl md:text-3xl tracking-tight leading-none text-white font-medium">
+                  <span className="font-editorial text-xl sm:text-2xl md:text-3xl tracking-tight leading-none text-white font-medium">
                     CHARLES
                   </span>
                 </TextBoxReveal>
                 <TextBoxReveal delay={0.2} duration={0.35} boxColor="#E10600">
-                  <span className="font-racing font-black text-2xl md:text-3xl tracking-tight leading-none text-white uppercase">
+                  <span className="font-racing font-black text-xl sm:text-2xl md:text-3xl tracking-tight leading-none text-white uppercase">
                     LECLERC
                   </span>
                 </TextBoxReveal>
               </div>
 
               {/* Right: Monaco Scarlet Red Store Button & Close Button */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-3">
                 <a
                   href="https://store.ferrari.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-[#E10600]/30"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-[#E10600]/30"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>STORE</span>
@@ -218,23 +218,23 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
                 <button
                   onClick={onClose}
-                  className="w-10 h-10 rounded-xl bg-[#1E2026] text-white hover:bg-[#E10600] border border-white/10 flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                  className="w-9 sm:w-10 h-9 sm:h-10 rounded-xl bg-[#1E2026] text-white hover:bg-[#E10600] border border-white/10 flex items-center justify-center transition-all active:scale-95 cursor-pointer"
                   title="Close Menu"
                 >
-                  <X className="w-5 h-5 stroke-[2.5]" />
+                  <X className="w-4 sm:w-5 h-4 sm:h-5 stroke-[2.5]" />
                 </button>
               </div>
             </div>
 
             {/* Center Stage: Masonry Photo Collage (Left) & Restored Racing Menu Navigation (Right) */}
-            <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center my-auto">
+            <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 lg:gap-12 xl:gap-16 items-center my-auto py-4 sm:py-6">
               
-              {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Editorial Sharp Grid) */}
-              <div className="hidden md:grid lg:col-span-5 grid-cols-2 gap-4 lg:gap-5 max-w-[380px] lg:max-w-[460px] xl:max-w-[520px] w-full">
+              {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Adaptive on Tablet & Desktop) */}
+              <div className="hidden md:grid md:col-span-6 lg:col-span-6 xl:col-span-7 grid-cols-2 gap-3.5 md:gap-4 lg:gap-6 max-w-[480px] md:max-w-[540px] lg:max-w-[700px] xl:max-w-[780px] w-full">
                 
                 {/* Column 1 (Cards 1 & 3): Drifting gently up & down */}
                 <motion.div
-                  className="flex flex-col gap-4 lg:gap-5"
+                  className="flex flex-col gap-3.5 md:gap-4 lg:gap-6"
                   animate={{
                     y: [-6, 6, -6],
                   }}
@@ -250,7 +250,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.18 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative aspect-[4/5] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[22vh] md:h-[26vh] lg:h-[32vh] xl:h-[36vh] max-h-[360px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc1.jpg"
@@ -266,7 +266,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative aspect-square overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[18vh] md:h-[21vh] lg:h-[26vh] xl:h-[30vh] max-h-[300px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc3.jpg"
@@ -279,7 +279,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
                 {/* Column 2 (Cards 2 & 4): Staggered Downward Offset & Reverse Drift */}
                 <motion.div
-                  className="flex flex-col gap-4 lg:gap-5 -translate-y-6 sm:-translate-y-8"
+                  className="flex flex-col gap-3.5 md:gap-4 lg:gap-6 -translate-y-3 md:-translate-y-5 lg:-translate-y-8"
                   animate={{
                     y: [6, -6, 6],
                   }}
@@ -295,7 +295,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.24 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative aspect-square overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[18vh] md:h-[21vh] lg:h-[26vh] xl:h-[30vh] max-h-[300px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc2.jpg"
@@ -311,7 +311,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.36 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative aspect-[4/5] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[22vh] md:h-[26vh] lg:h-[32vh] xl:h-[36vh] max-h-[360px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc4.jpg"
@@ -325,16 +325,16 @@ export default function MenuOverlay({ isOpen, onClose }) {
               </div>
 
               {/* RIGHT COLUMN: Restored Racing Typography Menu (HOME, ON TRACK, OFF TRACK, CALENDAR) */}
-              <div className="w-full lg:col-span-7 flex flex-col items-start lg:items-end justify-center text-left lg:text-right gap-4 sm:gap-6">
+              <div className="w-full md:col-span-6 lg:col-span-6 xl:col-span-5 flex flex-col items-start md:items-end justify-center text-left md:text-right gap-3 sm:gap-5 md:gap-6">
                 
                 {/* Menu Links with Staggered Per-Character Bouncy Roll-Up Animation & Hover Block Wipe */}
-                <nav className="flex flex-col gap-2 md:gap-3">
+                <nav className="flex flex-col gap-1.5 sm:gap-2 md:gap-3">
                   {menuItems.map((item) => {
                     const isActive = activeItem === item.label;
                     return (
                       <div
                         key={item.label}
-                        className="relative inline-flex items-center justify-start lg:justify-end"
+                        className="relative inline-flex items-center justify-start md:justify-end"
                       >
                         <MenuItemLink
                           item={item}
@@ -350,14 +350,36 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   })}
                 </nav>
 
+                {/* Mobile-Only Editorial Photo Strip (Shows on phones so mobile users also get photos!) */}
+                <div className="grid md:hidden grid-cols-4 gap-2 w-full max-w-[340px] pt-2">
+                  {[
+                    { src: '/images/leclerc1.jpg', alt: 'Helmet' },
+                    { src: '/images/leclerc2.jpg', alt: 'Stand' },
+                    { src: '/images/leclerc3.jpg', alt: 'Cockpit' },
+                    { src: '/images/leclerc4.jpg', alt: 'Motion' },
+                  ].map((img, idx) => (
+                    <div
+                      key={idx}
+                      className="relative aspect-[4/5] overflow-hidden"
+                    >
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        className="w-full h-full object-cover grayscale active:grayscale-0 transition-all duration-300"
+                      />
+                      <div className="absolute inset-0 bg-[#101114]/20" />
+                    </div>
+                  ))}
+                </div>
+
                 {/* Scuderia Ferrari Laurel Wreath + Helmet Badge */}
-                <div className="flex flex-col items-start lg:items-end mt-3 text-left lg:text-right">
+                <div className="flex flex-col items-start md:items-end mt-2 md:mt-3 text-left md:text-right">
                   <TextBoxReveal delay={0.42} duration={0.35} boxColor="#E10600" once>
                     <div className="flex items-center gap-2.5 text-neutral-300">
                       <img
                         src="/images/racing%20helmet%20laurel%20emblem.png"
                         alt="Racing Helmet Laurel Emblem"
-                        className="h-8 sm:h-9 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                        className="h-7 sm:h-8 md:h-9 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
                       />
                       <span className="text-[10px] sm:text-[11px] font-mono-telemetry uppercase tracking-wider text-neutral-300 font-bold">
                         SCUDERIA FERRARI SINCE 2019
@@ -371,7 +393,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
             </div>
 
             {/* Bottom Bar: Business Enquiries & Social Media Links */}
-            <div className="w-full flex flex-col md:flex-row items-center justify-between pt-4 border-t border-white/10 gap-3 text-xs font-racing uppercase tracking-wider text-neutral-400 z-10">
+            <div className="w-full flex flex-col sm:flex-row items-center justify-between pt-3 sm:pt-4 border-t border-white/10 gap-3 text-[11px] sm:text-xs font-racing uppercase tracking-wider text-neutral-400 z-10 shrink-0">
               <TextBoxReveal delay={0.46} duration={0.35} boxColor="#E10600">
                 <a
                   href="mailto:contact@charlesleclerc.com"
@@ -381,7 +403,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                 </a>
               </TextBoxReveal>
 
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
                 <TextBoxReveal delay={0.5} duration={0.35} boxColor="#E10600">
                   <a href="https://www.tiktok.com/@charlesleclerc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TIKTOK</a>
                 </TextBoxReveal>
