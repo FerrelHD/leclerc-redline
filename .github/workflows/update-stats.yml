@@ -1,4 +1,4 @@
-name: Auto Update Charles Leclerc Stats
+name: Auto Update Charles Leclerc Stats & F1 Calendar
 
 on:
   schedule:
@@ -24,14 +24,17 @@ jobs:
       - name: Fetch and update Leclerc stats
         run: node scripts/update-stats.mjs
 
+      - name: Fetch and update F1 calendar schedule
+        run: node scripts/update-calendar.mjs
+
       - name: Commit and push if changed
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/charlesData.js src/components/sections/StorytellingScroll.jsx
+          git add src/data/charlesData.js src/components/sections/StorytellingScroll.jsx src/data/f1Calendar.js
           if git diff --staged --quiet; then
-            echo "No stats changes detected. Everything is up to date."
+            echo "No stats or calendar changes detected. Everything is up to date."
           else
-            git commit -m "chore: auto-update Charles Leclerc F1 career stats"
+            git commit -m "chore: auto-update Leclerc stats and F1 race calendar"
             git push origin main
           fi
