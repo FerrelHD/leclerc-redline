@@ -92,18 +92,15 @@ function CountdownTimer({ targetDate }) {
 export default function F1Calendar() {
   const sectionRef = useRef(null);
   const listContainerRef = useRef(null);
-  const floatingTrackRef = useRef(null);
-  const trackSvgInnerRef = useRef(null);
+  const thumbnailRef = useRef(null);
+  const xToRef = useRef(null);
+  const yToRef = useRef(null);
 
   // User requested default filter to be UPCOMING
   const [activeFilter, setActiveFilter] = useState('UPCOMING');
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [hoveredRace, setHoveredRace] = useState(null);
   const [isCoarsePointer, setIsCoarsePointer] = useState(false);
-
-  // Mouse tracking coordinates with smooth lerp
-  const targetPos = useRef({ x: 0, y: 0 });
-  const currentPos = useRef({ x: 0, y: 0 });
-  const isPointerInside = useRef(false);
 
   const now = useMemo(() => new Date(), []);
 
@@ -156,58 +153,34 @@ export default function F1Calendar() {
     return () => mq.removeEventListener('change', update);
   }, []);
 
-  // Smooth lerp mouse-following loop for pure floating track
+  // Initialize GSAP quickTo mouse following for thumbnail wrapper
   useEffect(() => {
-    let frameId;
-    const LERP_FACTOR = 0.15;
+    if (!thumbnailRef.current || isCoarsePointer) return;
 
-    const tick = () => {
-      if (floatingTrackRef.current && isPointerInside.current) {
-        currentPos.current.x += (targetPos.current.x - currentPos.current.x) * LERP_FACTOR;
-        currentPos.current.y += (targetPos.current.y - currentPos.current.y) * LERP_FACTOR;
+    gsap.set(thumbnailRef.current, { scale: 0, xPercent: -50, yPercent: -50 });
 
-        gsap.set(floatingTrackRef.current, {
-          x: currentPos.current.x,
-          y: currentPos.current.y,
-        });
-      }
-      frameId = requestAnimationFrame(tick);
-    };
+    xToRef.current = gsap.quickTo(thumbnailRef.current, "x", {
+      duration: 0.4,
+      ease: "power3.out",
+    });
+    yToRef.current = gsap.quickTo(thumbnailRef.current, "y", {
+      duration: 0.4,
+      ease: "power3.out",
+    });
+  }, [isCoarsePointer]);
 
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, []);
-
-  // Animate floating track entry when hovered race changes
+  // Reset thumbnail state on filter change
   useEffect(() => {
-    if (!floatingTrackRef.current) return;
-
-    if (hoveredRace) {
-      gsap.to(floatingTrackRef.current, {
-        opacity: 1,
-        scale: 1,
-        duration: 0.3,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      });
-
-      if (trackSvgInnerRef.current) {
-        gsap.fromTo(
-          trackSvgInnerRef.current,
-          { scale: 0.9, opacity: 0.4 },
-          { scale: 1, opacity: 1, duration: 0.28, ease: 'power2.out' }
-        );
+    if (thumbnailRef.current) {
+      gsap.set(thumbnailRef.current, { scale: 0 });
+      const thumbnails = thumbnailRef.current.querySelectorAll('.hover-img-thumbnail');
+      if (thumbnails.length > 0) {
+        gsap.set(thumbnails, { yPercent: 0 });
       }
-    } else {
-      gsap.to(floatingTrackRef.current, {
-        opacity: 0,
-        scale: 0.85,
-        duration: 0.25,
-        ease: 'power2.in',
-        overwrite: 'auto',
-      });
     }
-  }, [hoveredRace?.round]);
+    setHoveredIndex(null);
+    setHoveredRace(null);
+  }, [activeFilter]);
 
   // Navbar Theme Synchronization (White text on Red background)
   useEffect(() => {
@@ -227,13 +200,46 @@ export default function F1Calendar() {
 
   const handleMouseMove = (e) => {
     if (isCoarsePointer) return;
-    isPointerInside.current = true;
-    targetPos.current = { x: e.clientX, y: e.clientY };
+    xToRef.current?.(e.clientX);
+    yToRef.current?.(e.clientY);
   };
 
   const handleListLeave = () => {
-    isPointerInside.current = false;
+    setHoveredIndex(null);
     setHoveredRace(null);
+    if (thumbnailRef.current) {
+      gsap.to(thumbnailRef.current, {
+        scale: 0,
+        duration: 0.3,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    }
+  };
+
+  const handleRowEnter = (race, index) => {
+    if (isCoarsePointer) return;
+    setHoveredIndex(index);
+    setHoveredRace(race);
+
+    if (thumbnailRef.current) {
+      gsap.to(thumbnailRef.current, {
+        scale: 1,
+        duration: 0.4,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+
+      const thumbnails = thumbnailRef.current.querySelectorAll('.hover-img-thumbnail');
+      if (thumbnails.length > 0) {
+        gsap.to(thumbnails, {
+          yPercent: -100 * index,
+          duration: 0.4,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      }
+    }
   };
 
   return (
@@ -299,54 +305,44 @@ export default function F1Calendar() {
         </div>
 
         {/* ========================================================================= */}
-        {/* PURE HOLOGRAPHIC FLOATING SVG TRACK (Cardless Minimalist White Vector)   */}
+        {/* OBSIDIAN UI FLOATING HOVER TRACK SVG SLIDING STACK                        */}
         {/* ========================================================================= */}
         {!isCoarsePointer && (
           <div
-            ref={floatingTrackRef}
-            className="pointer-events-none fixed top-0 left-0 z-50 -translate-x-1/2 -translate-y-1/2 opacity-0 will-change-transform"
-            style={{ width: '320px' }}
+            ref={thumbnailRef}
+            className="hover-img-thumbnail-wrapper pointer-events-none fixed top-0 left-0 z-50 w-[260px] sm:w-[300px] h-[240px] sm:h-[270px] flex flex-col overflow-hidden will-change-transform"
+            style={{ transformOrigin: "center center" }}
           >
-            {/* Pure Floating Technical Minimalist Track */}
-            <div className="relative flex flex-col items-center justify-center p-4">
-              
-              {/* Subtle diffused shadow backing */}
-              <div className="absolute inset-4 -z-10 rounded-full bg-black/30 blur-2xl pointer-events-none" />
+            {displayRaces.map((race) => (
+              <div
+                key={race.round}
+                className="hover-img-thumbnail relative w-full h-full flex-shrink-0 flex flex-col items-center justify-center p-2 select-none"
+              >
+                {/* Vektor Sirkuit Murni dengan Ambient Drop Shadow */}
+                <div className="w-full h-44 sm:h-52 flex items-center justify-center pointer-events-none">
+                  <svg
+                    viewBox={race.viewBox}
+                    className="w-full h-full max-h-40 sm:max-h-48 filter drop-shadow-[0_12px_28px_rgba(0,0,0,0.55)]"
+                  >
+                    <path
+                      d={race.svgPath}
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth={race.strokeWidth || 9}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
 
-              {/* Vektor SVG Sirkuit F1 Asli (Pure White Technical Line) */}
-              {hoveredRace && (
-                <div ref={trackSvgInnerRef} className="w-full flex flex-col items-center">
-                  <div className="w-60 h-60 flex items-center justify-center">
-                    <svg
-                      viewBox={hoveredRace.viewBox}
-                      className="w-full h-full max-h-52 filter drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
-                    >
-                      <path
-                        d={hoveredRace.svgPath}
-                        fill="none"
-                        stroke="#FFFFFF"
-                        strokeWidth={hoveredRace.strokeWidth || 9}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-
-                  {/* Minimal Floating Telemetry HUD Ribbon */}
-                  <div className="mt-2 text-center pointer-events-none">
-                    <div className="font-racing font-bold text-xs uppercase tracking-widest text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-                      {hoveredRace.circuit}
-                    </div>
-                    <div className="font-mono-telemetry text-[10px] text-white/80 tracking-wider mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
-                      {hoveredRace.specs?.length} • {hoveredRace.specs?.turns} TURNS • {hoveredRace.specs?.laps} LAPS
-                    </div>
-                    <div className="font-mono-telemetry text-[10px] text-[#FFE500] font-bold tracking-wider mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
-                      {hoveredRace.specs?.stat}
-                    </div>
+                {/* Nama Sirkuit Minimalis dengan Text Shadow */}
+                <div className="mt-2 text-center pointer-events-none">
+                  <div className="font-racing font-bold text-xs sm:text-sm uppercase tracking-widest text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
+                    {race.circuit}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            ))}
           </div>
         )}
 
@@ -359,24 +355,26 @@ export default function F1Calendar() {
           onMouseLeave={handleListLeave}
           className="relative w-full mt-4 divide-y divide-white/20 group/calendar"
         >
-          {displayRaces.map((race) => {
+          {displayRaces.map((race, index) => {
             const isNext = race.originalIndex === nextRaceIdx && race.status !== 'TODAY';
             const isRaceDay = race.status === 'TODAY';
             const isCompleted = race.status === 'COMPLETED';
-            const isHovered = hoveredRace?.round === race.round;
+            const isHovered = hoveredIndex === index;
 
             return (
               <div
                 key={race.round}
-                onMouseEnter={() => setHoveredRace(race)}
-                className={`py-5 sm:py-7 md:py-8 transition-all duration-300 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 ${
-                  hoveredRace !== null && !isHovered
+                onMouseEnter={() => handleRowEnter(race, index)}
+                className={`group/row py-5 sm:py-7 md:py-8 transition-all duration-300 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                  hoveredIndex !== null && !isHovered
                     ? 'opacity-25'
                     : 'opacity-100'
                 }`}
               >
-                {/* Sisi Kiri: Round Index & Giant Condensed Typography */}
-                <div className="flex items-center gap-4 sm:gap-6 md:gap-10 min-w-0">
+                {/* Sisi Kiri: Round Index & Giant Condensed Typography with Slide Animation */}
+                <div className={`flex items-center gap-4 sm:gap-6 md:gap-10 min-w-0 transition-transform duration-300 ease-out ${
+                  isHovered ? '-translate-x-2 sm:-translate-x-4' : 'translate-x-0'
+                }`}>
                   {/* Round number */}
                   <span className={`font-mono-telemetry text-xs sm:text-sm tracking-widest font-bold shrink-0 transition-colors duration-200 ${
                     isHovered ? 'text-black' : 'text-white/60'
@@ -396,8 +394,10 @@ export default function F1Calendar() {
                   </h3>
                 </div>
 
-                {/* Sisi Kanan: Clean Minimalist Metadata */}
-                <div className="flex items-center gap-6 sm:gap-10 md:gap-14 font-mono-telemetry text-xs sm:text-sm shrink-0 md:ml-auto md:pl-8 text-right justify-between md:justify-end">
+                {/* Sisi Kanan: Clean Minimalist Metadata with Slide Animation */}
+                <div className={`flex items-center gap-6 sm:gap-10 md:gap-14 font-mono-telemetry text-xs sm:text-sm shrink-0 md:ml-auto md:pl-8 text-right justify-between md:justify-end transition-transform duration-300 ease-out ${
+                  isHovered ? 'translate-x-2 sm:translate-x-4' : 'translate-x-0'
+                }`}>
                   {/* Circuit & Date */}
                   <div className="text-left md:text-right">
                     <div className="text-white font-semibold text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap">
@@ -408,7 +408,7 @@ export default function F1Calendar() {
                     </div>
                   </div>
 
-                  {/* Status / Highlight Pill */}
+                  {/* Status / Highlight (Minimalist Next Race without black card) */}
                   <div className="text-right min-w-[100px] sm:min-w-[125px] whitespace-nowrap">
                     {isRaceDay ? (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white text-[#C50500] font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow-sm">
@@ -416,9 +416,15 @@ export default function F1Calendar() {
                         LIVE GP
                       </span>
                     ) : isNext ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-black text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-wider border border-white/20">
-                        NEXT RACE
-                      </span>
+                      <div className="inline-flex items-center gap-2 justify-end">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFE500] opacity-80" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFE500]" />
+                        </span>
+                        <span className="font-mono-telemetry font-bold text-xs sm:text-[13px] uppercase tracking-widest text-[#FFE500] drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+                          NEXT RACE
+                        </span>
+                      </div>
                     ) : isCompleted ? (
                       <span className="text-white/60 text-[11px] sm:text-xs uppercase tracking-wider font-medium">
                         {race.specs?.stat?.split('(')[0] || 'FINISHED'}
@@ -438,12 +444,17 @@ export default function F1Calendar() {
                   </div>
                 </div>
 
-                {/* Mobile Touch Inline SVG Thumbnail */}
+                {/* Mobile Touch Inline Thumbnail */}
                 {isCoarsePointer && (
-                  <div className="mt-2 w-full flex items-center justify-between pt-3 border-t border-white/15">
-                    <span className="font-mono-telemetry text-[11px] text-white/80">
-                      {race.circuit} • {race.specs?.stat}
-                    </span>
+                  <div className="mt-3 w-full flex items-center justify-between pt-3 border-t border-white/15">
+                    <div>
+                      <div className="font-condensed font-bold text-base text-white uppercase leading-tight">
+                        {race.circuit}
+                      </div>
+                      <div className="font-mono-telemetry text-[11px] text-[#FFE500] mt-0.5">
+                        {race.specs?.stat}
+                      </div>
+                    </div>
                     <div className="w-14 h-14 shrink-0 flex items-center justify-center">
                       <svg
                         viewBox={race.viewBox}
@@ -470,7 +481,7 @@ export default function F1Calendar() {
         <div className="mt-14 pt-6 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between text-white/70 font-mono-telemetry text-xs gap-3">
           <span>SCUDERIA FERRARI HP // CHARLES LECLERC #16</span>
           <span className="uppercase tracking-widest text-[10px]">
-            HOVER GRAND PRIX TO REVEAL CIRCUIT TELEMETRY
+            HOVER GRAND PRIX TO REVEAL CIRCUIT SVG & TELEMETRY
           </span>
         </div>
 
