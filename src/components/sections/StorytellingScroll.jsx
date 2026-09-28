@@ -313,12 +313,12 @@ export default function StorytellingScroll() {
               <h2 className="font-racing font-extrabold uppercase text-white tracking-tight leading-[1.18] text-[clamp(1.02rem,4.2vw,2.6rem)]">
                 <span className="block overflow-hidden py-0.5">
                   <span className="story-headline-line block will-change-transform">
-                    BORN IN MONTE CARLO.
+                    FROM MONACO
                   </span>
                 </span>
                 <span className="block overflow-hidden py-0.5">
                   <span className="story-headline-line block text-[#E10600] will-change-transform">
-                    FORGED IN MARANELLO.
+                    TO MARANELLO.
                   </span>
                 </span>
               </h2>
@@ -335,12 +335,9 @@ export default function StorytellingScroll() {
             </div>
 
             {/* Driver Authentic Quote with Red Line Trace Animation */}
-            <div className="story-quote-box relative pl-4 py-1.5 mt-6 bg-white/[0.01] rounded-r-lg overflow-hidden">
-              <div className="story-quote-bar absolute left-0 top-0 bottom-0 w-0.5 bg-[#E10600]" />
               <p className="story-quote-text text-neutral-300 font-sans italic text-xs sm:text-sm md:text-base font-light leading-relaxed">
                 &ldquo;Every lap around Monaco is burned into my memory since childhood. Driving for Ferrari is an honor, but the only goal that matters is putting the red car back at the very top.&rdquo;
               </p>
-            </div>
           </div>
 
           {/* Right Column (Col 3): Leclerc Identity & Racing CTA */}
