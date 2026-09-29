@@ -10,30 +10,29 @@ gsap.registerPlugin(ScrollTrigger);
  * Essential FIA circuit specs and Charles Leclerc career highlights
  */
 const CIRCUIT_SPECS = {
-  1: { length: '5.28 KM', laps: 58, turns: 14, stat: 'P1 WIN & POLE (2022)' },
-  2: { length: '5.45 KM', laps: 56, turns: 16, stat: 'P4 (2024)' },
-  3: { length: '5.81 KM', laps: 53, turns: 18, stat: 'P3 PODIUM (2022)' },
-  4: { length: '5.41 KM', laps: 57, turns: 15, stat: 'P1 WIN & POLE (2022)' },
-  5: { length: '6.17 KM', laps: 50, turns: 27, stat: 'P2 PODIUM // FL (2022)' },
-  6: { length: '5.41 KM', laps: 57, turns: 19, stat: 'POLE POSITION (2022)' },
-  7: { length: '4.91 KM', laps: 63, turns: 19, stat: 'P3 PODIUM (2024)' },
-  8: { length: '3.34 KM', laps: 78, turns: 19, stat: 'P1 WIN & POLE (2024) 🇲🇨' },
-  9: { length: '4.66 KM', laps: 66, turns: 14, stat: 'POLE POSITION (2022)' },
-  10: { length: '4.36 KM', laps: 70, turns: 14, stat: 'P3 PODIUM (2019)' },
-  11: { length: '4.32 KM', laps: 71, turns: 10, stat: 'P1 WIN (2022)' },
-  12: { length: '5.89 KM', laps: 52, turns: 18, stat: 'P2 PODIUM (2021)' },
-  13: { length: '7.00 KM', laps: 44, turns: 19, stat: 'P1 FIRST F1 WIN (2019)' },
-  14: { length: '4.38 KM', laps: 70, turns: 14, stat: 'P4 (2024)' },
-  15: { length: '4.26 KM', laps: 72, turns: 14, stat: 'P3 PODIUM (2024)' },
-  16: { length: '5.79 KM', laps: 53, turns: 11, stat: 'P1 WIN (2019, 2024) 🇮🇹' },
-  17: { length: '6.00 KM', laps: 51, turns: 20, stat: '4x POLE POSITION (2021-2024)' },
-  18: { length: '4.94 KM', laps: 62, turns: 19, stat: 'POLE POSITION (2019, 2022)' },
-  19: { length: '5.51 KM', laps: 56, turns: 20, stat: 'P1 WIN & POLE (2024)' },
-  20: { length: '4.30 KM', laps: 71, turns: 17, stat: 'POLE POSITION (2019, 2023)' },
-  21: { length: '4.31 KM', laps: 71, turns: 15, stat: 'P4 (2022)' },
-  22: { length: '6.20 KM', laps: 50, turns: 17, stat: 'P2 PODIUM & POLE (2023)' },
-  23: { length: '5.42 KM', laps: 57, turns: 16, stat: 'P2 PODIUM (2024)' },
-  24: { length: '5.28 KM', laps: 58, turns: 16, stat: 'P2 PODIUM (2022, 2023)' },
+  1: { length: '5.28 KM', laps: 58, turns: 14, stat: 'WINNER: G. RUSSELL' },
+  2: { length: '5.45 KM', laps: 56, turns: 16, stat: 'WINNER: K. ANTONELLI' },
+  3: { length: '5.81 KM', laps: 53, turns: 18, stat: 'WINNER: K. ANTONELLI' },
+  4: { length: '5.41 KM', laps: 57, turns: 19, stat: 'WINNER: K. ANTONELLI' },
+  5: { length: '4.36 KM', laps: 70, turns: 14, stat: 'WINNER: K. ANTONELLI' },
+  6: { length: '3.34 KM', laps: 78, turns: 19, stat: 'WINNER: K. ANTONELLI' },
+  7: { length: '4.66 KM', laps: 66, turns: 14, stat: 'WINNER: L. HAMILTON' },
+  8: { length: '4.32 KM', laps: 71, turns: 10, stat: 'WINNER: G. RUSSELL' },
+  9: { length: '5.89 KM', laps: 52, turns: 18, stat: 'P1 WIN: C. LECLERC 🏆' },
+  10: { length: '7.00 KM', laps: 44, turns: 19, stat: 'WINNER: K. ANTONELLI' },
+  11: { length: '4.38 KM', laps: 70, turns: 14, stat: 'WINNER: L. NORRIS' },
+  12: { length: '4.26 KM', laps: 72, turns: 14, stat: 'WINNER: L. NORRIS' },
+  13: { length: '5.79 KM', laps: 53, turns: 11, stat: 'WINNER: K. ANTONELLI' },
+  14: { length: '5.47 KM', laps: 55, turns: 20, stat: 'WINNER: K. ANTONELLI (MADRID DEBUT)' },
+  15: { length: '6.00 KM', laps: 51, turns: 20, stat: 'WINNER: G. RUSSELL (SATURDAY GP)' },
+  16: { length: '5.54 KM', laps: 56, turns: 15, stat: 'BAHRAIN IN MALAYSIA // SEPANG' },
+  17: { length: '4.94 KM', laps: 62, turns: 19, stat: 'MARINA BAY STREET CIRCUIT' },
+  18: { length: '5.51 KM', laps: 56, turns: 20, stat: 'CIRCUIT OF THE AMERICAS' },
+  19: { length: '4.30 KM', laps: 71, turns: 17, stat: 'AUTÓDROMO HERMANOS RODRÍGUEZ' },
+  20: { length: '4.31 KM', laps: 71, turns: 15, stat: 'AUTÓDROMO JOSÉ CARLOS PACE' },
+  21: { length: '6.20 KM', laps: 50, turns: 17, stat: 'LAS VEGAS STRIP // SATURDAY NIGHT' },
+  22: { length: '5.42 KM', laps: 57, turns: 16, stat: 'LUSAIL INTERNATIONAL CIRCUIT' },
+  23: { length: '5.28 KM', laps: 58, turns: 16, stat: 'YAS MARINA // SEASON FINALE' },
 };
 
 function formatRaceDate(dateStr) {
@@ -269,7 +268,7 @@ export default function F1Calendar() {
             <div className="mt-3 flex items-center gap-3">
               <span className="h-[2px] w-8 bg-[#FFE500]" />
               <span className="font-mono-telemetry text-xs sm:text-sm uppercase tracking-[0.24em] text-white/80 font-medium">
-                24 GRAND PRIX // RACING SCHEDULE
+                {F1_CALENDAR.length} GRAND PRIX // RACING SCHEDULE
               </span>
             </div>
           </div>
@@ -426,8 +425,8 @@ export default function F1Calendar() {
                         </span>
                       </div>
                     ) : isCompleted ? (
-                      <span className="text-white/60 text-[11px] sm:text-xs uppercase tracking-wider font-medium">
-                        {race.specs?.stat?.split('(')[0] || 'FINISHED'}
+                      <span className="text-white/80 text-[11px] sm:text-xs uppercase tracking-wider font-semibold">
+                        {race.winner ? `P1: ${race.winner}` : (race.specs?.stat || 'SELESAI')}
                       </span>
                     ) : (
                       <div className="text-white/80 text-[11px] sm:text-xs">

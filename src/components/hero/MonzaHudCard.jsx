@@ -31,33 +31,13 @@ export default function MonzaHudCard({ className = "" }) {
               }}
             >
               <svg viewBox={currentRace.viewBox || "0 0 100 55"} className="w-full h-full" fill="none">
-                {/* Base Outline: Dynamic Circuit Shape */}
+                {/* Circuit Track Outline (Rotates smoothly in 3D without drawing line) */}
                 <path
                   d={currentRace.svgPath}
                   stroke="#0A0A0B"
-                  strokeOpacity="0.18"
                   strokeWidth={currentRace.strokeWidth || 1.8}
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                />
-                {/* Active Drawing Line: Looping Path Draw & Fade */}
-                <motion.path
-                  d={currentRace.svgPath}
-                  stroke="#0A0A0B"
-                  strokeWidth={currentRace.strokeWidth || 1.8}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{
-                    pathLength: [0, 1, 1, 1],
-                    opacity: [0.3, 1, 1, 0],
-                  }}
-                  transition={{
-                    duration: 3.2,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                    times: [0, 0.68, 0.86, 1],
-                  }}
                 />
               </svg>
             </motion.div>

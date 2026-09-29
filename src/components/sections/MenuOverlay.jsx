@@ -227,16 +227,16 @@ export default function MenuOverlay({ isOpen, onClose }) {
             </div>
 
             {/* Center Stage: Masonry Photo Collage (Left) & Restored Racing Menu Navigation (Right) */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 lg:gap-12 xl:gap-16 items-center my-auto py-4 sm:py-6">
+            <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 lg:gap-12 xl:gap-16 items-center my-auto py-2 sm:py-3 md:py-4">
               
-              {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Adaptive on Tablet & Desktop) */}
-              <div className="hidden md:grid md:col-span-6 lg:col-span-6 xl:col-span-7 grid-cols-2 gap-3.5 md:gap-4 lg:gap-6 max-w-[480px] md:max-w-[540px] lg:max-w-[700px] xl:max-w-[780px] w-full">
+              {/* LEFT COLUMN: 4 Staggered Animated Photography Cards (Scaled & Staggered to Match Editorial Reference) */}
+              <div className="hidden md:grid md:col-span-6 lg:col-span-6 xl:col-span-7 grid-cols-2 gap-4 md:gap-5 lg:gap-6 max-w-[560px] md:max-w-[620px] lg:max-w-[720px] xl:max-w-[800px] w-full">
                 
-                {/* Column 1 (Cards 1 & 3): Drifting gently up & down */}
+                {/* Column 1 (Cards 1 & 3): Starts right under Brand Monogram and extends downwards */}
                 <motion.div
-                  className="flex flex-col gap-3.5 md:gap-4 lg:gap-6"
+                  className="flex flex-col gap-4 md:gap-5 lg:gap-6"
                   animate={{
-                    y: [-6, 6, -6],
+                    y: [-4, 4, -4],
                   }}
                   transition={{
                     duration: 7.5,
@@ -244,13 +244,13 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     ease: "easeInOut",
                   }}
                 >
-                  {/* Card 1: Charles Helmet Detail (Tall Portrait) */}
+                  {/* Card 1: Charles Helmet Detail (Portrait) */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.18 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative w-full h-[22vh] md:h-[26vh] lg:h-[32vh] xl:h-[36vh] max-h-[360px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[27vh] md:h-[31vh] lg:h-[35vh] xl:h-[38vh] max-h-[400px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc1.jpg"
@@ -260,13 +260,13 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     <div className="absolute inset-0 bg-[#101114]/20 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
 
-                  {/* Card 3: Charles Cockpit Close-up (Square) */}
+                  {/* Card 3: Charles Cockpit / Profile (Portrait / Extends to Bottom) */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative w-full h-[18vh] md:h-[21vh] lg:h-[26vh] xl:h-[30vh] max-h-[300px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[25vh] md:h-[29vh] lg:h-[33vh] xl:h-[36vh] max-h-[380px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc3.jpg"
@@ -277,11 +277,11 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   </motion.div>
                 </motion.div>
 
-                {/* Column 2 (Cards 2 & 4): Staggered Downward Offset & Reverse Drift */}
+                {/* Column 2 (Cards 2 & 4): Staggered High Upwards towards Top Edge (Matching Lando Trophy Reference) */}
                 <motion.div
-                  className="flex flex-col gap-3.5 md:gap-4 lg:gap-6 -translate-y-3 md:-translate-y-5 lg:-translate-y-8"
+                  className="flex flex-col gap-4 md:gap-5 lg:gap-6 -translate-y-12 sm:-translate-y-16 md:-translate-y-20 lg:-translate-y-24 xl:-translate-y-28"
                   animate={{
-                    y: [6, -6, 6],
+                    y: [4, -4, 4],
                   }}
                   transition={{
                     duration: 8.5,
@@ -289,13 +289,13 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     ease: "easeInOut",
                   }}
                 >
-                  {/* Card 2: Charles On Track Stand (Square) */}
+                  {/* Card 2: Charles On Track Stand / Trophy Level (Reaches Top Edge) */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.24 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative w-full h-[18vh] md:h-[21vh] lg:h-[26vh] xl:h-[30vh] max-h-[300px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[27vh] md:h-[31vh] lg:h-[35vh] xl:h-[38vh] max-h-[400px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc2.jpg"
@@ -305,13 +305,13 @@ export default function MenuOverlay({ isOpen, onClose }) {
                     <div className="absolute inset-0 bg-[#101114]/20 group-hover:bg-transparent transition-colors duration-300" />
                   </motion.div>
 
-                  {/* Card 4: Charles Helmet Motion (Tall Portrait) */}
+                  {/* Card 4: Charles Helmet Motion (Car / Motion Detail) */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.36 }}
                     whileHover={{ scale: 1.02, y: -3 }}
-                    className="relative w-full h-[22vh] md:h-[26vh] lg:h-[32vh] xl:h-[36vh] max-h-[360px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
+                    className="relative w-full h-[25vh] md:h-[29vh] lg:h-[33vh] xl:h-[36vh] max-h-[380px] overflow-hidden cursor-pointer group transition-all duration-300 pointer-events-auto"
                   >
                     <img
                       src="/images/leclerc4.jpg"
