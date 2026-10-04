@@ -23,16 +23,16 @@ const CIRCUIT_SPECS = {
   11: { length: '4.38 KM', laps: 70, turns: 14, stat: 'WINNER: L. NORRIS' },
   12: { length: '4.26 KM', laps: 72, turns: 14, stat: 'WINNER: L. NORRIS' },
   13: { length: '5.79 KM', laps: 53, turns: 11, stat: 'WINNER: K. ANTONELLI' },
-  14: { length: '5.47 KM', laps: 55, turns: 20, stat: 'WINNER: K. ANTONELLI (MADRID DEBUT)' },
-  15: { length: '6.00 KM', laps: 51, turns: 20, stat: 'WINNER: G. RUSSELL (SATURDAY GP)' },
-  16: { length: '5.54 KM', laps: 56, turns: 15, stat: 'BAHRAIN IN MALAYSIA // SEPANG' },
+  14: { length: '5.47 KM', laps: 55, turns: 20, stat: 'WINNER: K. ANTONELLI' },
+  15: { length: '6.00 KM', laps: 51, turns: 20, stat: 'WINNER: G. RUSSELL' },
+  16: { length: '5.54 KM', laps: 56, turns: 15, stat: 'WINNER: M. VERSTAPPEN' },
   17: { length: '4.94 KM', laps: 62, turns: 19, stat: 'MARINA BAY STREET CIRCUIT' },
   18: { length: '5.51 KM', laps: 56, turns: 20, stat: 'CIRCUIT OF THE AMERICAS' },
   19: { length: '4.30 KM', laps: 71, turns: 17, stat: 'AUTÓDROMO HERMANOS RODRÍGUEZ' },
   20: { length: '4.31 KM', laps: 71, turns: 15, stat: 'AUTÓDROMO JOSÉ CARLOS PACE' },
-  21: { length: '6.20 KM', laps: 50, turns: 17, stat: 'LAS VEGAS STRIP // SATURDAY NIGHT' },
+  21: { length: '6.20 KM', laps: 50, turns: 17, stat: 'LAS VEGAS STRIP CIRCUIT' },
   22: { length: '5.42 KM', laps: 57, turns: 16, stat: 'LUSAIL INTERNATIONAL CIRCUIT' },
-  23: { length: '5.28 KM', laps: 58, turns: 16, stat: 'YAS MARINA // SEASON FINALE' },
+  23: { length: '5.28 KM', laps: 58, turns: 16, stat: 'YAS MARINA CIRCUIT' },
 };
 
 function formatRaceDate(dateStr) {
@@ -106,6 +106,7 @@ export default function F1Calendar() {
   // Compute status for all 24 races
   const raceStatuses = useMemo(() => {
     return F1_CALENDAR.map((race) => {
+      if (race.winner) return 'COMPLETED';
       const raceDate = new Date(race.raceDate);
       const diffMs = raceDate.getTime() - now.getTime();
       const diffHours = diffMs / (1000 * 60 * 60);
@@ -371,7 +372,7 @@ export default function F1Calendar() {
                 }`}
               >
                 {/* Sisi Kiri: Round Index & Giant Condensed Typography with Slide Animation */}
-                <div className={`flex items-center gap-4 sm:gap-6 md:gap-10 min-w-0 transition-transform duration-300 ease-out ${
+                <div className={`flex items-center gap-4 sm:gap-6 md:gap-10 min-w-0 flex-1 overflow-hidden transition-transform duration-300 ease-out ${
                   isHovered ? '-translate-x-2 sm:-translate-x-4' : 'translate-x-0'
                 }`}>
                   {/* Round number */}

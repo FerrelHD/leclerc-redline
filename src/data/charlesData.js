@@ -6,10 +6,10 @@ export const driverProfile = {
   country: "Monaco",
   flag: "🇲🇨",
   nextRace: {
-    name: "AZERBAIJAN GP",
-    circuit: "Baku City Circuit",
-    date: "20 SEP 2026",
-    status: "RACE DAY"
+    name: "SINGAPORE GP",
+    circuit: "Marina Bay Street Circuit",
+    date: "11 OCT 2026",
+    status: "UPCOMING"
   },
   stats: {
     poles: "27",
@@ -17,7 +17,7 @@ export const driverProfile = {
     wins: "9",
     firstEntry: "2018",
     fastestLaps: "13",
-    points: "1839"
+    points: "1851"
   }
 };
 

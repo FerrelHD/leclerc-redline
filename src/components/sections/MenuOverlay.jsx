@@ -16,7 +16,7 @@ function MenuItemLink({ item, isActive, onSelect, onHover }) {
         onHover();
       }}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative font-racing font-black text-2xl sm:text-3xl md:text-[2.2rem] lg:text-[2.5rem] xl:text-[2.9rem] tracking-tight leading-none uppercase block py-1 transition-colors duration-200 cursor-pointer ${
+      className={`relative font-racing font-black text-2xl sm:text-3xl md:text-[1.8rem] lg:text-[1.95rem] xl:text-[2.45rem] 2xl:text-[2.9rem] tracking-tight leading-none uppercase block py-0.5 sm:py-1 transition-colors duration-200 cursor-pointer ${
         isActive ? 'text-white' : 'text-[#8E8E93] hover:text-white'
       }`}
     >
@@ -186,7 +186,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="relative z-[9999] w-full min-h-screen h-[100dvh] overflow-y-auto lg:overflow-hidden flex flex-col justify-between px-5 sm:px-8 md:px-12 lg:px-16 py-4 sm:py-6 md:py-8 text-white max-w-[1700px] mx-auto"
+            className="relative z-[9999] w-full min-h-screen h-[100dvh] overflow-y-auto flex flex-col justify-between px-5 sm:px-8 md:px-12 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-5 xl:py-7 text-white max-w-[1700px] mx-auto"
           >
             {/* Top Bar: Brand Typography & Close Button */}
             <div className="w-full flex items-center justify-between z-10 shrink-0">
@@ -325,10 +325,10 @@ export default function MenuOverlay({ isOpen, onClose }) {
               </div>
 
               {/* RIGHT COLUMN: Restored Racing Typography Menu (HOME, ON TRACK, OFF TRACK, CALENDAR) */}
-              <div className="w-full md:col-span-6 lg:col-span-6 xl:col-span-5 flex flex-col items-start md:items-end justify-center text-left md:text-right gap-3 sm:gap-5 md:gap-6">
+              <div className="w-full md:col-span-6 lg:col-span-6 xl:col-span-5 flex flex-col items-start md:items-end justify-center text-left md:text-right gap-2 sm:gap-3 md:gap-4 lg:gap-4 xl:gap-5">
                 
                 {/* Menu Links with Staggered Per-Character Bouncy Roll-Up Animation & Hover Block Wipe */}
-                <nav className="flex flex-col gap-1.5 sm:gap-2 md:gap-3">
+                <nav className="flex flex-col gap-1 sm:gap-1.5 md:gap-1.5 lg:gap-2 xl:gap-2.5">
                   {menuItems.map((item) => {
                     const isActive = activeItem === item.label;
                     return (
@@ -373,13 +373,13 @@ export default function MenuOverlay({ isOpen, onClose }) {
                 </div>
 
                 {/* Scuderia Ferrari Laurel Wreath + Helmet Badge */}
-                <div className="flex flex-col items-start md:items-end mt-2 md:mt-3 text-left md:text-right">
+                <div className="flex flex-col items-start md:items-end mt-1 sm:mt-1.5 md:mt-2 text-left md:text-right">
                   <TextBoxReveal delay={0.42} duration={0.35} boxColor="#E10600" once>
                     <div className="flex items-center gap-2.5 text-neutral-300">
                       <img
                         src="/images/racing%20helmet%20laurel%20emblem.png"
                         alt="Racing Helmet Laurel Emblem"
-                        className="h-7 sm:h-8 md:h-9 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                        className="h-6 sm:h-7 md:h-8 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
                       />
                       <span className="text-[10px] sm:text-[11px] font-mono-telemetry uppercase tracking-wider text-neutral-300 font-bold">
                         SCUDERIA FERRARI SINCE 2019
@@ -393,7 +393,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
             </div>
 
             {/* Bottom Bar: Business Enquiries & Social Media Links */}
-            <div className="w-full flex flex-col sm:flex-row items-center justify-between pt-3 sm:pt-4 border-t border-white/10 gap-3 text-[11px] sm:text-xs font-racing uppercase tracking-wider text-neutral-400 z-10 shrink-0">
+            <div className="w-full flex flex-col sm:flex-row items-center justify-between pt-2.5 sm:pt-3 border-t border-white/10 gap-2 sm:gap-3 text-[11px] sm:text-xs font-racing uppercase tracking-wider text-neutral-400 z-10 shrink-0">
               <TextBoxReveal delay={0.46} duration={0.35} boxColor="#E10600">
                 <a
                   href="mailto:contact@charlesleclerc.com"
