@@ -13,7 +13,7 @@ export const driverProfile = {
   },
   stats: {
     poles: "27",
-    podiums: "54",
+    podiums: "55",
     wins: "9",
     firstEntry: "2018",
     fastestLaps: "13",

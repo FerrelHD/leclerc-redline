@@ -277,10 +277,10 @@ export default function StorytellingScroll() {
               <div className="story-stat-item flex items-baseline lg:justify-end gap-1.5 sm:gap-2 mb-0.5">
                 <span
                   className="stat-count text-[#E10600] font-racing font-bold text-xl sm:text-2xl lg:text-3xl"
-                  data-target="54"
+                  data-target="55"
                   data-pad="false"
                 >
-                  54
+                  55
                 </span>
                 <span className="text-white font-racing uppercase tracking-tight text-base sm:text-lg lg:text-xl">
                   PODIUMS
