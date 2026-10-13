@@ -15,13 +15,19 @@ export default function MonacoMaranelloSplit() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Navbar Theme Switcher
+      // 1. Navbar Theme Switcher & Background Synchronization
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top 50%',
         end: 'bottom 50%',
-        onEnter: () => document.body.classList.remove('nav-theme-dark'),
-        onEnterBack: () => document.body.classList.remove('nav-theme-dark'),
+        onEnter: () => {
+          gsap.to(document.body, { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
+          document.body.classList.remove('nav-theme-dark');
+        },
+        onEnterBack: () => {
+          gsap.to(document.body, { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
+          document.body.classList.remove('nav-theme-dark');
+        },
       });
 
       // 2. Set Posisi Awal Eksplisit (Sekali saja saat mount)
@@ -95,13 +101,13 @@ export default function MonacoMaranelloSplit() {
     <section
       id="monaco-maranello"
       ref={sectionRef}
-      className="sticky top-0 w-full h-screen bg-white text-[#0A0A0B] z-10 overflow-hidden flex items-center justify-center select-none py-24 sm:py-28 lg:py-0"
+      className="sticky top-0 w-full h-screen bg-[#F8F9FA] text-[#0A0A0B] z-10 overflow-hidden flex items-center justify-center select-none py-24 sm:py-28 lg:py-0"
     >
-      <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.04]">
+      <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03]">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="split-topo" width="500" height="500" patternUnits="userSpaceOnUse">
-              <path d="M0 250 Q 125 125 250 250 T 500 250 M 0 125 Q 200 50 300 200 T 500 75 M 0 375 Q 180 300 320 420 T 500 350" fill="none" stroke="#000" strokeWidth="1.2" />
+              <path d="M0 250 Q 125 125 250 250 T 500 250 M 0 125 Q 200 50 300 200 T 500 75 M 0 375 Q 180 300 320 420 T 500 350" fill="none" stroke="#000" strokeWidth="1" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#split-topo)" />
@@ -118,7 +124,7 @@ export default function MonacoMaranelloSplit() {
             <img
               src="/images/leclerc monaco side.png"
               alt="Monaco Helmet"
-              className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
+              className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.12)]"
               onError={e => { e.currentTarget.src = '/images/charles-helmet-monaco.png'; }}
             />
           </div>
@@ -179,7 +185,7 @@ export default function MonacoMaranelloSplit() {
             <img
               src="/images/leclerc first win side-Photoroom.png"
               alt="Spa 2019 Helmet"
-              className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
+              className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.12)]"
               onError={e => { e.currentTarget.src = '/images/leclerc first win side.png'; }}
             />
           </div>
