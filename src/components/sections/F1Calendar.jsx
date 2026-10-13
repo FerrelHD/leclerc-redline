@@ -262,7 +262,7 @@ export default function F1Calendar() {
               </span>
             </div>
 
-            <h2 className="font-condensed font-extrabold text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight uppercase leading-none text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
+            <h2 className="font-condensed font-extrabold text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight uppercase leading-none text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
               CALENDAR
             </h2>
 
@@ -382,9 +382,9 @@ export default function F1Calendar() {
                     {String(race.round).padStart(2, '0')}
                   </span>
 
-                  {/* Grand Prix Title (Big Shoulders Display Condensed, Always 1 Line) */}
+                  {/* Grand Prix Title (Fluid Big Shoulders Display Condensed: wraps cleanly on mobile, massive 1 line on desktop) */}
                   <h3
-                    className={`font-condensed font-extrabold text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.2rem] uppercase leading-none whitespace-nowrap tracking-tight transition-colors duration-200 ${
+                    className={`font-condensed font-extrabold text-[clamp(1.75rem,5.5vw,3rem)] sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.2rem] uppercase leading-none tracking-tight transition-colors duration-200 whitespace-normal sm:whitespace-nowrap break-words ${
                       isHovered
                         ? 'text-black'
                         : 'text-white'

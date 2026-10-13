@@ -61,8 +61,18 @@ const socialCards = [
 export default function SocialsDeck() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isFanned, setIsFanned] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  );
   const sectionRef = useRef(null);
   const deckContainerRef = useRef(null);
+
+  // Reactive window resize listener for precise responsive card fan-out
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Switch navbar to dark theme and trigger deck fan-out on scroll
   useEffect(() => {
@@ -89,21 +99,37 @@ export default function SocialsDeck() {
     return () => ctx.revert();
   }, []);
 
+  // Adaptive layout tokens across device tiers
+  const isSmallMobile = windowWidth < 440;
+  const isMobile = windowWidth < 640;
+  const isTablet = windowWidth >= 640 && windowWidth < 1024;
+
+  const spreadDistance = isSmallMobile ? 32 : isMobile ? 42 : isTablet ? 72 : 115;
+  const rotateStep = isSmallMobile ? 4.2 : isMobile ? 5.2 : isTablet ? 6.2 : 7.5;
+  const yStep = isSmallMobile ? 7 : isMobile ? 9 : isTablet ? 12 : 16;
+  const cardWidth = isSmallMobile
+    ? 'clamp(105px, 28vw, 125px)'
+    : isMobile
+    ? 'clamp(120px, 25vw, 150px)'
+    : isTablet
+    ? 'clamp(150px, 20vw, 190px)'
+    : 'clamp(180px, 16vw, 240px)';
+
   return (
     <section
       id="socials-deck"
       ref={sectionRef}
-      className="relative z-10 w-full pt-32 sm:pt-36 pb-8 sm:pb-12 px-4 sm:px-8 md:px-12 bg-transparent text-white"
+      className="relative z-10 w-full pt-28 sm:pt-36 pb-8 sm:pb-12 px-3 sm:px-8 md:px-12 bg-transparent text-white"
     >
 
       {/* Editorial Header */}
-      <div className="relative z-10 max-w-4xl mx-auto text-center mb-12 sm:mb-16">
-        <p className="font-racing font-bold text-xs md:text-sm tracking-[0.25em] text-[#E10600] uppercase mb-4">
+      <div className="relative z-10 max-w-4xl mx-auto text-center mb-10 sm:mb-16">
+        <p className="font-racing font-bold text-xs md:text-sm tracking-[0.25em] text-[#E10600] uppercase mb-3 sm:mb-4">
           CHARLES LECLERC
         </p>
-        <h2 className="font-racing font-black text-5xl sm:text-7xl md:text-8xl tracking-tight uppercase leading-[0.88] text-white">
+        <h2 className="font-racing font-black text-4xl xs:text-5xl sm:text-7xl md:text-8xl tracking-tight uppercase leading-[0.88] text-white">
           WHAT&apos;S UP <br />
-          <span className="font-editorial italic font-normal text-4xl sm:text-6xl md:text-7xl text-white/80">
+          <span className="font-editorial italic font-normal text-3xl xs:text-4xl sm:text-6xl md:text-7xl text-white/80">
             on socials
           </span>
         </h2>
@@ -112,27 +138,24 @@ export default function SocialsDeck() {
       {/* 
         Interactive Fan Deck:
         - Fan-Out Deal on Enter: Starts as 1 card in center, fans out smoothly when clearly scrolled into view
-        - Mobile Responsive: Tight spread on mobile so all 7 cards remain visible within the screen
-        - Consistent natural deck stacking order (zIndex = defaultZ)
-        - Wide Accordion Spread: Neighbor cards push away cleanly and return directly without overlapping/glitching
+        - Mobile & Tablet Adaptive: Tiered spread distances so all 7 cards stay within screen bounds without overflow
+        - Active spotlight: Selected card elevates to front with dimmed neighbor cards on mobile
+        - Wide Accordion Spread: Desktop cards push away cleanly
         - Subpixel Anti-Aliasing Lock: isolate + WebKit backface fix prevents border flickering
       */}
       <div
         ref={deckContainerRef}
         onMouseLeave={() => setHoveredIndex(null)}
-        className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[440px] sm:min-h-[540px] md:min-h-[600px] px-2"
+        className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[420px] sm:min-h-[540px] md:min-h-[600px] px-2"
       >
-        <div className="relative flex items-center justify-center w-full min-h-[380px] sm:min-h-[480px] md:min-h-[540px]">
+        <div className="relative flex items-center justify-center w-full min-h-[360px] sm:min-h-[480px] md:min-h-[540px]">
           {socialCards.map((card, i) => {
             const offsetFromCenter = i - 3;
             const absOffset = Math.abs(offsetFromCenter);
 
-            // Responsive spacing: adapt spread so all 7 cards remain visible on mobile viewports
-            const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-            const spreadDistance = isMobile ? 38 : 115;
             const defaultX = offsetFromCenter * spreadDistance;
-            const defaultRotate = offsetFromCenter * (isMobile ? 5.5 : 7.5);
-            const defaultY = absOffset * (isMobile ? 10 : 16);
+            const defaultRotate = offsetFromCenter * rotateStep;
+            const defaultY = absOffset * yStep;
             const defaultZ = 25 - absOffset * 2;
 
             const isHovered = isFanned && hoveredIndex === i;
@@ -148,21 +171,21 @@ export default function SocialsDeck() {
               if (isHovered) {
                 targetY = defaultY - (isMobile ? 24 : 36);
                 targetRotate = 0;
-                targetScale = isMobile ? 1.08 : 1.12;
+                targetScale = isMobile ? 1.1 : 1.12;
               } else if (i < hoveredIndex) {
                 const pushDistance = isMobile
-                  ? ((hoveredIndex - i === 1) ? -48 : -24)
+                  ? ((hoveredIndex - i === 1) ? -14 : -6)
                   : ((hoveredIndex - i === 1) ? -125 : -70);
                 targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate - (isMobile ? 2 : 4);
-                targetScale = isMobile ? 0.94 : 0.95;
+                targetRotate = defaultRotate - (isMobile ? 1.5 : 4);
+                targetScale = isMobile ? 0.96 : 0.95;
               } else if (i > hoveredIndex) {
                 const pushDistance = isMobile
-                  ? ((i - hoveredIndex === 1) ? 48 : 24)
+                  ? ((i - hoveredIndex === 1) ? 14 : 6)
                   : ((i - hoveredIndex === 1) ? 125 : 70);
                 targetX = defaultX + pushDistance;
-                targetRotate = defaultRotate + (isMobile ? 2 : 4);
-                targetScale = isMobile ? 0.94 : 0.95;
+                targetRotate = defaultRotate + (isMobile ? 1.5 : 4);
+                targetScale = isMobile ? 0.96 : 0.95;
               }
             }
 
@@ -186,18 +209,19 @@ export default function SocialsDeck() {
                   y: targetY,
                   rotate: targetRotate,
                   scale: targetScale,
+                  opacity: isFanned ? (hasHover && !isHovered ? (isMobile ? 0.68 : 0.82) : 1) : 1,
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 180, // Lebih tenang dan halus, tidak terburu-buru
+                  stiffness: 180,
                   damping: 26,
                   mass: 0.8,
                   delay: staggerDelay,
                 }}
                 className="absolute cursor-pointer select-none origin-bottom will-change-transform"
                 style={{
-                  zIndex: defaultZ,
-                  width: 'clamp(115px, 25vw, 250px)',
+                  zIndex: isHovered ? 60 : defaultZ,
+                  width: cardWidth,
                   aspectRatio: '9/16',
                   transformOrigin: '50% 90%',
                   WebkitBackfaceVisibility: 'hidden',

@@ -203,14 +203,14 @@ export default function Footer() {
         - Solid dark charcoal surface (#0c0c0c)
         =============================================================================
       */}
-      <div className="relative z-10 mx-auto w-[calc(100%-16px)] sm:w-[calc(100%-32px)] md:w-[calc(100%-48px)] max-w-[1860px] rounded-t-[140px] sm:rounded-t-[180px] md:rounded-t-[220px] rounded-b-[40px] sm:rounded-b-[50px] md:rounded-b-[60px] bg-[#0f0404]/90 backdrop-blur-sm border-t border-red-500/20 shadow-[0_-25px_70px_rgba(220,38,38,0.35)] filter drop-shadow-[0_25px_60px_rgba(0,0,0,0.98)] overflow-hidden">
+      <div className="relative z-10 mx-auto w-[calc(100%-12px)] xs:w-[calc(100%-16px)] sm:w-[calc(100%-32px)] md:w-[calc(100%-48px)] max-w-[1860px] rounded-t-[70px] xs:rounded-t-[100px] sm:rounded-t-[180px] md:rounded-t-[220px] rounded-b-[32px] sm:rounded-b-[50px] md:rounded-b-[60px] bg-[#0f0404]/90 backdrop-blur-sm border-t border-red-500/20 shadow-[0_-25px_70px_rgba(220,38,38,0.35)] filter drop-shadow-[0_25px_60px_rgba(0,0,0,0.98)] overflow-hidden">
 
         {/* SUBTLE INNER GLOW (Highlights the cathedral arch curve from within) */}
-        <div className="absolute inset-x-0 top-0 h-44 sm:h-56 rounded-t-[140px] sm:rounded-t-[180px] md:rounded-t-[220px] bg-gradient-to-b from-white/5 via-red-600/[0.03] to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-36 xs:h-44 sm:h-56 rounded-t-[70px] xs:rounded-t-[100px] sm:rounded-t-[180px] md:rounded-t-[220px] bg-gradient-to-b from-white/5 via-red-600/[0.03] to-transparent pointer-events-none" />
 
         {/* Internal Subtle Center Radial Ambience */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] sm:w-[850px] h-[550px] rounded-full opacity-20 pointer-events-none z-0"
+          className="absolute left-1/2 -translate-x-1/2 top-0 w-[340px] sm:w-[600px] md:w-[850px] h-[400px] sm:h-[550px] rounded-full opacity-20 pointer-events-none z-0"
           style={{
             background:
               'radial-gradient(circle, rgba(225,6,0,0.35) 0%, rgba(255,229,0,0.05) 45%, transparent 70%)',
@@ -218,7 +218,7 @@ export default function Footer() {
         />
 
         {/* Main Footer Content: Constrained inside max-w-6xl mx-auto px-8 (z-20 in front of ticker) */}
-        <div className="relative z-20 w-full max-w-6xl mx-auto px-6 sm:px-8 pt-16 sm:pt-20 md:pt-28 pb-0 flex flex-col items-center">
+        <div className="relative z-20 w-full max-w-6xl mx-auto px-4 xs:px-6 sm:px-8 pt-12 xs:pt-16 sm:pt-20 md:pt-28 pb-0 flex flex-col items-center">
 
           {/* ========================================================================= */}
           {/* CENTER EDITORIAL: SIGNATURE + ARCH CANOPY CENTERED HEADING                */}
@@ -229,7 +229,7 @@ export default function Footer() {
               {/* 🏎️ Live Handwritten SVG Signature in Glowing Modena Yellow (#FFE500) */}
               <div
                 ref={sigWrapperRef}
-                className="absolute -top-12 sm:-top-16 md:-top-22 -left-6 sm:-left-12 md:-left-14 w-48 sm:w-64 md:w-80 pointer-events-none z-20 overflow-visible"
+                className="absolute -top-8 xs:-top-10 sm:-top-16 md:-top-22 -left-2 xs:-left-6 sm:-left-12 md:-left-14 w-36 xs:w-48 sm:w-64 md:w-80 pointer-events-none z-20 overflow-visible"
               >
                 <svg
                   viewBox="80 10 820 720"
@@ -257,14 +257,14 @@ export default function Footer() {
               </div>
 
               {/* ✨ Kinetic Editorial Mask Reveal Heading */}
-              <h2 className="relative z-10 font-racing font-black text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight uppercase leading-[0.92] text-white text-center overflow-visible">
+              <h2 className="relative z-10 font-racing font-black text-[2.2rem] xs:text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight uppercase leading-[0.92] text-white text-center overflow-visible">
                 <div className="overflow-hidden py-1">
                   <span
                     ref={headingLine1Ref}
                     className="block tracking-[-0.03em] will-change-transform"
                   >
                     ALWAYS{' '}
-                    <span className="font-editorial italic font-normal text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-[#FFE500] tracking-normal lowercase">
+                    <span className="font-editorial italic font-normal text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-[#FFE500] tracking-normal lowercase">
                       pushing
                     </span>
                   </span>
@@ -352,9 +352,9 @@ export default function Footer() {
             </div>
 
             {/* CENTER COLUMN: FOREGROUND DRIVER HERO */}
-            <div className="relative w-full h-full flex flex-col items-center justify-end z-20 -mt-28 sm:-mt-40 md:-mt-52 lg:-mt-64 pointer-events-none">
-              {/* Lebar dinaikkan sedikit lagi agar helm & bahu lebih kokoh dan dominan */}
-              <div className="relative w-[420px] sm:w-[530px] md:w-[640px] lg:w-[750px] xl:w-[800px] flex flex-col items-center pointer-events-auto">
+            <div className="relative w-full h-full flex flex-col items-center justify-end z-20 -mt-20 xs:-mt-28 sm:-mt-40 md:-mt-52 lg:-mt-64 pointer-events-none">
+              {/* Lebar dibuat fluid & proporsional agar tidak memicu overflow di layar HP */}
+              <div className="relative w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[530px] md:max-w-[640px] lg:max-w-[750px] xl:max-w-[800px] flex flex-col items-center pointer-events-auto">
 
                 {/* Authentic Cutout: Charles Leclerc with Monaco Helmet & Fleece Jacket extending to bottom */}
                 <div ref={driverHeroRef} className="w-full will-change-transform">

@@ -15,11 +15,13 @@ export default function FaceHelmetReveal() {
   const heroCardRef = useRef(null);
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
+  const mobileToggleRef = useRef(null);
   const signatureRef = useRef(null);
   const signatureWrapperRef = useRef(null);
 
   const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
   const [isHovered, setIsHovered] = useState(false);
+  const [mobileHelmetActive, setMobileHelmetActive] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const isHoveredRef = useRef(false);
   const rafMouseRef = useRef(null);
@@ -48,6 +50,45 @@ export default function FaceHelmetReveal() {
       rafMouseRef.current = null;
     }
     setMousePos({ x: -500, y: -500 });
+  };
+
+  const handleTouchStart = (e) => {
+    if (!heroCardRef.current || e.touches.length === 0) return;
+    isHoveredRef.current = true;
+    setIsHovered(true);
+    const touch = e.touches[0];
+    setMousePos({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchMove = (e) => {
+    if (!heroCardRef.current || e.touches.length === 0) return;
+    if (!isHoveredRef.current) {
+      isHoveredRef.current = true;
+      setIsHovered(true);
+    }
+    const touch = e.touches[0];
+    const clientX = touch.clientX;
+    const clientY = touch.clientY;
+    if (!rafMouseRef.current) {
+      rafMouseRef.current = requestAnimationFrame(() => {
+        setMousePos({ x: clientX, y: clientY });
+        rafMouseRef.current = null;
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    isHoveredRef.current = false;
+    setIsHovered(false);
+    if (rafMouseRef.current) {
+      cancelAnimationFrame(rafMouseRef.current);
+      rafMouseRef.current = null;
+    }
+    setTimeout(() => {
+      if (!isHoveredRef.current) {
+        setMousePos({ x: -500, y: -500 });
+      }
+    }, 450);
   };
 
   // GSAP ScrollTrigger Sequence: Fullscreen to Clean Portrait Crop + Overlapping Signature
@@ -106,9 +147,9 @@ export default function FaceHelmetReveal() {
         0
       );
 
-      // Stage B: HUD Monza Race widget fades out
+      // Stage B: HUD Monza Race widget and Mobile Reveal Toggle fade out
       tl.to(
-        hudWidgetRef.current,
+        [hudWidgetRef.current, mobileToggleRef.current].filter(Boolean),
         {
           opacity: 0,
           y: 25,
@@ -155,7 +196,7 @@ export default function FaceHelmetReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative w-full h-screen overflow-hidden select-none bg-[#0A0A0A]"
+      className="relative w-full h-screen min-h-[100dvh] overflow-hidden select-none bg-[#0A0A0A]"
     >
       {/* ========================================================================= */}
       {/* 1. BACKGROUND LAYER: SLEEK SOLID MOTORSPORT BLACK WITH CONTINUOUS MARQUEE */}
@@ -165,7 +206,7 @@ export default function FaceHelmetReveal() {
         {/* TOP TRACK: Infinite Continuous Running Marquee (Editorial Italic Monaco Red) */}
         <div className="w-full overflow-hidden whitespace-nowrap flex py-1 relative z-10 opacity-90">
           <motion.div
-            className="flex shrink-0 font-bold text-[5vw] md:text-[3.8vw] leading-tight tracking-tight text-[#E10600]"
+            className="flex shrink-0 font-bold text-[clamp(1.5rem,5.2vw,3rem)] md:text-[3.8vw] leading-tight tracking-tight text-[#E10600]"
             animate={{ x: ['0%', '-50%'] }}
             transition={{
               repeat: Infinity,
@@ -187,7 +228,7 @@ export default function FaceHelmetReveal() {
         {/* BOTTOM TRACK: Infinite Continuous Running Marquee (Heavyweight Racing White) */}
         <div className="w-full overflow-hidden whitespace-nowrap flex py-1 relative z-10 opacity-90">
           <motion.div
-            className="flex shrink-0 font-racing font-black text-[5vw] md:text-[3.8vw] leading-tight tracking-tight text-[#F7F7F5]"
+            className="flex shrink-0 font-racing font-black text-[clamp(1.5rem,5.2vw,3rem)] md:text-[3.8vw] leading-tight tracking-tight text-[#F7F7F5]"
             animate={{ x: ['-50%', '0%'] }}
             transition={{
               repeat: Infinity,
@@ -201,7 +242,7 @@ export default function FaceHelmetReveal() {
         </div>
 
         {/* Minimalist Editorial Badge below Navbar */}
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none overflow-hidden py-1">
+        <div className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none overflow-hidden py-1 w-full px-4 text-center">
           <div
             ref={messageBadgeRef}
             className="flex items-center gap-3 font-racing font-bold text-xs md:text-sm uppercase tracking-[0.28em] text-white/90 drop-shadow-md"
@@ -224,7 +265,10 @@ export default function FaceHelmetReveal() {
           ref={heroCardRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative w-full h-full overflow-hidden bg-[#FFFFFF] flex flex-col justify-between origin-center"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="relative w-full h-full overflow-hidden bg-[#FFFFFF] flex flex-col justify-between origin-center touch-pan-y"
           style={{
             clipPath: 'inset(0% 0% 0% 0% round 0px)',
           }}
@@ -245,6 +289,7 @@ export default function FaceHelmetReveal() {
                 className="w-full h-full"
                 globalMouse={mousePos}
                 isHovered={isHovered && scrollProgress < 0.25}
+                forceFullReveal={mobileHelmetActive && scrollProgress < 0.35}
               />
 
             </div>
@@ -253,9 +298,35 @@ export default function FaceHelmetReveal() {
           {/* 1:1 AUTHENTIC MONZA GP HUD CARD */}
           <div
             ref={hudWidgetRef}
-            className="absolute bottom-4 sm:bottom-8 left-3 sm:left-6 md:left-12 z-20 pointer-events-auto select-none scale-[0.8] sm:scale-100 origin-bottom-left"
+            className="absolute bottom-3 sm:bottom-8 left-3 sm:left-6 md:left-12 z-20 pointer-events-auto select-none scale-[0.72] xs:scale-[0.8] sm:scale-100 origin-bottom-left"
           >
             <MonzaHudCard />
+          </div>
+
+          {/* MOBILE HELMET REVEAL INTERACTIVE TOGGLE */}
+          <div
+            ref={mobileToggleRef}
+            className="absolute bottom-3 sm:bottom-8 right-3 sm:right-6 z-20 pointer-events-auto select-none sm:hidden"
+          >
+            <button
+              type="button"
+              onClick={() => setMobileHelmetActive((prev) => !prev)}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0A0A0B]/85 backdrop-blur-md border border-white/20 text-white shadow-lg active:scale-95 transition-all duration-200"
+              aria-label="Toggle Charles Leclerc Helmet Reveal"
+            >
+              <span
+                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                  mobileHelmetActive
+                    ? 'bg-[#E10600] animate-pulse shadow-[0_0_8px_#E10600]'
+                    : 'bg-white/40'
+                }`}
+              />
+              <span className="font-racing text-[10px] tracking-wider uppercase">
+                {mobileHelmetActive ? 'SHOW PORTRAIT' : 'REVEAL HELMET'}
+              </span>
+            </button>
           </div>
 
         </div>

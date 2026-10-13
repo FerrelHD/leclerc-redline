@@ -7,6 +7,7 @@ export default function MainVisualStack({
   className = "",
   globalMouse = { x: -500, y: -500 },
   isHovered = false,
+  forceFullReveal = false,
 }) {
   const containerRef = useRef(null);
   const visualWrapperRef = useRef(null);
@@ -19,6 +20,7 @@ export default function MainVisualStack({
   const lastMouseRef = useRef({ x: -500, y: -500, time: 0 });
   const isHoveredRef = useRef(false);
   const isVisibleRef = useRef(true);
+  const forceFullRevealRef = useRef(forceFullReveal);
 
   // Volumetric 3D Studio Spatial Depth & Natural Camera Perspective refs
   const parallaxTargetRef = useRef({ x: 0, y: 0, rotX: 0, rotY: 0, shadowX: 0, shadowY: 20 });
@@ -107,6 +109,23 @@ export default function MainVisualStack({
     }
   }, [globalMouse, isHovered]);
 
+  // Keep forceFullRevealRef updated and synchronize helmet wrapper styling
+  useEffect(() => {
+    forceFullRevealRef.current = forceFullReveal;
+    if (helmetWrapperRef.current) {
+      if (forceFullReveal) {
+        helmetWrapperRef.current.style.opacity = '1';
+        helmetWrapperRef.current.style.clipPath = 'none';
+        helmetWrapperRef.current.style.webkitClipPath = 'none';
+        if (shadowPathRef.current) shadowPathRef.current.setAttribute('d', '');
+      } else if (trailRef.current.length === 0) {
+        helmetWrapperRef.current.style.opacity = '0';
+        helmetWrapperRef.current.style.clipPath = 'url(#fluid-ribbon-mask)';
+        helmetWrapperRef.current.style.webkitClipPath = 'url(#fluid-ribbon-mask)';
+      }
+    }
+  }, [forceFullReveal]);
+
   // High-performance RAF loop: direct DOM mutation without React re-render churn
   useEffect(() => {
     let animId;
@@ -157,7 +176,17 @@ export default function MainVisualStack({
       if (pts.length === 0) {
         if (maskPathRef.current) maskPathRef.current.setAttribute('d', 'M 0 0');
         if (shadowPathRef.current) shadowPathRef.current.setAttribute('d', '');
-        if (helmetWrapperRef.current) helmetWrapperRef.current.style.opacity = '0';
+        if (helmetWrapperRef.current) {
+          if (forceFullRevealRef.current) {
+            helmetWrapperRef.current.style.opacity = '1';
+            helmetWrapperRef.current.style.clipPath = 'none';
+            helmetWrapperRef.current.style.webkitClipPath = 'none';
+          } else {
+            helmetWrapperRef.current.style.opacity = '0';
+            helmetWrapperRef.current.style.clipPath = 'url(#fluid-ribbon-mask)';
+            helmetWrapperRef.current.style.webkitClipPath = 'url(#fluid-ribbon-mask)';
+          }
+        }
         animId = requestAnimationFrame(updateMeshAndParallax);
         return;
       }
@@ -227,8 +256,23 @@ export default function MainVisualStack({
       }
 
       if (maskPathRef.current) maskPathRef.current.setAttribute('d', d);
-      if (shadowPathRef.current) shadowPathRef.current.setAttribute('d', d);
-      if (helmetWrapperRef.current) helmetWrapperRef.current.style.opacity = '1';
+      if (shadowPathRef.current) {
+        if (forceFullRevealRef.current) {
+          shadowPathRef.current.setAttribute('d', '');
+        } else {
+          shadowPathRef.current.setAttribute('d', d);
+        }
+      }
+      if (helmetWrapperRef.current) {
+        helmetWrapperRef.current.style.opacity = '1';
+        if (forceFullRevealRef.current) {
+          helmetWrapperRef.current.style.clipPath = 'none';
+          helmetWrapperRef.current.style.webkitClipPath = 'none';
+        } else {
+          helmetWrapperRef.current.style.clipPath = 'url(#fluid-ribbon-mask)';
+          helmetWrapperRef.current.style.webkitClipPath = 'url(#fluid-ribbon-mask)';
+        }
+      }
 
       animId = requestAnimationFrame(updateMeshAndParallax);
     };
@@ -291,11 +335,11 @@ export default function MainVisualStack({
         {/* 2. BOTTOM LAYER: Official Monaco GP Helmet */}
         <div
           ref={helmetWrapperRef}
-          className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none -translate-y-8 sm:translate-y-4 md:translate-y-14 scale-[1.38] sm:scale-105 md:scale-100 origin-bottom transition-opacity duration-150"
+          className="absolute inset-0 z-20 flex items-end justify-center pointer-events-none -translate-y-8 sm:translate-y-4 md:translate-y-14 scale-[1.38] sm:scale-105 md:scale-100 origin-bottom transition-all duration-300"
           style={{
-            clipPath: 'url(#fluid-ribbon-mask)',
-            WebkitClipPath: 'url(#fluid-ribbon-mask)',
-            opacity: 0,
+            clipPath: forceFullReveal ? 'none' : 'url(#fluid-ribbon-mask)',
+            WebkitClipPath: forceFullReveal ? 'none' : 'url(#fluid-ribbon-mask)',
+            opacity: forceFullReveal ? 1 : 0,
           }}
         >
           <div className="w-full h-full flex items-end justify-center">

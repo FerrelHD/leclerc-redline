@@ -87,6 +87,16 @@ export default function ArchiveZoomParallax() {
             flashRef.current.style.opacity = flashOp;
           }
 
+          // As iris dilates (p >= 0.45), harmonize container & section backgrounds to #F9F9FB
+          // so no black gap/seam ever peeks through between the entrance and parallax stages!
+          const isWhiteActive = p >= 0.45;
+          if (irisTriggerRef.current) {
+            irisTriggerRef.current.style.backgroundColor = isWhiteActive ? '#F9F9FB' : '#0A0A0A';
+          }
+          if (sectionRef.current) {
+            sectionRef.current.style.backgroundColor = isWhiteActive ? '#F9F9FB' : '#0A0A0A';
+          }
+
           // Navbar Theme Switch:
           if (p >= 0.65) {
             document.body.classList.remove('nav-theme-dark');
@@ -95,9 +105,13 @@ export default function ArchiveZoomParallax() {
           }
         },
         onLeave: () => {
+          if (irisTriggerRef.current) irisTriggerRef.current.style.backgroundColor = '#F9F9FB';
+          if (sectionRef.current) sectionRef.current.style.backgroundColor = '#F9F9FB';
           document.body.classList.remove('nav-theme-dark');
         },
         onLeaveBack: () => {
+          if (irisTriggerRef.current) irisTriggerRef.current.style.backgroundColor = '#0A0A0A';
+          if (sectionRef.current) sectionRef.current.style.backgroundColor = '#0A0A0A';
           document.body.classList.add('nav-theme-dark');
         },
       });
@@ -231,13 +245,13 @@ export default function ArchiveZoomParallax() {
     <section
       id="archive-parallax"
       ref={sectionRef}
-      className="relative z-30 w-full text-[#0A0A0A] bg-[#0A0A0A]"
+      className="relative z-30 w-full text-[#0A0A0A] bg-[#0A0A0A] transition-colors duration-300"
     >
       {/* ========================================================================= */}
       {/* PHASE 1: FULLSCREEN APERTURE IRIS MOTION GRAPHIC TRANSITION (140vh)       */}
       {/* ========================================================================= */}
-      <div ref={irisTriggerRef} className="relative h-[140vh] w-full bg-[#0A0A0A]">
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+      <div ref={irisTriggerRef} className="relative h-[140vh] w-full bg-[#0A0A0A] transition-colors duration-300">
+        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center transition-colors duration-300">
           {/* 1. Revealed White Canvas (Visual Log Editorial Entrance) */}
           <div
             ref={whiteCanvasRef}
