@@ -26,6 +26,9 @@ export default function MainVisualStack({
   const parallaxTargetRef = useRef({ x: 0, y: 0, rotX: 0, rotY: 0, shadowX: 0, shadowY: 20 });
   const parallaxCurrentRef = useRef({ x: 0, y: 0, rotX: 0, rotY: 0, shadowX: 0, shadowY: 20 });
 
+  const animIdRef = useRef(null);
+  const updateLoopRef = useRef(null);
+
   // Keep track of container dimensions for SVG viewbox
   useEffect(() => {
     if (!containerRef.current) return;
@@ -107,6 +110,9 @@ export default function MainVisualStack({
         lastMouseRef.current = { x: localX, y: localY, time: now };
       }
     }
+    if (isHovered && isVisibleRef.current && !animIdRef.current && updateLoopRef.current) {
+      animIdRef.current = requestAnimationFrame(updateLoopRef.current);
+    }
   }, [globalMouse, isHovered]);
 
   // Keep forceFullRevealRef updated and synchronize helmet wrapper styling
@@ -128,22 +134,9 @@ export default function MainVisualStack({
 
   // High-performance RAF loop: direct DOM mutation without React re-render churn
   useEffect(() => {
-    let animId;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isVisibleRef.current = entry.isIntersecting;
-        if (entry.isIntersecting && !animId) {
-          animId = requestAnimationFrame(updateMeshAndParallax);
-        }
-      },
-      { threshold: 0 }
-    );
-    if (containerRef.current) observer.observe(containerRef.current);
-
     const updateMeshAndParallax = () => {
       if (!isVisibleRef.current) {
-        animId = null;
+        animIdRef.current = null;
         return;
       }
 
@@ -187,7 +180,19 @@ export default function MainVisualStack({
             helmetWrapperRef.current.style.webkitClipPath = 'url(#fluid-ribbon-mask)';
           }
         }
-        animId = requestAnimationFrame(updateMeshAndParallax);
+        // If user is not hovering and parallax has settled to ~0, sleep RAF loop to save 100% idle CPU
+        const isSettled = !isHoveredRef.current &&
+          Math.abs(target.x - curr.x) < 0.05 &&
+          Math.abs(target.y - curr.y) < 0.05 &&
+          Math.abs(target.rotX - curr.rotX) < 0.05 &&
+          Math.abs(target.rotY - curr.rotY) < 0.05;
+
+        if (isSettled) {
+          animIdRef.current = null;
+          return;
+        }
+
+        animIdRef.current = requestAnimationFrame(updateMeshAndParallax);
         return;
       }
 
@@ -274,12 +279,30 @@ export default function MainVisualStack({
         }
       }
 
-      animId = requestAnimationFrame(updateMeshAndParallax);
+      animIdRef.current = requestAnimationFrame(updateMeshAndParallax);
     };
 
-    animId = requestAnimationFrame(updateMeshAndParallax);
+    updateLoopRef.current = updateMeshAndParallax;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && !animIdRef.current) {
+          animIdRef.current = requestAnimationFrame(updateMeshAndParallax);
+        } else if (!entry.isIntersecting && animIdRef.current) {
+          cancelAnimationFrame(animIdRef.current);
+          animIdRef.current = null;
+        }
+      },
+      { threshold: 0 }
+    );
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    animIdRef.current = requestAnimationFrame(updateMeshAndParallax);
     return () => {
-      if (animId) cancelAnimationFrame(animId);
+      if (animIdRef.current) cancelAnimationFrame(animIdRef.current);
+      animIdRef.current = null;
+      updateLoopRef.current = null;
       observer.disconnect();
     };
   }, []);

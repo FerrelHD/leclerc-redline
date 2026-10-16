@@ -352,25 +352,25 @@ export default function Footer() {
             </div>
 
             {/* CENTER COLUMN: FOREGROUND DRIVER HERO */}
-            <div className="relative w-full h-full flex flex-col items-center justify-end z-20 -mt-20 xs:-mt-28 sm:-mt-40 md:-mt-52 lg:-mt-64 pointer-events-none">
-              {/* Lebar dibuat fluid & proporsional agar tidak memicu overflow di layar HP */}
-              <div className="relative w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[530px] md:max-w-[640px] lg:max-w-[750px] xl:max-w-[800px] flex flex-col items-center pointer-events-auto">
+            <div className="relative w-full h-full flex flex-col items-center justify-end z-20 -mt-20 xs:-mt-28 sm:-mt-36 md:-mt-48 lg:-mt-60 pointer-events-none">
+              {/* Responsive: fluid on mobile to prevent overflow, bold prominent width on desktop */}
+              <div className="relative w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[480px] md:max-w-none md:w-[580px] lg:w-[680px] xl:w-[740px] flex flex-col items-center pointer-events-auto shrink-0">
 
                 {/* Authentic Cutout: Charles Leclerc with Monaco Helmet & Fleece Jacket extending to bottom */}
                 <div ref={driverHeroRef} className="w-full will-change-transform">
                   <img
                     src="/images/leclerc-footer.png"
                     alt="Charles Leclerc Monaco Helmet & Signature Jacket"
-                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-14 sm:-mb-18 md:-mb-22"
+                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_25px_60px_rgba(0,0,0,0.95)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-6 sm:-mb-8 md:-mb-10"
                     loading="eager"
                     decoding="async"
                   />
                 </div>
 
-                {/* Pill Button: BUSINESS ENQUIRIES across chest (z-30) with Sheen Sweep */}
+                {/* Pill Button: BUSINESS ENQUIRIES across lower chest (z-30) with Sheen Sweep */}
                 <div
                   ref={ctaRef}
-                  className="absolute bottom-14 sm:bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap will-change-transform"
+                  className="absolute bottom-6 sm:bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap will-change-transform"
                 >
                   <MagneticEffect factor={0.25}>
                     <a

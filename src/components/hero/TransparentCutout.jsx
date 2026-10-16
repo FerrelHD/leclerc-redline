@@ -1,18 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+const processedCache = new Map();
+
 export default function TransparentCutout({ src = "/images/leclercnewimage.png", alt = "Cutout", className = "" }) {
   const canvasRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     let isCancelled = false;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    if (processedCache.has(src)) {
+      const cached = processedCache.get(src);
+      canvas.width = cached.width;
+      canvas.height = cached.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(cached, 0, 0);
+      setIsReady(true);
+      return;
+    }
+
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = src;
     img.onload = () => {
       if (isCancelled) return;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+      if (!canvasRef.current) return;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
       const w = img.naturalWidth;
@@ -82,6 +96,13 @@ export default function TransparentCutout({ src = "/images/leclercnewimage.png",
         }
 
         ctx.putImageData(imgData, 0, 0);
+        try {
+          const offscreen = document.createElement('canvas');
+          offscreen.width = w;
+          offscreen.height = h;
+          offscreen.getContext('2d').putImageData(imgData, 0, 0);
+          processedCache.set(src, offscreen);
+        } catch (_) {}
         setIsReady(true);
       } catch (err) {
         console.warn("Canvas transparency processing:", err);

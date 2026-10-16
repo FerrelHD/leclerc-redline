@@ -6,7 +6,6 @@ import MainVisualStack from './MainVisualStack';
 import AnimatedSignature from './AnimatedSignature';
 import MonzaHudCard from './MonzaHudCard';
 import InteractiveNeuralVortex from '../ui/interactive-neural-vortex-background';
-import WavesBackground from '../ui/WavesBackground';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,12 +21,15 @@ export default function FaceHelmetReveal() {
   const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
   const [isHovered, setIsHovered] = useState(false);
   const [mobileHelmetActive, setMobileHelmetActive] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [canReveal, setCanReveal] = useState(true);
+  const canRevealRef = useRef(true);
+  const isDarkRef = useRef(false);
+  const isHeroActiveRef = useRef(true);
   const isHoveredRef = useRef(false);
   const rafMouseRef = useRef(null);
 
   const handleMouseMove = (e) => {
-    if (!heroCardRef.current) return;
+    if (!heroCardRef.current || !isHeroActiveRef.current) return;
     if (!isHoveredRef.current) {
       isHoveredRef.current = true;
       setIsHovered(true);
@@ -53,7 +55,7 @@ export default function FaceHelmetReveal() {
   };
 
   const handleTouchStart = (e) => {
-    if (!heroCardRef.current || e.touches.length === 0) return;
+    if (!heroCardRef.current || !isHeroActiveRef.current || e.touches.length === 0) return;
     isHoveredRef.current = true;
     setIsHovered(true);
     const touch = e.touches[0];
@@ -61,7 +63,7 @@ export default function FaceHelmetReveal() {
   };
 
   const handleTouchMove = (e) => {
-    if (!heroCardRef.current || e.touches.length === 0) return;
+    if (!heroCardRef.current || !isHeroActiveRef.current || e.touches.length === 0) return;
     if (!isHoveredRef.current) {
       isHoveredRef.current = true;
       setIsHovered(true);
@@ -104,18 +106,34 @@ export default function FaceHelmetReveal() {
           scrub: 0.6,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            setScrollProgress(self.progress);
-            if (self.progress > 0.08) {
-              document.body.classList.add('nav-theme-dark');
-            } else {
-              document.body.classList.remove('nav-theme-dark');
+            // Theme toggle: only touch DOM when crossing 0.08 threshold
+            const isDark = self.progress > 0.08;
+            if (isDark !== isDarkRef.current) {
+              isDarkRef.current = isDark;
+              if (isDark) {
+                document.body.classList.add('nav-theme-dark');
+              } else {
+                document.body.classList.remove('nav-theme-dark');
+              }
             }
+
+            // Can reveal helmet: only set React state when crossing 0.28 threshold
+            const active = self.progress < 0.28;
+            if (active !== canRevealRef.current) {
+              canRevealRef.current = active;
+              setCanReveal(active);
+            }
+            isHeroActiveRef.current = self.progress < 0.95;
           },
           onLeaveBack: () => {
+            isDarkRef.current = false;
             document.body.classList.remove('nav-theme-dark');
+            canRevealRef.current = true;
+            setCanReveal(true);
+            isHeroActiveRef.current = true;
           },
           onEnterBack: () => {
-            document.body.classList.remove('nav-theme-dark');
+            isHeroActiveRef.current = true;
           },
         },
       });
@@ -288,8 +306,8 @@ export default function FaceHelmetReveal() {
                 bottomImage="/images/charles-helmet-monaco.png"
                 className="w-full h-full"
                 globalMouse={mousePos}
-                isHovered={isHovered && scrollProgress < 0.25}
-                forceFullReveal={mobileHelmetActive && scrollProgress < 0.35}
+                isHovered={isHovered && canReveal}
+                forceFullReveal={mobileHelmetActive && canReveal}
               />
 
             </div>

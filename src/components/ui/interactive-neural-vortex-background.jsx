@@ -15,7 +15,6 @@ export default function InteractiveNeuralVortex({
 }) {
   const canvasRef = useRef(null);
   const pointer = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2, tX: window.innerWidth / 2, tY: window.innerHeight / 2 });
-  const animationRef = useRef(null);
 
   useEffect(() => {
     const canvasEl = canvasRef.current;
@@ -140,10 +139,13 @@ export default function InteractiveNeuralVortex({
     const uPointerPosition = gl.getUniformLocation(program, 'u_pointer_position');
     const uScrollProgress = gl.getUniformLocation(program, 'u_scroll_progress');
 
-    // Resize Handler
+    let isVisible = true;
+    let animId = null;
+
+    // Resize Handler with capped DPR for optimal Retina performance
     const resizeCanvas = () => {
       if (!canvasEl) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const parent = canvasEl.parentElement;
       const w = parent ? parent.clientWidth : window.innerWidth;
       const h = parent ? parent.clientHeight : window.innerHeight;
@@ -156,8 +158,13 @@ export default function InteractiveNeuralVortex({
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Render Loop
+    // Render Loop (automatically paused when off-screen)
     const render = () => {
+      if (!isVisible) {
+        animId = null;
+        return;
+      }
+
       const currentTime = performance.now();
       
       // Smooth pointer interpolation
@@ -173,18 +180,39 @@ export default function InteractiveNeuralVortex({
       gl.uniform1f(uScrollProgress, window.pageYOffset / (2 * window.innerHeight || 1));
       
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      animationRef.current = requestAnimationFrame(render);
+      animId = requestAnimationFrame(render);
     };
 
-    render();
+    // IntersectionObserver: 0% GPU load when scrolled out of view
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          if (!animId) {
+            animId = requestAnimationFrame(render);
+          }
+        } else {
+          if (animId) {
+            cancelAnimationFrame(animId);
+            animId = null;
+          }
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvasEl);
 
-    // Event listeners
+    animId = requestAnimationFrame(render);
+
+    // Event listeners (passive, disabled when off-screen)
     const handleMouseMove = (e) => {
+      if (!isVisible) return;
       pointer.current.tX = e.clientX;
       pointer.current.tY = e.clientY;
     };
 
     const handleTouchMove = (e) => {
+      if (!isVisible) return;
       if (e.touches && e.touches[0]) {
         pointer.current.tX = e.touches[0].clientX;
         pointer.current.tY = e.touches[0].clientY;
@@ -195,10 +223,13 @@ export default function InteractiveNeuralVortex({
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     return () => {
+      observer.disconnect();
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('pointermove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
-      cancelAnimationFrame(animationRef.current);
+      if (animId) {
+        cancelAnimationFrame(animId);
+      }
       if (gl) {
         gl.deleteProgram(program);
         gl.deleteShader(vertexShader);

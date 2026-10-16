@@ -8,12 +8,12 @@ export default function Navbar() {
   const [showLogo, setShowLogo] = useState(true);
 
   useEffect(() => {
+    let lastShown = true;
     const handleScroll = () => {
-      // Hilang saat di-scroll melewati 80px (sesuaikan dengan tinggi hero jika perlu)
-      if (window.scrollY > 80) {
-        setShowLogo(false);
-      } else {
-        setShowLogo(true);
+      const isVisible = window.scrollY <= 80;
+      if (isVisible !== lastShown) {
+        lastShown = isVisible;
+        setShowLogo(isVisible);
       }
     };
 
