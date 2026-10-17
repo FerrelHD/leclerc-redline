@@ -2,8 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import TransparentCutout from './TransparentCutout';
 
 export default function MainVisualStack({
-  topImage = "/images/leclercnewimage.png",
-  bottomImage = "/images/charles-helmet-monaco.png",
+  topImage = "/images/leclercnewimage.webp",
+  bottomImage = "/images/charles-helmet-monaco.webp",
   className = "",
   globalMouse = { x: -500, y: -500 },
   isHovered = false,

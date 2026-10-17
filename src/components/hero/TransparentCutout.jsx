@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 const processedCache = new Map();
 
-export default function TransparentCutout({ src = "/images/leclercnewimage.png", alt = "Cutout", className = "" }) {
+export default function TransparentCutout({ src = "/images/leclercnewimage.webp", alt = "Cutout", className = "" }) {
   const canvasRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
 

@@ -302,8 +302,8 @@ export default function FaceHelmetReveal() {
 
               {/* Main Visual Stack Component */}
               <MainVisualStack
-                topImage="/images/leclercnewimage.png"
-                bottomImage="/images/charles-helmet-monaco.png"
+                topImage="/images/leclercnewimage.webp"
+                bottomImage="/images/charles-helmet-monaco.webp"
                 className="w-full h-full"
                 globalMouse={mousePos}
                 isHovered={isHovered && canReveal}

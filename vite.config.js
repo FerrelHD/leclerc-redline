@@ -11,13 +11,27 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 600,
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-framework': ['react', 'react-dom'],
-          'vendor-motion': ['framer-motion', 'lenis'],
-          'vendor-gsap': ['gsap'],
-          'vendor-icons': ['lucide-react'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+              return 'vendor-react';
+            }
+            if (id.includes('gsap')) {
+              return 'vendor-gsap';
+            }
+            if (id.includes('framer-motion') || id.includes('motion-dom') || id.includes('motion-utils')) {
+              return 'vendor-motion';
+            }
+            if (id.includes('lenis')) {
+              return 'vendor-lenis';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+          }
         },
       },
     },

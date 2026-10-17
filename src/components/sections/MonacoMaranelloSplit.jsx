@@ -158,6 +158,10 @@ export default function MonacoMaranelloSplit() {
             <img
               src="/images/leclerc monaco side.png"
               alt="Monaco Helmet"
+              loading="lazy"
+              decoding="async"
+              width="800"
+              height="700"
               className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.12)]"
               onError={e => { e.currentTarget.src = '/images/charles-helmet-monaco.png'; }}
             />
@@ -219,6 +223,10 @@ export default function MonacoMaranelloSplit() {
             <img
               src="/images/leclerc first win side-Photoroom.png"
               alt="Spa 2019 Helmet"
+              loading="lazy"
+              decoding="async"
+              width="800"
+              height="700"
               className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.12)]"
               onError={e => { e.currentTarget.src = '/images/leclerc first win side.png'; }}
             />

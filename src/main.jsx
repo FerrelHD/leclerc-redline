@@ -13,3 +13,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>
 );
+
+// Seamless handover: smoothly dismiss 0ms telemetry preloader once React bundle mounts
+const preloader = document.getElementById('telemetry-preloader');
+if (preloader) {
+  preloader.classList.add('fade-out');
+  setTimeout(() => {
+    if (preloader && preloader.parentNode) {
+      preloader.parentNode.removeChild(preloader);
+    }
+  }, 450);
+}

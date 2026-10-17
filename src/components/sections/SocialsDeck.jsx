@@ -244,8 +244,10 @@ export default function SocialsDeck() {
                     src={card.image}
                     alt={card.title}
                     className="w-full h-full object-cover filter contrast-[1.03]"
-                    loading="eager"
+                    loading="lazy"
                     decoding="async"
+                    width="400"
+                    height="560"
                   />
 
                   {/* Vignette Overlay */}

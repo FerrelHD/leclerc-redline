@@ -359,10 +359,12 @@ export default function Footer() {
                 {/* Authentic Cutout: Charles Leclerc with Monaco Helmet & Fleece Jacket extending to bottom */}
                 <div ref={driverHeroRef} className="w-full will-change-transform">
                   <img
-                    src="/images/leclerc-footer.png"
+                    src="/images/leclerc-footer.webp"
                     alt="Charles Leclerc Monaco Helmet & Signature Jacket"
+                    width="740"
+                    height="677"
                     className="w-full h-auto object-contain object-bottom drop-shadow-[0_25px_60px_rgba(0,0,0,0.95)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-6 sm:-mb-8 md:-mb-10"
-                    loading="eager"
+                    loading="lazy"
                     decoding="async"
                   />
                 </div>

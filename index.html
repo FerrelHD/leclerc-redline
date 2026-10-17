@@ -9,18 +9,26 @@
 
     <!-- Open Graph / Social Sharing Metadata -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Charles Leclerc Official Showcase" />
     <meta property="og:title" content="Charles Leclerc #16 — Scuderia Ferrari HP Official Showcase" />
     <meta property="og:description" content="Interactive digital experience celebrating Scuderia Ferrari F1 driver Charles Leclerc #16. Raw speed, Monaco heritage, and motorsport luxury." />
-    <meta property="og:image" content="/images/preview.png" />
+    <meta property="og:image" content="/images/preview.webp" />
+    <meta property="og:image:width" content="1909" />
+    <meta property="og:image:height" content="906" />
+    <meta property="og:image:type" content="image/webp" />
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ScuderiaFerrari" />
+    <meta name="twitter:creator" content="@Charles_Leclerc" />
     <meta name="twitter:title" content="Charles Leclerc #16 — Scuderia Ferrari HP Official Showcase" />
     <meta name="twitter:description" content="Interactive digital experience celebrating Scuderia Ferrari F1 driver Charles Leclerc #16." />
-    <meta name="twitter:image" content="/images/preview.png" />
+    <meta name="twitter:image" content="/images/preview.webp" />
     <meta name="theme-color" content="#080809" />
     
-    <!-- Preload Critical Hero Cutout for Ultra-Fast First Paint -->
-    <link rel="preload" as="image" href="/images/leclercnewimage.png" type="image/png" />
-    <link rel="preload" as="image" href="/images/charles-helmet-monaco.png" type="image/png" />
+    <!-- Preload Critical Hero Cutouts for Ultra-Fast First Paint with High Fetch Priority -->
+    <link rel="preload" as="image" href="/images/leclercnewimage.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/charles-helmet-monaco.webp" type="image/webp" fetchpriority="high" />
 
     <!-- Google Fonts with display=swap for Zero FOIT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,6 +42,68 @@
     </script>
   </head>
   <body class="bg-[#080809] text-[#F8F9FA] antialiased selection:bg-[#E10600] selection:text-white overflow-x-hidden">
+    <!-- 0ms Zero-Dependency F1 Telemetry Shell for Instant FCP (Before JS Bundle Parse) -->
+    <div id="telemetry-preloader" aria-hidden="true">
+      <style>
+        #telemetry-preloader {
+          position: fixed;
+          inset: 0;
+          z-index: 999999;
+          background-color: #080809;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+          color: #f8f9fa;
+          transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          pointer-events: auto;
+        }
+        #telemetry-preloader.fade-out {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
+        .f1-badge {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+        .f1-number {
+          font-size: 56px;
+          font-weight: 900;
+          letter-spacing: -2px;
+          color: #ffffff;
+          line-height: 1;
+        }
+        .f1-line {
+          width: 68px;
+          height: 3px;
+          background-color: #E10600;
+          margin-top: 14px;
+          border-radius: 2px;
+          animation: f1-pulse 1.1s ease-in-out infinite alternate;
+        }
+        .f1-status {
+          margin-top: 18px;
+          font-size: 10px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.6);
+        }
+        @keyframes f1-pulse {
+          from { opacity: 0.35; transform: scaleX(0.7); }
+          to { opacity: 1; transform: scaleX(1.15); box-shadow: 0 0 16px rgba(225, 6, 0, 0.85); }
+        }
+      </style>
+      <div class="f1-badge">
+        <div class="f1-number">16</div>
+        <div class="f1-line"></div>
+        <div class="f1-status">SCUDERIA FERRARI HP // TELEMETRY ARMED</div>
+      </div>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -117,6 +117,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/SPA 2019 Leclerc Potrait.jpg"
                 alt="Spa 2019 Portrait"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="400"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -135,6 +139,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Monza 2019 Potrait.jpg"
                 alt="Monza 2019 Portrait (B&W)"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="375"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -159,6 +167,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Monza 2019.jpg"
                 alt="Monza 2019 Landscape"
+                loading="lazy"
+                decoding="async"
+                width="400"
+                height="225"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -173,6 +185,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Monza 2019 2.png"
                 alt="Monza 2019 Alt"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="300"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -192,6 +208,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Bahrain 2022 Square.jpeg"
                 alt="Bahrain 2022 Square"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="300"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -206,6 +226,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Bahrain 2022 Potrait.jpg"
                 alt="Bahrain 2022 Portrait (B&W)"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="375"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -220,6 +244,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Austria 2022.jpg"
                 alt="Austria 2022"
+                loading="lazy"
+                decoding="async"
+                width="400"
+                height="225"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -234,6 +262,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Austria 2022 Potrait.jpg"
                 alt="Austria 2022 Portrait"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="400"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -253,6 +285,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Monaco 2024 Square.jpg"
                 alt="Monaco 2024 Square (B&W)"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="300"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>
@@ -267,6 +303,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Monaco 2024.jpg"
                 alt="Monaco 2024 Finale"
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="375"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 origin-center"
               />
             </div>
@@ -281,6 +321,10 @@ export default function PodiumGallery() {
               <img
                 src="/images/leclerc gallery/Monaco 2024 Horizontal.jpg"
                 alt="Monaco 2024 Horizontal"
+                loading="lazy"
+                decoding="async"
+                width="400"
+                height="225"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
             </div>

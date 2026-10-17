@@ -1,18 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import Navbar from './components/sections/Navbar';
 import FaceHelmetReveal from './components/hero/FaceHelmetReveal';
-import StorytellingScroll from './components/sections/StorytellingScroll';
-import PodiumGallery from './components/sections/PodiumGallery';
-import MonacoMaranelloSplit from './components/sections/MonacoMaranelloSplit';
-import F1Calendar from './components/sections/F1Calendar';
-import ArchiveZoomParallax from './components/sections/ArchiveZoomParallax';
-import SocialsDeck from './components/sections/SocialsDeck';
-import Footer from './components/sections/Footer';
 import LoadingScreen from './components/ui/LoadingScreen';
+
+// Code Splitting: Lazy-load heavy below-the-fold sections
+const StorytellingScroll = lazy(() => import('./components/sections/StorytellingScroll'));
+const PodiumGallery = lazy(() => import('./components/sections/PodiumGallery'));
+const MonacoMaranelloSplit = lazy(() => import('./components/sections/MonacoMaranelloSplit'));
+const F1Calendar = lazy(() => import('./components/sections/F1Calendar'));
+const ArchiveZoomParallax = lazy(() => import('./components/sections/ArchiveZoomParallax'));
+const SocialsDeck = lazy(() => import('./components/sections/SocialsDeck'));
+const Footer = lazy(() => import('./components/sections/Footer'));
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -34,11 +36,14 @@ export default function App() {
       infinite: false,
     });
 
-    // Tick Lenis inside GSAP's RAF so both share the same frame loop
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    // Tick Lenis inside GSAP's RAF on a single unified frame loop (120fps compatible)
+    const updateLenis = (time) => {
+      lenis.raf(time * 1000);
+    };
+    gsap.ticker.add(updateLenis);
     gsap.ticker.lagSmoothing(0);
 
-    // Push scroll position to ScrollTrigger on every Lenis tick
+    // Push smooth scroll position directly into ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
 
     // Global load handler to guarantee accurate ScrollTrigger positions across all sections
@@ -70,7 +75,8 @@ export default function App() {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
+      lenis.off('scroll', ScrollTrigger.update);
+      gsap.ticker.remove(updateLenis);
       lenis.destroy();
     };
   }, []);
@@ -88,25 +94,28 @@ export default function App() {
 
       {/* Main Experience Flow */}
       <main className="relative z-10 bg-[#0A0A0A]">
-        {/* Section 1: Hero & Signature 3D Face-Helmet Slice Reveal */}
+        {/* Section 1: Hero & Signature 3D Face-Helmet Slice Reveal (Immediate Eager Mount) */}
         <section id="hero">
           <FaceHelmetReveal />
         </section>
 
-        {/* Section 2: Cinematic Storytelling with Kinetic Scroll Fill */}
-        <StorytellingScroll />
+        {/* Below-the-fold content wrapped in Suspense with zero layout shift placeholder */}
+        <Suspense fallback={<div className="w-full min-h-screen bg-[#0A0A0A]" />}>
+          {/* Section 2: Cinematic Storytelling with Kinetic Scroll Fill */}
+          <StorytellingScroll />
 
-        {/* Section 3: The Glory - Horizontal Podium Gallery */}
-        <PodiumGallery />
+          {/* Section 3: The Glory - Horizontal Podium Gallery */}
+          <PodiumGallery />
 
-        {/* Section 4: Dual Identity - Monaco Roots vs Maranello Spirit */}
-        <MonacoMaranelloSplit />
+          {/* Section 4: Dual Identity - Monaco Roots vs Maranello Spirit */}
+          <MonacoMaranelloSplit />
 
-        {/* Section 5: Official F1 2026 World Championship Calendar */}
-        <F1Calendar />
+          {/* Section 5: Official F1 2026 World Championship Calendar */}
+          <F1Calendar />
 
-        {/* Section 6: The Raw Archive - 3D Editorial Zoom Parallax */}
-        <ArchiveZoomParallax />
+          {/* Section 6: The Raw Archive - 3D Editorial Zoom Parallax */}
+          <ArchiveZoomParallax />
+        </Suspense>
 
       </main>
 
@@ -129,11 +138,13 @@ export default function App() {
           }}
         />
 
-        {/* Section 6: What's Up On Socials - Fanned Cards Deck */}
-        <SocialsDeck />
+        <Suspense fallback={<div className="w-full min-h-[50vh] bg-[#050000]" />}>
+          {/* Section 6: What's Up On Socials - Fanned Cards Deck */}
+          <SocialsDeck />
 
-        {/* Section 7: Official Motorsport Luxury Footer */}
-        <Footer />
+          {/* Section 7: Official Motorsport Luxury Footer */}
+          <Footer />
+        </Suspense>
       </div>
     </div>
   );

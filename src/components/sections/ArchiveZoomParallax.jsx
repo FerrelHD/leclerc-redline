@@ -46,7 +46,7 @@ export default function ArchiveZoomParallax() {
             const ringScale = 1 + p * 14;
             const ringRotate = p * 45; // 45deg rotation
             const ringOpacity = p > 0.7 ? Math.max(0, (0.95 - p) / 0.25) : 1;
-            apertureRingRef.current.style.transform = `scale(${ringScale}) rotate(${ringRotate}deg)`;
+            apertureRingRef.current.style.transform = `translate3d(0, 0, 0) scale(${ringScale}) rotate(${ringRotate}deg)`;
             apertureRingRef.current.style.opacity = ringOpacity;
           }
 
@@ -62,17 +62,17 @@ export default function ArchiveZoomParallax() {
             hudDataRef.current.style.opacity = hudOpacity;
           }
 
-          // 4 Corner Viewfinder brackets translate outward and fade
+          // 4 Corner Viewfinder brackets translate outward and fade (GPU accelerated translate3d)
           if (bracketTL.current && bracketTR.current && bracketBL.current && bracketBR.current) {
             const offset = p * 70;
             const bOpacity = Math.max(0, 1 - p * 2.5);
-            bracketTL.current.style.transform = `translate(${-offset}px, ${-offset}px)`;
+            bracketTL.current.style.transform = `translate3d(${-offset}px, ${-offset}px, 0)`;
             bracketTL.current.style.opacity = bOpacity;
-            bracketTR.current.style.transform = `translate(${offset}px, ${-offset}px)`;
+            bracketTR.current.style.transform = `translate3d(${offset}px, ${-offset}px, 0)`;
             bracketTR.current.style.opacity = bOpacity;
-            bracketBL.current.style.transform = `translate(${-offset}px, ${offset}px)`;
+            bracketBL.current.style.transform = `translate3d(${-offset}px, ${offset}px, 0)`;
             bracketBL.current.style.opacity = bOpacity;
-            bracketBR.current.style.transform = `translate(${offset}px, ${offset}px)`;
+            bracketBR.current.style.transform = `translate3d(${offset}px, ${offset}px, 0)`;
             bracketBR.current.style.opacity = bOpacity;
           }
 
@@ -417,8 +417,10 @@ export default function ArchiveZoomParallax() {
                       src={pic.src}
                       alt={pic.alt}
                       className={`w-full h-full ${pic.imgStyle}`}
-                      loading="eager"
+                      loading="lazy"
                       decoding="async"
+                      width="600"
+                      height="400"
                     />
                     {/* Telemetry label — fades in on hover */}
                     <div className="absolute inset-x-0 bottom-0 px-2 py-1.5 bg-gradient-to-t from-black/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
