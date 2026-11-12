@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -18,6 +18,8 @@ gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
 export default function App() {
+  const lenisRef = useRef(null);
+
   useEffect(() => {
     // Prevent browser from restoring scroll to middle of page before GSAP/Lenis calculates heights
     if ('scrollRestoration' in history) {
@@ -33,6 +35,10 @@ export default function App() {
       touchMultiplier: 1.6,
       infinite: false,
     });
+    lenisRef.current = lenis;
+
+    // Pause Lenis until LoadingScreen completes its opening animation
+    lenis.stop();
 
     // Tick Lenis inside GSAP's RAF on a single unified frame loop (120fps compatible)
     const updateLenis = (time) => {
@@ -65,13 +71,21 @@ export default function App() {
       lenis.off('scroll', ScrollTrigger.update);
       gsap.ticker.remove(updateLenis);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 
   return (
     <div className="relative min-h-screen w-full bg-[#080809] text-[#F8F9FA]">
       {/* Luxury Motorsport Telemetry Preloader (Aperture Iris Entrance) */}
-      <LoadingScreen onLoaded={() => ScrollTrigger.refresh()} />
+      <LoadingScreen
+        onLoaded={() => ScrollTrigger.refresh()}
+        onComplete={() => {
+          if (lenisRef.current) {
+            lenisRef.current.start();
+          }
+        }}
+      />
 
       {/* Noise Texture Overlay */}
       <div className="noise-overlay" />

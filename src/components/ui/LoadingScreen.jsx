@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
-export default function LoadingScreen({ onLoaded }) {
+export default function LoadingScreen({ onLoaded, onComplete }) {
   const [progress, setProgress] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -64,6 +64,7 @@ export default function LoadingScreen({ onLoaded }) {
       onComplete: () => {
         setIsCompleted(true);
         document.body.style.overflow = '';
+        if (onComplete) onComplete();
       },
     });
 
