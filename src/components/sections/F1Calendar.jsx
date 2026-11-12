@@ -217,21 +217,22 @@ export default function F1Calendar() {
     }
   };
 
-  const handleRowEnter = (race, index) => {
+  const handleRowEnter = (e, race, index) => {
     if (isCoarsePointer) return;
-    setHoveredIndex(index);
-    setHoveredRace(race);
 
     if (thumbnailRef.current) {
-      gsap.to(thumbnailRef.current, {
-        scale: 1,
-        duration: 0.4,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
-
       const thumbnails = thumbnailRef.current.querySelectorAll('.hover-img-thumbnail');
-      if (thumbnails.length > 0) {
+
+      // Snap instantly to cursor and target circuit on first entry, preventing corner glide
+      if (hoveredIndex === null && e) {
+        gsap.set(thumbnailRef.current, {
+          x: e.clientX,
+          y: e.clientY,
+        });
+        if (thumbnails.length > 0) {
+          gsap.set(thumbnails, { yPercent: -100 * index });
+        }
+      } else if (thumbnails.length > 0) {
         gsap.to(thumbnails, {
           yPercent: -100 * index,
           duration: 0.4,
@@ -239,7 +240,17 @@ export default function F1Calendar() {
           overwrite: "auto",
         });
       }
+
+      gsap.to(thumbnailRef.current, {
+        scale: 1,
+        duration: 0.4,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
     }
+
+    setHoveredIndex(index);
+    setHoveredRace(race);
   };
 
   return (
@@ -364,7 +375,7 @@ export default function F1Calendar() {
             return (
               <div
                 key={race.round}
-                onMouseEnter={() => handleRowEnter(race, index)}
+                onMouseEnter={(e) => handleRowEnter(e, race, index)}
                 className={`group/row py-5 sm:py-7 md:py-8 transition-all duration-300 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 ${
                   hoveredIndex !== null && !isHovered
                     ? 'opacity-25'
