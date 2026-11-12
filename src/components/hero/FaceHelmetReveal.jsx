@@ -286,7 +286,7 @@ export default function FaceHelmetReveal() {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          className="relative w-full h-full overflow-hidden bg-[#FFFFFF] flex flex-col justify-between origin-center touch-pan-y"
+          className="relative w-full h-full overflow-hidden bg-[#FFFFFF] flex flex-col justify-between origin-center touch-pan-y will-change-transform will-change-[clip-path] [transform:translateZ(0)]"
           style={{
             clipPath: 'inset(0% 0% 0% 0% round 0px)',
           }}

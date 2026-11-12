@@ -54,7 +54,7 @@ export default function InteractiveNeuralVortex({
         vec2 sine_acc = vec2(0.);
         vec2 res = vec2(0.);
         float scale = 8.;
-        for (int j = 0; j < 15; j++) {
+        for (int j = 0; j < 10; j++) {
           uv = rotate(uv, 1.);
           sine_acc = rotate(sine_acc, 1.);
           vec2 layer = uv * scale + float(j) + sine_acc - t;
@@ -171,13 +171,14 @@ export default function InteractiveNeuralVortex({
       pointer.current.x += (pointer.current.tX - pointer.current.x) * 0.15;
       pointer.current.y += (pointer.current.tY - pointer.current.y) * 0.15;
       
-      const rect = canvasEl.getBoundingClientRect();
-      const relX = rect.width > 0 ? (pointer.current.x - rect.left) / rect.width : 0.5;
-      const relY = rect.height > 0 ? 1.0 - (pointer.current.y - rect.top) / rect.height : 0.5;
+      const winW = window.innerWidth || 1;
+      const winH = window.innerHeight || 1;
+      const relX = pointer.current.x / winW;
+      const relY = 1.0 - (pointer.current.y / winH);
 
       gl.uniform1f(uTime, currentTime);
       gl.uniform2f(uPointerPosition, relX, relY);
-      gl.uniform1f(uScrollProgress, window.pageYOffset / (2 * window.innerHeight || 1));
+      gl.uniform1f(uScrollProgress, (window.scrollY || 0) / (2 * winH));
       
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       animId = requestAnimationFrame(render);
