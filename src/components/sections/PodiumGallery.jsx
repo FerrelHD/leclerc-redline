@@ -52,19 +52,6 @@ export default function PodiumGallery() {
           },
         },
       });
-
-      // Recalculate as images finish decoding inside track
-      if (trackRef.current) {
-        const images = trackRef.current.querySelectorAll('img');
-        images.forEach(img => {
-          if (!img.complete) {
-            img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
-          }
-        });
-      }
-
-      const t = setTimeout(() => ScrollTrigger.refresh(), 300);
-      return () => clearTimeout(t);
     }, sectionRef);
 
     return () => ctx.revert();

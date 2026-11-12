@@ -39,40 +39,29 @@ export default function App() {
       lenis.raf(time * 1000);
     };
     gsap.ticker.add(updateLenis);
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
 
     // Push smooth scroll position directly into ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
 
-    // Global load handler to guarantee accurate ScrollTrigger positions across all sections
-    const handleGlobalRefresh = () => {
-      ScrollTrigger.refresh();
+    // Debounced global refresh to prevent unpin/repin storms during early interaction
+    let refreshTimer;
+    const debouncedRefresh = () => {
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 150);
     };
 
-    window.addEventListener('load', handleGlobalRefresh);
+    window.addEventListener('load', debouncedRefresh);
 
     if (document.fonts) {
-      document.fonts.ready.then(handleGlobalRefresh);
+      document.fonts.ready.then(debouncedRefresh);
     }
 
-    // Recalculate as images finish decoding
-    const imgs = document.querySelectorAll('img');
-    imgs.forEach((img) => {
-      if (!img.complete) {
-        img.addEventListener('load', handleGlobalRefresh, { once: true });
-        img.addEventListener('error', handleGlobalRefresh, { once: true });
-      }
-    });
-
-    const t1 = setTimeout(handleGlobalRefresh, 150);
-    const t2 = setTimeout(handleGlobalRefresh, 500);
-    const t3 = setTimeout(handleGlobalRefresh, 1200);
-
     return () => {
-      window.removeEventListener('load', handleGlobalRefresh);
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
+      window.removeEventListener('load', debouncedRefresh);
+      clearTimeout(refreshTimer);
       lenis.off('scroll', ScrollTrigger.update);
       gsap.ticker.remove(updateLenis);
       lenis.destroy();
