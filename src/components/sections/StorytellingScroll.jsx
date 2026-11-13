@@ -235,8 +235,8 @@ export default function StorytellingScroll() {
                 preserveAspectRatio="xMidYMid slice"
                 width="100%"
                 height="100%"
-                href="/images/f1.png"
-                xlinkHref="/images/f1.png"
+                href="/images/f1.webp"
+                xlinkHref="/images/f1.webp"
               />
             </svg>
           </figure>

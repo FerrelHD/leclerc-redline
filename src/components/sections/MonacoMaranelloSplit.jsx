@@ -156,14 +156,14 @@ export default function MonacoMaranelloSplit() {
             className="absolute left-0 bottom-0 h-[48vh] sm:h-[55vh] lg:h-[80vh] max-h-[700px] pointer-events-none flex items-end justify-start will-change-transform z-0 opacity-80 lg:opacity-100"
           >
             <img
-              src="/images/leclerc monaco side.png"
+              src="/images/leclerc-monaco-side.webp"
               alt="Monaco Helmet"
               loading="lazy"
               decoding="async"
               width="800"
               height="700"
               className="h-full w-auto max-w-none object-contain object-bottom filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.12)]"
-              onError={e => { e.currentTarget.src = '/images/charles-helmet-monaco.png'; }}
+              onError={e => { e.currentTarget.src = '/images/leclerc monaco side.png'; }}
             />
           </div>
 
@@ -221,7 +221,7 @@ export default function MonacoMaranelloSplit() {
             className="absolute right-0 bottom-0 h-[48vh] sm:h-[55vh] lg:h-[80vh] max-h-[700px] pointer-events-none flex items-end justify-end will-change-transform z-0 opacity-85 lg:opacity-100"
           >
             <img
-              src="/images/leclerc first win side-Photoroom.png"
+              src="/images/leclerc-first-win-side.webp"
               alt="Spa 2019 Helmet"
               loading="lazy"
               decoding="async"
