@@ -114,14 +114,13 @@ export default function StorytellingScroll() {
         }
       );
 
-      // 6. Narrative Paragraphs Blur-to-Focus Fade
+      // 6. Narrative Paragraphs GPU Hardware Fade
       gsap.fromTo(
         '.story-para',
-        { opacity: 0, y: 20, filter: 'blur(8px)' },
+        { opacity: 0, y: 22 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
           duration: 0.85,
           stagger: 0.18,
           ease: 'power2.out',
@@ -326,10 +325,10 @@ export default function StorytellingScroll() {
 
             {/* Soft Focus Flowing Narrative Story */}
             <div className="story-narrative-block space-y-4 text-neutral-300 font-sans text-sm sm:text-base font-light leading-relaxed">
-              <p className="story-para text-justify sm:text-left">
+              <p className="story-para text-justify sm:text-left will-change-transform">
                 Born on the legendary streets of Monte Carlo, Charles Leclerc was destined for motorsport greatness. From karting on the French Riviera under the guidance of Jules Bianchi to dominant championship runs in GP3 and Formula 2, his trajectory has been forged through blistering qualifying speed and fierce mental resilience.
               </p>
-              <p className="story-para text-justify sm:text-left text-neutral-400">
+              <p className="story-para text-justify sm:text-left text-neutral-400 will-change-transform">
                 Now spearheading Scuderia Ferrari in Car #16, Leclerc carries the hopes of millions of Tifosi across the globe. Blending surgical single-lap precision with relentless wheel-to-wheel racecraft, every lap is driven on the absolute limit of physics—guided by one unwavering mission: bringing the World Championship home to Maranello.
               </p>
             </div>
