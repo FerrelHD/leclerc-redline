@@ -14,14 +14,12 @@ export default function FaceHelmetReveal() {
   const heroCardRef = useRef(null);
   const messageBadgeRef = useRef(null);
   const hudWidgetRef = useRef(null);
-  const mobileToggleRef = useRef(null);
   const signatureRef = useRef(null);
   const signatureWrapperRef = useRef(null);
   const mainVisualRef = useRef(null);
   const vortexRef = useRef(null);
 
   const [isHovered, setIsHovered] = useState(false);
-  const [mobileHelmetActive, setMobileHelmetActive] = useState(false);
   const [canReveal, setCanReveal] = useState(true);
   const canRevealRef = useRef(true);
   const isDarkRef = useRef(false);
@@ -148,9 +146,9 @@ export default function FaceHelmetReveal() {
         0
       );
 
-      // Stage B: HUD Monza Race widget and Mobile Reveal Toggle fade out
+      // Stage B: HUD Monza Race widget fades out
       tl.to(
-        [hudWidgetRef.current, mobileToggleRef.current].filter(Boolean),
+        hudWidgetRef.current,
         {
           opacity: 0,
           y: 25,
@@ -293,7 +291,6 @@ export default function FaceHelmetReveal() {
                 bottomImage="/images/charles-helmet-monaco.webp"
                 className="w-full h-full"
                 isHovered={isHovered && canReveal}
-                forceFullReveal={mobileHelmetActive && canReveal}
               />
 
             </div>
@@ -305,32 +302,6 @@ export default function FaceHelmetReveal() {
             className="absolute bottom-3 sm:bottom-8 left-3 sm:left-6 md:left-12 z-20 pointer-events-auto select-none scale-[0.72] xs:scale-[0.8] sm:scale-100 origin-bottom-left"
           >
             <MonzaHudCard />
-          </div>
-
-          {/* MOBILE HELMET REVEAL INTERACTIVE TOGGLE */}
-          <div
-            ref={mobileToggleRef}
-            className="absolute bottom-3 sm:bottom-8 right-3 sm:right-6 z-20 pointer-events-auto select-none sm:hidden"
-          >
-            <button
-              type="button"
-              onClick={() => setMobileHelmetActive((prev) => !prev)}
-              onTouchStart={(e) => e.stopPropagation()}
-              onTouchEnd={(e) => e.stopPropagation()}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0A0A0B]/85 backdrop-blur-md border border-white/20 text-white shadow-lg active:scale-95 transition-all duration-200"
-              aria-label="Toggle Charles Leclerc Helmet Reveal"
-            >
-              <span
-                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                  mobileHelmetActive
-                    ? 'bg-[#E10600] animate-pulse shadow-[0_0_8px_#E10600]'
-                    : 'bg-white/40'
-                }`}
-              />
-              <span className="font-racing text-[10px] tracking-wider uppercase">
-                {mobileHelmetActive ? 'SHOW PORTRAIT' : 'REVEAL HELMET'}
-              </span>
-            </button>
           </div>
 
         </div>
