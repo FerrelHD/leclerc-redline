@@ -319,7 +319,7 @@ export default function ArchiveZoomParallax() {
               {/* Top Telemetry Row */}
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2.5 pl-5 pt-2 sm:pl-8 sm:pt-3">
-                  <span className="w-2 h-2 rounded-full bg-[#E10600] animate-ping" />
+                  <span className="w-2 h-2 rounded-full bg-[#E10600] shadow-[0_0_6px_#E10600]" />
                   <span className="text-white font-bold tracking-[0.28em]">REC [RAW 4K // 120 FPS]</span>
                 </div>
                 <div className="text-right pr-5 pt-2 sm:pr-8 sm:pt-3">

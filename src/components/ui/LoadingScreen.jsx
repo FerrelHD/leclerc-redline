@@ -140,7 +140,7 @@ export default function LoadingScreen({ onLoaded, onComplete }) {
       {/* Top Telemetry Header */}
       <div className="absolute top-8 sm:top-12 inset-x-0 px-8 sm:px-12 flex items-center justify-between font-mono-telemetry text-[11px] text-neutral-500 uppercase tracking-widest pointer-events-none">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
           <span className="text-white font-medium">SCUDERIA FERRARI HP</span>
         </div>
         <span>CAR #16 // CHARLES LECLERC</span>
