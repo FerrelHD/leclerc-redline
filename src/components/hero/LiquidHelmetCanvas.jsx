@@ -296,7 +296,8 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     // Responsive Canvas Resize & Accurate Bounding Box Calculation
     const handleResize = () => {
       if (!canvas || !gl) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Cap DPR at 1.25 for peak Retina fluidity & minimal GPU power draw
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       const w = canvas.clientWidth || 1000;
       const h = canvas.clientHeight || 1000;
 
