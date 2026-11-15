@@ -62,7 +62,7 @@ export default function PodiumGallery() {
     <section
       id="podiums"
       ref={sectionRef}
-      className="relative bg-[#F8F9FA] text-[#0A0A0B] z-10 w-full h-screen overflow-hidden flex flex-col justify-center select-none -mt-[100vh]"
+      className="relative bg-[#F8F9FA] text-[#0A0A0B] z-10 w-full h-screen overflow-hidden flex flex-col justify-center select-none"
     >
       {/* Background Topography Lines (Lando Norris Style) */}
       <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03]">

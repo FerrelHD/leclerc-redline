@@ -103,11 +103,11 @@ export default function App() {
         {/* Section 2: Cinematic Storytelling with Kinetic Scroll Fill */}
         <StorytellingScroll />
 
-        {/* Section 3: The Glory - Horizontal Podium Gallery */}
-        <PodiumGallery />
-
-        {/* Section 4: Dual Identity - Monaco Roots vs Maranello Spirit */}
-        <MonacoMaranelloSplit />
+        {/* Section 3 & 4: Seamless Monaco White Zone (Podium Gallery & Dual Identity) */}
+        <div className="relative z-10 w-full bg-[#F8F9FA]">
+          <PodiumGallery />
+          <MonacoMaranelloSplit />
+        </div>
 
         {/* Section 5: Official F1 2026 World Championship Calendar */}
         <F1Calendar />
