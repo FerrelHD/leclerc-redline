@@ -325,18 +325,21 @@ export default function StorytellingScroll() {
 
             {/* Soft Focus Flowing Narrative Story */}
             <div className="story-narrative-block space-y-4 text-neutral-300 font-sans text-sm sm:text-base font-light leading-relaxed">
-              <p className="story-para text-justify sm:text-left will-change-transform">
+              <p className="story-para text-left will-change-transform">
                 Born on the legendary streets of Monte Carlo, Charles Leclerc was destined for motorsport greatness. From karting on the French Riviera under the guidance of Jules Bianchi to dominant championship runs in GP3 and Formula 2, his trajectory has been forged through blistering qualifying speed and fierce mental resilience.
               </p>
-              <p className="story-para text-justify sm:text-left text-neutral-400 will-change-transform">
+              <p className="story-para text-left text-neutral-400 will-change-transform">
                 Now spearheading Scuderia Ferrari in Car #16, Leclerc carries the hopes of millions of Tifosi across the globe. Blending surgical single-lap precision with relentless wheel-to-wheel racecraft, every lap is driven on the absolute limit of physics—guided by one unwavering mission: bringing the World Championship home to Maranello.
               </p>
             </div>
 
             {/* Driver Authentic Quote with Red Line Trace Animation */}
+            <div className="story-quote-box relative pl-4 sm:pl-5 border-l-2 border-[#E10600]/70 py-1">
+              <span className="story-quote-bar absolute left-[-2px] top-0 bottom-0 w-[2px] bg-[#E10600]" />
               <p className="story-quote-text text-neutral-300 font-sans italic text-xs sm:text-sm md:text-base font-light leading-relaxed">
                 &ldquo;Every lap around Monaco is burned into my memory since childhood. Driving for Ferrari is an honor, but the only goal that matters is putting the red car back at the very top.&rdquo;
               </p>
+            </div>
           </div>
 
           {/* Right Column (Col 3): Leclerc Identity & Racing CTA */}
