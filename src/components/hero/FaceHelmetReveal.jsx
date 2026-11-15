@@ -17,8 +17,8 @@ export default function FaceHelmetReveal() {
   const mobileToggleRef = useRef(null);
   const signatureRef = useRef(null);
   const signatureWrapperRef = useRef(null);
+  const mainVisualRef = useRef(null);
 
-  const [mousePos, setMousePos] = useState({ x: -500, y: -500 });
   const [isHovered, setIsHovered] = useState(false);
   const [mobileHelmetActive, setMobileHelmetActive] = useState(false);
   const [canReveal, setCanReveal] = useState(true);
@@ -26,7 +26,6 @@ export default function FaceHelmetReveal() {
   const isDarkRef = useRef(false);
   const isHeroActiveRef = useRef(true);
   const isHoveredRef = useRef(false);
-  const rafMouseRef = useRef(null);
 
   const handleMouseMove = (e) => {
     if (!heroCardRef.current || !isHeroActiveRef.current) return;
@@ -34,24 +33,13 @@ export default function FaceHelmetReveal() {
       isHoveredRef.current = true;
       setIsHovered(true);
     }
-    const clientX = e.clientX;
-    const clientY = e.clientY;
-    if (!rafMouseRef.current) {
-      rafMouseRef.current = requestAnimationFrame(() => {
-        setMousePos({ x: clientX, y: clientY });
-        rafMouseRef.current = null;
-      });
-    }
+    mainVisualRef.current?.onPointerMove(e.clientX, e.clientY);
   };
 
   const handleMouseLeave = () => {
     isHoveredRef.current = false;
     setIsHovered(false);
-    if (rafMouseRef.current) {
-      cancelAnimationFrame(rafMouseRef.current);
-      rafMouseRef.current = null;
-    }
-    setMousePos({ x: -500, y: -500 });
+    mainVisualRef.current?.onPointerLeave();
   };
 
   const handleTouchStart = (e) => {
@@ -59,7 +47,7 @@ export default function FaceHelmetReveal() {
     isHoveredRef.current = true;
     setIsHovered(true);
     const touch = e.touches[0];
-    setMousePos({ x: touch.clientX, y: touch.clientY });
+    mainVisualRef.current?.onPointerMove(touch.clientX, touch.clientY);
   };
 
   const handleTouchMove = (e) => {
@@ -69,26 +57,15 @@ export default function FaceHelmetReveal() {
       setIsHovered(true);
     }
     const touch = e.touches[0];
-    const clientX = touch.clientX;
-    const clientY = touch.clientY;
-    if (!rafMouseRef.current) {
-      rafMouseRef.current = requestAnimationFrame(() => {
-        setMousePos({ x: clientX, y: clientY });
-        rafMouseRef.current = null;
-      });
-    }
+    mainVisualRef.current?.onPointerMove(touch.clientX, touch.clientY);
   };
 
   const handleTouchEnd = () => {
     isHoveredRef.current = false;
     setIsHovered(false);
-    if (rafMouseRef.current) {
-      cancelAnimationFrame(rafMouseRef.current);
-      rafMouseRef.current = null;
-    }
     setTimeout(() => {
       if (!isHoveredRef.current) {
-        setMousePos({ x: -500, y: -500 });
+        mainVisualRef.current?.onPointerLeave();
       }
     }, 450);
   };
@@ -302,10 +279,10 @@ export default function FaceHelmetReveal() {
 
               {/* Main Visual Stack Component */}
               <MainVisualStack
+                ref={mainVisualRef}
                 topImage="/images/leclercnewimage.webp"
                 bottomImage="/images/charles-helmet-monaco.webp"
                 className="w-full h-full"
-                globalMouse={mousePos}
                 isHovered={isHovered && canReveal}
                 forceFullReveal={mobileHelmetActive && canReveal}
               />

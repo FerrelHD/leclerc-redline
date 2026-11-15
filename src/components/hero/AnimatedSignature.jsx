@@ -81,4 +81,4 @@ const AnimatedSignature = forwardRef(({ color = "#E10600" }, ref) => {
   );
 });
 
-export default AnimatedSignature;
+export default React.memo(AnimatedSignature);

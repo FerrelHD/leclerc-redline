@@ -8,7 +8,7 @@ import React, { useEffect, useRef } from 'react';
  * - Subtle graphite/charcoal grey fluid tones
  * - Responsive pointer tracking with inertia
  */
-export default function InteractiveNeuralVortex({
+function InteractiveNeuralVortex({
   className = "absolute inset-0 w-full h-full pointer-events-none z-0",
   children,
   fluidTone = "charcoal", // 'charcoal' | 'subtle' | 'ferrari-accent'
@@ -251,3 +251,5 @@ export default function InteractiveNeuralVortex({
     </div>
   );
 }
+
+export default React.memo(InteractiveNeuralVortex);

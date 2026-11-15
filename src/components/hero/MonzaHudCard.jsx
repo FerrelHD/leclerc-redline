@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { getNextRace } from '../../data/f1Calendar';
 
-export default function MonzaHudCard({ className = "" }) {
+function MonzaHudCard({ className = "" }) {
   const currentRace = getNextRace();
 
   return (
@@ -71,3 +71,5 @@ export default function MonzaHudCard({ className = "" }) {
     </div>
   );
 }
+
+export default React.memo(MonzaHudCard);

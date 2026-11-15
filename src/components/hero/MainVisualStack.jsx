@@ -1,14 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import TransparentCutout from './TransparentCutout';
 
-export default function MainVisualStack({
+const MainVisualStack = forwardRef(function MainVisualStack({
   topImage = "/images/leclercnewimage.webp",
   bottomImage = "/images/charles-helmet-monaco.webp",
   className = "",
-  globalMouse = { x: -500, y: -500 },
   isHovered = false,
   forceFullReveal = false,
-}) {
+}, ref) {
   const containerRef = useRef(null);
   const visualWrapperRef = useRef(null);
   const maskPathRef = useRef(null);
@@ -45,12 +44,14 @@ export default function MainVisualStack({
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-  // Track mouse with CSS scale compensation & volumetric 3D depth
-  useEffect(() => {
-    isHoveredRef.current = isHovered;
-    if (!containerRef.current || !isHovered || globalMouse.x < 0) {
-      lastMouseRef.current = { x: -500, y: -500, time: 0 };
-      parallaxTargetRef.current = { x: 0, y: 0, rotX: 0, rotY: 0, shadowX: 0, shadowY: 20 };
+  const onPointerLeave = () => {
+    lastMouseRef.current = { x: -500, y: -500, time: 0 };
+    parallaxTargetRef.current = { x: 0, y: 0, rotX: 0, rotY: 0, shadowX: 0, shadowY: 20 };
+  };
+
+  const onPointerMove = (clientX, clientY) => {
+    if (!containerRef.current || !isHoveredRef.current || clientX < 0) {
+      onPointerLeave();
       return;
     }
 
@@ -61,8 +62,8 @@ export default function MainVisualStack({
     const scaleX = containerRef.current.offsetWidth / rect.width;
     const scaleY = containerRef.current.offsetHeight / rect.height;
 
-    const localX = (globalMouse.x - rect.left) * scaleX;
-    const localY = (globalMouse.y - rect.top) * scaleY;
+    const localX = (clientX - rect.left) * scaleX;
+    const localY = (clientY - rect.top) * scaleY;
 
     // Normalized mouse coordinates (-1 to +1 from center)
     const normX = Math.max(-1, Math.min(1, (localX / (containerRef.current.offsetWidth || 1000) - 0.5) * 2));
@@ -110,10 +111,23 @@ export default function MainVisualStack({
         lastMouseRef.current = { x: localX, y: localY, time: now };
       }
     }
-    if (isHovered && isVisibleRef.current && !animIdRef.current && updateLoopRef.current) {
+    if (isVisibleRef.current && !animIdRef.current && updateLoopRef.current) {
       animIdRef.current = requestAnimationFrame(updateLoopRef.current);
     }
-  }, [globalMouse, isHovered]);
+  };
+
+  useImperativeHandle(ref, () => ({
+    onPointerMove,
+    onPointerLeave,
+  }));
+
+  // Synchronize hover state
+  useEffect(() => {
+    isHoveredRef.current = isHovered;
+    if (!isHovered) {
+      onPointerLeave();
+    }
+  }, [isHovered]);
 
   // Keep forceFullRevealRef updated and synchronize helmet wrapper styling
   useEffect(() => {
@@ -376,4 +390,6 @@ export default function MainVisualStack({
       </div>
     </div>
   );
-}
+});
+
+export default React.memo(MainVisualStack);
