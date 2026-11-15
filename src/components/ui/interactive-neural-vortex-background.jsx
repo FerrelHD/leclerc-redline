@@ -37,13 +37,16 @@ function InteractiveNeuralVortex({
       }
     `;
 
-    // Fragment Shader: Inverted for White Background with Elegant Charcoal/Grey Fluid
+    // Fragment Shader: Inverted for White Background with Aerodynamic Fluid Vortex Wake
     const fsSource = `
       precision mediump float;
       varying vec2 vUv;
       uniform float u_time;
       uniform float u_ratio;
       uniform vec2 u_pointer_position;
+      uniform vec2 u_pointer_velocity;
+      uniform float u_pointer_speed;
+      uniform float u_wake_intensity;
       uniform float u_scroll_progress;
       
       vec2 rotate(vec2 uv, float th) {
@@ -68,13 +71,32 @@ function InteractiveNeuralVortex({
       void main() {
         vec2 uv = .5 * vUv;
         uv.x *= u_ratio;
-        vec2 pointer = vUv - u_pointer_position;
-        pointer.x *= u_ratio;
-        float p = clamp(length(pointer), 0., 1.);
-        p = .5 * pow(1. - p, 2.);
-        float t = .0008 * u_time;
+
+        // Relative vector to pointer with aspect ratio correction
+        vec2 pointerDelta = vUv - u_pointer_position;
+        pointerDelta.x *= u_ratio;
+        float dist = length(pointerDelta);
+
+        // Aerodynamic vortex wake deflection:
+        // When cursor moves, the air around it curls into a vortex slipstream
+        float wakeRadius = 0.42;
+        float wakeFactor = smoothstep(wakeRadius, 0.0, dist) * u_wake_intensity;
+
+        // Tangential curl (perpendicular swirl around pointer)
+        vec2 curl = vec2(-pointerDelta.y, pointerDelta.x) * (2.8 * u_pointer_speed);
+        // Linear velocity slipstream drag
+        vec2 slipstream = u_pointer_velocity * 1.6;
+
+        vec2 deflection = (curl + slipstream) * wakeFactor;
+        vec2 deflectedUv = uv - deflection * 0.28;
+
+        float p = clamp(dist, 0., 1.);
+        p = .5 * pow(1. - p, 2.) + wakeFactor * (1.2 + 2.0 * u_pointer_speed);
+
+        float speedBoost = u_pointer_speed * wakeFactor * 1.5;
+        float t = .0008 * u_time + speedBoost;
         
-        float noise = neuro_shape(uv, t, p);
+        float noise = neuro_shape(deflectedUv, t, p);
         noise = 1.05 * pow(noise, 2.6);
         noise = max(0.0, noise - 0.32);
         noise *= (1.0 - length(vUv - 0.5) * 0.4);
@@ -86,10 +108,15 @@ function InteractiveNeuralVortex({
         vec3 fluidColor = vec3(0.32, 0.32, 0.35);
         fluidColor = mix(fluidColor, vec3(0.52, 0.52, 0.56), 0.35 + 0.15 * sin(2.0 * u_scroll_progress + 1.2));
         
-        // Fluid visibility: crisp, elegant graphite streamlines (delicate 35% peak contrast)
-        float intensity = clamp(noise * 0.55, 0.0, 0.35);
+        // Subtle Ferrari Racing Redline shear glow on rapid aerodynamic wakes
+        float shearStress = smoothstep(0.18, 0.02, dist) * u_pointer_speed * u_wake_intensity;
+        vec3 redlineWarmth = vec3(0.85, 0.06, 0.02);
+        fluidColor = mix(fluidColor, redlineWarmth, clamp(shearStress * 0.42, 0.0, 0.5));
+
+        // Fluid visibility: crisp, elegant graphite streamlines (delicate 35% peak contrast, up to 50% under wake)
+        float intensity = clamp(noise * (0.55 + shearStress * 0.35), 0.0, 0.52);
         
-        // Inverted blend: Clean white canvas with silky graphite streamlines
+        // Inverted blend: Clean white canvas with silky graphite streamlines + aerodynamic wake
         vec3 finalColor = mix(bgColor, fluidColor, intensity);
         
         gl_FragColor = vec4(finalColor, 1.0);
@@ -137,6 +164,9 @@ function InteractiveNeuralVortex({
     const uTime = gl.getUniformLocation(program, 'u_time');
     const uRatio = gl.getUniformLocation(program, 'u_ratio');
     const uPointerPosition = gl.getUniformLocation(program, 'u_pointer_position');
+    const uPointerVelocity = gl.getUniformLocation(program, 'u_pointer_velocity');
+    const uPointerSpeed = gl.getUniformLocation(program, 'u_pointer_speed');
+    const uWakeIntensity = gl.getUniformLocation(program, 'u_wake_intensity');
     const uScrollProgress = gl.getUniformLocation(program, 'u_scroll_progress');
 
     let isVisible = true;
@@ -178,6 +208,9 @@ function InteractiveNeuralVortex({
 
       gl.uniform1f(uTime, currentTime);
       gl.uniform2f(uPointerPosition, relX, relY);
+      gl.uniform2f(uPointerVelocity, 0.0, 0.0);
+      gl.uniform1f(uPointerSpeed, 0.0);
+      gl.uniform1f(uWakeIntensity, 0.0);
       gl.uniform1f(uScrollProgress, (window.scrollY || 0) / (2 * winH));
       
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
