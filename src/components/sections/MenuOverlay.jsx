@@ -210,7 +210,7 @@ export default function MenuOverlay({ isOpen, onClose }) {
                   href="https://store.ferrari.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-[#E10600]/30"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl bg-[#E10600] hover:bg-[#ff1a14] text-white font-racing font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-[#E10600]/30 min-h-[44px]"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>STORE</span>
@@ -218,10 +218,11 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
                 <button
                   onClick={onClose}
-                  className="w-9 sm:w-10 h-9 sm:h-10 rounded-xl bg-[#1E2026] text-white hover:bg-[#E10600] border border-white/10 flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                  className="w-11 h-11 rounded-xl bg-[#1E2026] text-white hover:bg-[#E10600] border border-white/10 flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                  aria-label="Close Navigation Menu"
                   title="Close Menu"
                 >
-                  <X className="w-4 sm:w-5 h-4 sm:h-5 stroke-[2.5]" />
+                  <X className="w-5 h-5 stroke-[2.5]" />
                 </button>
               </div>
             </div>
@@ -405,16 +406,16 @@ export default function MenuOverlay({ isOpen, onClose }) {
 
               <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
                 <TextBoxReveal delay={0.5} duration={0.35} boxColor="#E10600">
-                  <a href="https://www.tiktok.com/@charlesleclerc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TIKTOK</a>
+                  <a href="https://www.tiktok.com/@charlesleclerc" target="_blank" rel="noopener noreferrer" className="py-2 inline-block hover:text-white transition-colors">TIKTOK</a>
                 </TextBoxReveal>
                 <TextBoxReveal delay={0.54} duration={0.35} boxColor="#E10600">
-                  <a href="https://www.instagram.com/charles_leclerc/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">INSTAGRAM</a>
+                  <a href="https://www.instagram.com/charles_leclerc/" target="_blank" rel="noopener noreferrer" className="py-2 inline-block hover:text-white transition-colors">INSTAGRAM</a>
                 </TextBoxReveal>
                 <TextBoxReveal delay={0.58} duration={0.35} boxColor="#E10600">
-                  <a href="https://www.youtube.com/@charlesleclerc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YOUTUBE</a>
+                  <a href="https://www.youtube.com/@charlesleclerc" target="_blank" rel="noopener noreferrer" className="py-2 inline-block hover:text-white transition-colors">YOUTUBE</a>
                 </TextBoxReveal>
                 <TextBoxReveal delay={0.62} duration={0.35} boxColor="#E10600">
-                  <a href="https://www.twitch.tv/charlesleclerc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TWITCH</a>
+                  <a href="https://www.twitch.tv/charlesleclerc" target="_blank" rel="noopener noreferrer" className="py-2 inline-block hover:text-white transition-colors">TWITCH</a>
                 </TextBoxReveal>
               </div>
             </div>
