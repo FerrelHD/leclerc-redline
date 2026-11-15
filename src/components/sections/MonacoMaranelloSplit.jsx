@@ -127,7 +127,7 @@ export default function MonacoMaranelloSplit() {
         <button
           type="button"
           onClick={() => setActiveTab('monaco')}
-          className={`px-4 sm:px-5 py-1.5 rounded-full font-mono-telemetry text-[11px] sm:text-xs uppercase tracking-wider font-bold transition-all cursor-pointer ${
+          className={`px-4 sm:px-5 py-2 min-h-[44px] flex items-center justify-center rounded-full font-mono-telemetry text-[11px] sm:text-xs uppercase tracking-wider font-bold transition-all cursor-pointer ${
             activeTab === 'monaco'
               ? 'bg-[#E10600] text-white shadow-md shadow-[#E10600]/30'
               : 'text-neutral-600 hover:text-black'
@@ -138,7 +138,7 @@ export default function MonacoMaranelloSplit() {
         <button
           type="button"
           onClick={() => setActiveTab('spa')}
-          className={`px-4 sm:px-5 py-1.5 rounded-full font-mono-telemetry text-[11px] sm:text-xs uppercase tracking-wider font-bold transition-all cursor-pointer ${
+          className={`px-4 sm:px-5 py-2 min-h-[44px] flex items-center justify-center rounded-full font-mono-telemetry text-[11px] sm:text-xs uppercase tracking-wider font-bold transition-all cursor-pointer ${
             activeTab === 'spa'
               ? 'bg-[#E10600] text-white shadow-md shadow-[#E10600]/30'
               : 'text-neutral-600 hover:text-black'
@@ -183,7 +183,7 @@ export default function MonacoMaranelloSplit() {
             </div>
             <div className="overflow-visible mt-4 sm:mt-5 flex justify-center">
               <MagneticEffect factor={0.25}>
-                <a href="#podiums" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
+                <a href="#podiums" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Explore Monaco Home Win">
                   <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
                 </a>
               </MagneticEffect>
@@ -209,7 +209,7 @@ export default function MonacoMaranelloSplit() {
             </div>
             <div className="overflow-visible mt-4 sm:mt-5 flex justify-center">
               <MagneticEffect factor={0.25}>
-                <a href="#podiums" className="w-10 sm:w-11 h-10 sm:h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
+                <a href="#podiums" className="w-11 h-11 rounded-2xl bg-[#E10600] text-white flex items-center justify-center shadow-lg shadow-[#E10600]/30 transition-all duration-300 hover:scale-110 hover:bg-[#ff1a14] active:scale-95" title="Discover First Win Spa 2019">
                   <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
                 </a>
               </MagneticEffect>

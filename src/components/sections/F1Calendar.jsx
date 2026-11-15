@@ -323,7 +323,7 @@ export default function F1Calendar() {
                 <button
                   key={key}
                   onClick={() => setActiveFilter(key)}
-                  className={`px-3.5 py-1.5 rounded font-mono-telemetry text-[11px] uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                  className={`px-3.5 sm:px-4 py-2 min-h-[44px] flex items-center justify-center rounded font-mono-telemetry text-[11px] uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                     activeFilter === key
                       ? 'bg-white text-[#C50500] font-black shadow-md'
                       : 'text-white/75 hover:text-white hover:bg-white/10'
