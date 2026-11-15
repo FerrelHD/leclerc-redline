@@ -6,6 +6,7 @@
  * - Organic surface tension ripple noise
  * - Real-time optical lens edge refraction & chromatic dispersion (RGB split)
  * - Exact aspect-ratio-corrected UV mapping matching 'object-contain object-bottom'
+ * - F1 Ferrari Redline ambient edge glow for signature cinematic look
  */
 
 export const MAX_TRAIL_POINTS = 24;
@@ -62,26 +63,30 @@ export const FRAGMENT_SHADER_SOURCE = `
     );
   }
 
-  // Maps viewport UV to object-contain object-bottom UV coordinates
+  // Maps viewport UV (screenUv: 0=top, 1=bottom) to object-contain object-bottom UV coordinates
   vec2 getContainBottomUv(vec2 uv, vec2 imgDim, vec2 customScaleOffset) {
     float boxAspect = u_resolution.x / u_resolution.y;
     float imgAspect = imgDim.x / imgDim.y;
     vec2 st = uv;
 
-    // Apply custom scale and offset (around bottom-center origin)
-    float scale = customScaleOffset.x;
-    float offsetY = customScaleOffset.y;
-    st.x = (st.x - 0.5) / scale + 0.5;
-    st.y = (st.y - offsetY) / scale;
-
     if (boxAspect > imgAspect) {
       // Container is wider than image -> image height fits 100%, width centered
       float factor = imgAspect / boxAspect;
       st.x = (st.x - 0.5) / factor + 0.5;
+      st.y = st.y;
     } else {
       // Container is taller than image -> image width fits 100%, anchored at bottom
       float factor = boxAspect / imgAspect;
-      st.y = st.y / factor;
+      st.x = st.x;
+      st.y = (st.y - 1.0) / factor + 1.0;
+    }
+
+    // Apply custom scale and offset around center
+    float scale = customScaleOffset.x;
+    float offsetY = customScaleOffset.y;
+    if (scale != 1.0 || offsetY != 0.0) {
+      st.x = (st.x - 0.5) / scale + 0.5;
+      st.y = (st.y - 0.5) / scale + 0.5 + offsetY;
     }
 
     return st;
@@ -119,7 +124,7 @@ export const FRAGMENT_SHADER_SOURCE = `
     minDist += ripple;
 
     // 3. Liquid mask with smooth anti-aliased edge
-    float liquidMask = 1.0 - smoothstep(-0.015, 0.015, minDist);
+    float liquidMask = 1.0 - smoothstep(-0.018, 0.018, minDist);
     liquidMask = clamp(liquidMask, 0.0, 1.0);
 
     // If no trail points are active, mask stays 0
@@ -131,20 +136,18 @@ export const FRAGMENT_SHADER_SOURCE = `
     float effectiveMask = max(liquidMask, u_revealProgress);
 
     // 4. Optical Lens Edge & Chromatic Refraction
-    // Edge zone where refraction is strongest
     float edgeZone = smoothstep(0.02, 0.45, liquidMask) * (1.0 - smoothstep(0.55, 0.98, liquidMask));
     edgeZone *= (1.0 - u_revealProgress); // Fade out refraction when fully revealed
 
     // Refraction vector pointing outwards from the fluid boundary
     vec2 centerOffset = screenUv - vec2(0.5, 0.5);
-    vec2 refractVec = normalize(centerOffset + vec2(0.001)) * edgeZone * 0.022;
+    vec2 refractVec = normalize(centerOffset + vec2(0.001)) * edgeZone * 0.024;
 
     // 5. Sample Face Texture
     vec2 faceUv = getContainBottomUv(screenUv, u_faceAspect, vec2(1.0, 0.0));
     vec4 faceColor = vec4(0.0);
     if (faceUv.x >= 0.0 && faceUv.x <= 1.0 && faceUv.y >= 0.0 && faceUv.y <= 1.0) {
       faceColor = texture2D(u_texFace, faceUv);
-      // Subtle contrast / brightness boost matching editorial styling
       faceColor.rgb = (faceColor.rgb - 0.5) * 1.04 + 0.5 + 0.02;
     }
 
@@ -163,16 +166,16 @@ export const FRAGMENT_SHADER_SOURCE = `
       float a = texture2D(u_texHelmet, clamp(helmetBaseUv, 0.0, 1.0)).a;
 
       helmetColor = vec4(r, g, b, a);
-      // Editorial contrast & vibrance tuning for Monaco GP Helmet
       helmetColor.rgb = (helmetColor.rgb - 0.5) * 1.10 + 0.5 + 0.04;
     }
 
     // 7. Composite Face + Refracted Helmet via Liquid Mask
     vec4 composite = mix(faceColor, helmetColor, effectiveMask * helmetColor.a);
 
-    // Subtle edge highlight / glass rim sheen
-    float rimSheen = smoothstep(0.1, 0.3, edgeZone) * 0.12 * helmetColor.a;
-    composite.rgb += vec3(rimSheen);
+    // Subtle Ferrari Racing Redline sheen along the fluid edge
+    vec3 redlineAccent = vec3(0.88, 0.02, 0.0);
+    float edgeSheen = edgeZone * 0.28 * helmetColor.a;
+    composite.rgb += redlineAccent * edgeSheen;
 
     gl_FragColor = composite;
   }
@@ -218,7 +221,6 @@ export function loadTexture(gl, url) {
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  // Temporary 1x1 transparent placeholder while loading
   gl.texImage2D(
     gl.TEXTURE_2D,
     0,

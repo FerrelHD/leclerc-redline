@@ -246,8 +246,8 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     // Default transformation for Monaco GP helmet alignment on Charles's face
     gl.uniform2f(uniformsRef.current.u_faceAspect, 1350.0, 1125.0);
     gl.uniform2f(uniformsRef.current.u_helmetAspect, 1018.0, 1018.0);
-    // Helmet scale = 0.77, offsetY = -0.095 (anchored from bottom)
-    gl.uniform2f(uniformsRef.current.u_helmetTransform, 0.77, -0.095);
+    // Helmet scale = 0.77, offsetY = 0.095 (anchored from bottom, shifted up)
+    gl.uniform2f(uniformsRef.current.u_helmetTransform, 0.77, 0.095);
 
     // Load textures
     let isDisposed = false;
