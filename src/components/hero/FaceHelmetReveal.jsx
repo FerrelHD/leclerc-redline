@@ -18,6 +18,7 @@ export default function FaceHelmetReveal() {
   const signatureRef = useRef(null);
   const signatureWrapperRef = useRef(null);
   const mainVisualRef = useRef(null);
+  const vortexRef = useRef(null);
 
   const [isHovered, setIsHovered] = useState(false);
   const [mobileHelmetActive, setMobileHelmetActive] = useState(false);
@@ -34,12 +35,14 @@ export default function FaceHelmetReveal() {
       setIsHovered(true);
     }
     mainVisualRef.current?.onPointerMove(e.clientX, e.clientY);
+    vortexRef.current?.onPointerMove(e.clientX, e.clientY);
   };
 
   const handleMouseLeave = () => {
     isHoveredRef.current = false;
     setIsHovered(false);
     mainVisualRef.current?.onPointerLeave();
+    vortexRef.current?.onPointerLeave();
   };
 
   const handleTouchStart = (e) => {
@@ -48,6 +51,7 @@ export default function FaceHelmetReveal() {
     setIsHovered(true);
     const touch = e.touches[0];
     mainVisualRef.current?.onPointerMove(touch.clientX, touch.clientY);
+    vortexRef.current?.onPointerMove(touch.clientX, touch.clientY);
   };
 
   const handleTouchMove = (e) => {
@@ -58,6 +62,7 @@ export default function FaceHelmetReveal() {
     }
     const touch = e.touches[0];
     mainVisualRef.current?.onPointerMove(touch.clientX, touch.clientY);
+    vortexRef.current?.onPointerMove(touch.clientX, touch.clientY);
   };
 
   const handleTouchEnd = () => {
@@ -66,6 +71,7 @@ export default function FaceHelmetReveal() {
     setTimeout(() => {
       if (!isHoveredRef.current) {
         mainVisualRef.current?.onPointerLeave();
+        vortexRef.current?.onPointerLeave();
       }
     }, 450);
   };
@@ -270,7 +276,10 @@ export default function FaceHelmetReveal() {
         >
           {/* Interactive WebGL Neural Vortex Fluid Background inside Hero Card */}
           <div className="absolute inset-0 pointer-events-none z-0">
-            <InteractiveNeuralVortex className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+            <InteractiveNeuralVortex
+              ref={vortexRef}
+              className="absolute inset-0 w-full h-full pointer-events-none z-0"
+            />
           </div>
 
           {/* FRAMER MOTION: MAIN VISUAL STACK (Portrait + Monaco GP Helmet Reveal) */}
