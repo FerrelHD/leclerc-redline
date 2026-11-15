@@ -53,27 +53,16 @@ function formatRaceTime(dateStr) {
   });
 }
 
-function CountdownTimer({ targetDate }) {
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const diff = new Date(targetDate).getTime() - Date.now();
-    return Math.max(0, diff);
-  });
+function CountdownTimer({ targetDate, currentTimestamp }) {
+  const diff = Math.max(0, new Date(targetDate).getTime() - (currentTimestamp || Date.now()));
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const diff = new Date(targetDate).getTime() - Date.now();
-      setTimeLeft(Math.max(0, diff));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [targetDate]);
-
-  const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
   const pad = (n) => String(n).padStart(2, '0');
 
-  if (timeLeft <= 0) {
+  if (diff <= 0) {
     return (
       <span className="font-mono-telemetry font-bold text-[#E10600]">
         LIGHTS OUT
@@ -100,6 +89,38 @@ export default function F1Calendar() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [hoveredRace, setHoveredRace] = useState(null);
   const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+  const [currentTimestamp, setCurrentTimestamp] = useState(() => Date.now());
+
+  // Unified single timer ticking once per second only while calendar section is visible in viewport
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    let timerId = null;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCurrentTimestamp(Date.now());
+          if (!timerId) {
+            timerId = setInterval(() => setCurrentTimestamp(Date.now()), 1000);
+          }
+        } else {
+          if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+          }
+        }
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+      if (timerId) clearInterval(timerId);
+    };
+  }, []);
 
   const now = useMemo(() => new Date(), []);
 
@@ -442,7 +463,7 @@ export default function F1Calendar() {
                       </span>
                     ) : (
                       <div className="text-white/80 text-[11px] sm:text-xs">
-                        <CountdownTimer targetDate={race.raceDate} />
+                        <CountdownTimer targetDate={race.raceDate} currentTimestamp={currentTimestamp} />
                       </div>
                     )}
                   </div>
