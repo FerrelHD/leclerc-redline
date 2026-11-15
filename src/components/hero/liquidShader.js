@@ -5,8 +5,8 @@
  * - Distance-field metaball blending with smooth minimum (smin)
  * - Organic surface tension ripple noise
  * - Real-time optical lens edge refraction & chromatic dispersion (RGB split)
- * - Exact aspect-ratio-corrected UV mapping matching 'object-contain object-bottom'
- * - F1 Ferrari Redline ambient edge glow for signature cinematic look
+ * - Exact 1:1 pixel-accurate bounding box mapping matching CSS layout
+ * - F1 Ferrari Redline ambient edge sheen
  */
 
 export const MAX_TRAIL_POINTS = 24;
@@ -32,10 +32,9 @@ export const FRAGMENT_SHADER_SOURCE = `
   uniform float u_time;
   uniform float u_revealProgress;
 
-  // Aspect ratios for exact object-contain object-bottom alignment
-  uniform vec2 u_faceAspect;    // (width, height) = (1350, 1125)
-  uniform vec2 u_helmetAspect;  // (width, height) = (1018, 1018)
-  uniform vec2 u_helmetTransform; // (scale, offsetY)
+  // Normalized bounding boxes: (xMin, yMin, width, height) in 0.0 to 1.0 screen space
+  uniform vec4 u_faceBounds;
+  uniform vec4 u_helmetBounds;
 
   // Fluid trail uniforms
   uniform int u_trailCount;
@@ -63,41 +62,12 @@ export const FRAGMENT_SHADER_SOURCE = `
     );
   }
 
-  // Maps viewport UV (screenUv: 0=top, 1=bottom) to object-contain object-bottom UV coordinates
-  vec2 getContainBottomUv(vec2 uv, vec2 imgDim, vec2 customScaleOffset) {
-    float boxAspect = u_resolution.x / u_resolution.y;
-    float imgAspect = imgDim.x / imgDim.y;
-    vec2 st = uv;
-
-    if (boxAspect > imgAspect) {
-      // Container is wider than image -> image height fits 100%, width centered
-      float factor = imgAspect / boxAspect;
-      st.x = (st.x - 0.5) / factor + 0.5;
-      st.y = st.y;
-    } else {
-      // Container is taller than image -> image width fits 100%, anchored at bottom
-      float factor = boxAspect / imgAspect;
-      st.x = st.x;
-      st.y = (st.y - 1.0) / factor + 1.0;
-    }
-
-    // Apply custom scale and offset around center
-    float scale = customScaleOffset.x;
-    float offsetY = customScaleOffset.y;
-    if (scale != 1.0 || offsetY != 0.0) {
-      st.x = (st.x - 0.5) / scale + 0.5;
-      st.y = (st.y - 0.5) / scale + 0.5 + offsetY;
-    }
-
-    return st;
-  }
-
   void main() {
-    // 1. Invert Y for standard WebGL texture coordinates (origin top-left in web UI)
+    // 1. Invert Y for standard WebGL texture coordinates (0=top, 1=bottom in screen UV)
     vec2 screenUv = vec2(vUv.x, 1.0 - vUv.y);
     float aspect = u_resolution.x / u_resolution.y;
 
-    // Aspect-ratio-corrected coordinate for distance measurements
+    // Aspect-ratio-corrected coordinate for circular fluid distance measurements
     vec2 p = screenUv;
     p.x *= aspect;
 
@@ -127,32 +97,31 @@ export const FRAGMENT_SHADER_SOURCE = `
     float liquidMask = 1.0 - smoothstep(-0.018, 0.018, minDist);
     liquidMask = clamp(liquidMask, 0.0, 1.0);
 
-    // If no trail points are active, mask stays 0
     if (activeWeights <= 0.001) {
       liquidMask = 0.0;
     }
 
-    // Blend with full reveal progress (e.g. mobile toggle)
+    // Blend with full reveal progress (e.g. mobile button toggle)
     float effectiveMask = max(liquidMask, u_revealProgress);
 
     // 4. Optical Lens Edge & Chromatic Refraction
     float edgeZone = smoothstep(0.02, 0.45, liquidMask) * (1.0 - smoothstep(0.55, 0.98, liquidMask));
-    edgeZone *= (1.0 - u_revealProgress); // Fade out refraction when fully revealed
+    edgeZone *= (1.0 - u_revealProgress);
 
     // Refraction vector pointing outwards from the fluid boundary
     vec2 centerOffset = screenUv - vec2(0.5, 0.5);
     vec2 refractVec = normalize(centerOffset + vec2(0.001)) * edgeZone * 0.024;
 
-    // 5. Sample Face Texture
-    vec2 faceUv = getContainBottomUv(screenUv, u_faceAspect, vec2(1.0, 0.0));
+    // 5. Sample Face Texture (Base Layer - Charles Leclerc Face)
+    vec2 faceUv = (screenUv - u_faceBounds.xy) / u_faceBounds.zw;
     vec4 faceColor = vec4(0.0);
     if (faceUv.x >= 0.0 && faceUv.x <= 1.0 && faceUv.y >= 0.0 && faceUv.y <= 1.0) {
       faceColor = texture2D(u_texFace, faceUv);
       faceColor.rgb = (faceColor.rgb - 0.5) * 1.04 + 0.5 + 0.02;
     }
 
-    // 6. Sample Helmet Texture with Chromatic Dispersion
-    vec2 helmetBaseUv = getContainBottomUv(screenUv, u_helmetAspect, u_helmetTransform);
+    // 6. Sample Helmet Texture (Reveal Layer - Official Monaco GP Helmet)
+    vec2 helmetBaseUv = (screenUv - u_helmetBounds.xy) / u_helmetBounds.zw;
     vec4 helmetColor = vec4(0.0);
 
     vec2 uvR = helmetBaseUv + refractVec * 1.08;
@@ -169,7 +138,7 @@ export const FRAGMENT_SHADER_SOURCE = `
       helmetColor.rgb = (helmetColor.rgb - 0.5) * 1.10 + 0.5 + 0.04;
     }
 
-    // 7. Composite Face + Refracted Helmet via Liquid Mask
+    // 7. Composite: Default shows Face; Hovered liquid trail reveals Helmet!
     vec4 composite = mix(faceColor, helmetColor, effectiveMask * helmetColor.a);
 
     // Subtle Ferrari Racing Redline sheen along the fluid edge
@@ -245,7 +214,11 @@ export function loadTexture(gl, url) {
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-      resolve({ texture, width: img.naturalWidth || img.width, height: img.naturalHeight || img.height });
+      resolve({
+        texture,
+        width: img.naturalWidth || img.width,
+        height: img.naturalHeight || img.height,
+      });
     };
     img.onerror = (err) => reject(err);
     img.src = url;

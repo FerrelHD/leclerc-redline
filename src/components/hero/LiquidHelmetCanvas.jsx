@@ -7,6 +7,53 @@ import {
   loadTexture,
 } from './liquidShader';
 
+/**
+ * Computes exact pixel bounding boxes matching CSS 'object-contain object-bottom'
+ * with scale(0.77) and translateY(-9.5%) for the Monaco GP Helmet.
+ */
+function computeBounds(W, H) {
+  const aspectBox = W / H;
+
+  // 1. Face: 1350 x 1125, aspect 1.2, object-contain object-bottom
+  const aspectFace = 1350 / 1125;
+  let wFace, hFace, xFace, yFace;
+  if (aspectBox > aspectFace) {
+    hFace = H;
+    wFace = H * aspectFace;
+    xFace = (W - wFace) / 2;
+    yFace = 0;
+  } else {
+    wFace = W;
+    hFace = W / aspectFace;
+    xFace = 0;
+    yFace = H - hFace;
+  }
+
+  // 2. Helmet: 1018 x 1018, aspect 1.0, object-contain object-bottom + scale(0.77) translateY(-9.5%)
+  const aspectHelmet = 1.0;
+  let baseHW, baseHH;
+  if (aspectBox > aspectHelmet) {
+    baseHH = H;
+    baseHW = H;
+  } else {
+    baseHW = W;
+    baseHH = W;
+  }
+
+  const wHelmet = baseHW * 0.77;
+  const hHelmet = baseHH * 0.77;
+  // In screen coords (0=top, H=bottom): translateY(-9.5%) shifts upwards (-0.095 * baseHH)
+  const centerHY = H - baseHH / 2 - 0.095 * baseHH;
+  const centerHX = W / 2;
+  const xMinH = centerHX - wHelmet / 2;
+  const yMinH = centerHY - hHelmet / 2;
+
+  return {
+    face: new Float32Array([xFace / W, yFace / H, wFace / W, hFace / H]),
+    helmet: new Float32Array([xMinH / W, yMinH / H, wHelmet / W, hHelmet / H]),
+  };
+}
+
 const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
   {
     faceSrc = '/images/leclercnewimage.webp',
@@ -23,6 +70,7 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
   const texturesRef = useRef({ face: null, helmet: null });
   const uniformsRef = useRef({});
   const animIdRef = useRef(null);
+  const boundsRef = useRef(null);
 
   // Fluid physics & trail state
   const trailRef = useRef([]);
@@ -42,7 +90,6 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
 
   useEffect(() => {
     forceFullRevealRef.current = forceFullReveal;
-    // Wake up render loop to animate reveal transition
     startLoop();
   }, [forceFullReveal]);
 
@@ -54,8 +101,6 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
 
     const now = performance.now();
     const last = lastPointerRef.current;
-
-    // Radius in normalized UV coordinates (approx ~120px on 1000px height -> 0.12)
     const baseRadius = 0.135;
 
     if (last.x < 0) {
@@ -70,7 +115,6 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     } else {
       const dist = Math.hypot(normX - last.x, normY - last.y);
       if (dist >= 0.008) {
-        // Sub-step interpolation for continuous ribbon flow on fast strokes
         const steps = Math.min(10, Math.max(1, Math.floor(dist / 0.012)));
         for (let s = 1; s <= steps; s++) {
           const ix = last.x + (normX - last.x) * (s / steps);
@@ -87,7 +131,6 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
       }
     }
 
-    // Cap maximum active points
     if (trailRef.current.length > MAX_TRAIL_POINTS) {
       trailRef.current.length = MAX_TRAIL_POINTS;
     }
@@ -135,7 +178,7 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     }
     trailRef.current = active;
 
-    // 2. Smoothly animate reveal progress (for mobile toggle)
+    // 2. Smoothly animate reveal progress
     const targetReveal = forceFullRevealRef.current ? 1.0 : 0.0;
     revealProgressRef.current += (targetReveal - revealProgressRef.current) * 0.12;
     if (Math.abs(targetReveal - revealProgressRef.current) < 0.001) {
@@ -145,6 +188,14 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     // 3. Upload uniforms
     const u = uniformsRef.current;
     gl.useProgram(programRef.current);
+
+    // Explicitly bind textures to active texture units
+    if (texturesRef.current.face && texturesRef.current.helmet) {
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, texturesRef.current.face);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, texturesRef.current.helmet);
+    }
 
     gl.uniform1f(u.u_time, performance.now() * 0.001);
     gl.uniform1f(u.u_revealProgress, revealProgressRef.current);
@@ -170,7 +221,7 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    // 5. Idle sleep detection: if not hovered, trail is gone, and reveal is settled -> sleep RAF
+    // 5. Idle sleep detection
     const isSettled =
       !isHoveredRef.current &&
       active.length === 0 &&
@@ -232,9 +283,8 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
       u_resolution: gl.getUniformLocation(program, 'u_resolution'),
       u_time: gl.getUniformLocation(program, 'u_time'),
       u_revealProgress: gl.getUniformLocation(program, 'u_revealProgress'),
-      u_faceAspect: gl.getUniformLocation(program, 'u_faceAspect'),
-      u_helmetAspect: gl.getUniformLocation(program, 'u_helmetAspect'),
-      u_helmetTransform: gl.getUniformLocation(program, 'u_helmetTransform'),
+      u_faceBounds: gl.getUniformLocation(program, 'u_faceBounds'),
+      u_helmetBounds: gl.getUniformLocation(program, 'u_helmetBounds'),
       u_trailCount: gl.getUniformLocation(program, 'u_trailCount'),
       u_trail: gl.getUniformLocation(program, 'u_trail'),
     };
@@ -243,11 +293,28 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     gl.uniform1i(uniformsRef.current.u_texFace, 0);
     gl.uniform1i(uniformsRef.current.u_texHelmet, 1);
 
-    // Default transformation for Monaco GP helmet alignment on Charles's face
-    gl.uniform2f(uniformsRef.current.u_faceAspect, 1350.0, 1125.0);
-    gl.uniform2f(uniformsRef.current.u_helmetAspect, 1018.0, 1018.0);
-    // Helmet scale = 0.77, offsetY = 0.095 (anchored from bottom, shifted up)
-    gl.uniform2f(uniformsRef.current.u_helmetTransform, 0.77, 0.095);
+    // Responsive Canvas Resize & Accurate Bounding Box Calculation
+    const handleResize = () => {
+      if (!canvas || !gl) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.clientWidth || 1000;
+      const h = canvas.clientHeight || 1000;
+
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.useProgram(program);
+      gl.uniform2f(uniformsRef.current.u_resolution, canvas.width, canvas.height);
+
+      // Compute and upload 1:1 pixel-accurate layout bounds
+      const bounds = computeBounds(w, h);
+      boundsRef.current = bounds;
+      gl.uniform4fv(uniformsRef.current.u_faceBounds, bounds.face);
+      gl.uniform4fv(uniformsRef.current.u_helmetBounds, bounds.helmet);
+
+      startLoop();
+    };
 
     // Load textures
     let isDisposed = false;
@@ -272,23 +339,6 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
       .catch((err) => {
         console.error('Error loading liquid helmet textures:', err);
       });
-
-    // Responsive Canvas Resize
-    const handleResize = () => {
-      if (!canvas || !gl) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = canvas.clientWidth || 1000;
-      const h = canvas.clientHeight || 1000;
-
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.useProgram(program);
-      gl.uniform2f(uniformsRef.current.u_resolution, canvas.width, canvas.height);
-
-      startLoop();
-    };
 
     handleResize();
     window.addEventListener('resize', handleResize);
