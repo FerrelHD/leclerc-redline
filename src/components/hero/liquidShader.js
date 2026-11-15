@@ -82,7 +82,8 @@ export const FRAGMENT_SHADER_SOURCE = `
       ptPos.x *= aspect;
 
       float dist = length(p - ptPos);
-      float r = pt.z * (0.35 + 0.65 * pow(pt.w, 0.7));
+      // Quick aerodynamic shrink curve: rapid evaporation without abrupt cutoffs
+      float r = pt.z * (0.22 + 0.78 * pow(pt.w, 1.4));
       float d = dist - r;
 
       minDist = smin(minDist, d, 0.065);

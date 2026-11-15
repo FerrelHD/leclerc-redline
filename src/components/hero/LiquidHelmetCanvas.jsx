@@ -115,6 +115,10 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
     targetPointerRef.current.active = false;
     currentPointerRef.current.x = -1;
     currentPointerRef.current.y = -1;
+    // Accelerated exit fade: when mouse leaves hero card, swiftly evaporate lingering points (~150ms)
+    for (let i = 0; i < trailRef.current.length; i++) {
+      trailRef.current[i].decay = Math.max(trailRef.current[i].decay, 0.085);
+    }
   };
 
   useImperativeHandle(ref, () => ({
@@ -165,7 +169,7 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
         y: curr.y,
         r: dynamicRadius,
         life: 1.0,
-        decay: 0.024, // viscous dissipation (~42 frames / 700ms)
+        decay: 0.048, // Snappy F1 dissipation (~20 frames / ~320ms)
       });
 
       if (trailRef.current.length > MAX_TRAIL_POINTS) {
