@@ -61,17 +61,35 @@ const socialCards = [
 export default function SocialsDeck() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isFanned, setIsFanned] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== 'undefined' ? window.innerWidth : 1200
-  );
+  const getTier = () => {
+    if (typeof window === 'undefined') return 3;
+    const w = window.innerWidth;
+    if (w < 440) return 0; // small mobile
+    if (w < 640) return 1; // mobile
+    if (w < 1024) return 2; // tablet
+    return 3; // desktop
+  };
+
+  const [deviceTier, setDeviceTier] = useState(getTier);
   const sectionRef = useRef(null);
   const deckContainerRef = useRef(null);
 
-  // Reactive window resize listener for precise responsive card fan-out
+  // Debounced breakpoint listener (only triggers when crossing actual device boundaries)
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    let timeoutId;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const nextTier = getTier();
+        setDeviceTier((prev) => (prev !== nextTier ? nextTier : prev));
+      }, 120);
+    };
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   // Switch navbar to dark theme and trigger deck fan-out on scroll
@@ -100,9 +118,9 @@ export default function SocialsDeck() {
   }, []);
 
   // Adaptive layout tokens across device tiers
-  const isSmallMobile = windowWidth < 440;
-  const isMobile = windowWidth < 640;
-  const isTablet = windowWidth >= 640 && windowWidth < 1024;
+  const isSmallMobile = deviceTier === 0;
+  const isMobile = deviceTier <= 1;
+  const isTablet = deviceTier === 2;
 
   const spreadDistance = isSmallMobile ? 32 : isMobile ? 42 : isTablet ? 72 : 115;
   const rotateStep = isSmallMobile ? 4.2 : isMobile ? 5.2 : isTablet ? 6.2 : 7.5;
