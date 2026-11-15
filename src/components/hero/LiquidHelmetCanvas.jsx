@@ -72,9 +72,10 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
   const animIdRef = useRef(null);
   const boundsRef = useRef(null);
 
-  // Fluid physics & trail state
+  // Fluid physics & trail state with spring-lerp inertia
   const trailRef = useRef([]);
-  const lastPointerRef = useRef({ x: -1, y: -1, time: 0 });
+  const targetPointerRef = useRef({ x: -1, y: -1, active: false });
+  const currentPointerRef = useRef({ x: -1, y: -1, speed: 0 });
   const revealProgressRef = useRef(0.0);
   const isHoveredRef = useRef(isHovered);
   const forceFullRevealRef = useRef(forceFullReveal);
@@ -86,6 +87,9 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
 
   useEffect(() => {
     isHoveredRef.current = isHovered;
+    if (!isHovered) {
+      targetPointerRef.current.active = false;
+    }
   }, [isHovered]);
 
   useEffect(() => {
@@ -99,47 +103,18 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
       return;
     }
 
-    const now = performance.now();
-    const last = lastPointerRef.current;
-    const baseRadius = 0.135;
-
-    if (last.x < 0) {
-      trailRef.current.unshift({
-        x: normX,
-        y: normY,
-        r: baseRadius,
-        life: 1.0,
-        decay: 0.032,
-      });
-      lastPointerRef.current = { x: normX, y: normY, time: now };
-    } else {
-      const dist = Math.hypot(normX - last.x, normY - last.y);
-      if (dist >= 0.008) {
-        const steps = Math.min(10, Math.max(1, Math.floor(dist / 0.012)));
-        for (let s = 1; s <= steps; s++) {
-          const ix = last.x + (normX - last.x) * (s / steps);
-          const iy = last.y + (normY - last.y) * (s / steps);
-          trailRef.current.unshift({
-            x: ix,
-            y: iy,
-            r: baseRadius,
-            life: 1.0,
-            decay: 0.032,
-          });
-        }
-        lastPointerRef.current = { x: normX, y: normY, time: now };
-      }
+    if (currentPointerRef.current.x < 0) {
+      currentPointerRef.current = { x: normX, y: normY, speed: 0 };
     }
 
-    if (trailRef.current.length > MAX_TRAIL_POINTS) {
-      trailRef.current.length = MAX_TRAIL_POINTS;
-    }
-
+    targetPointerRef.current = { x: normX, y: normY, active: true };
     startLoop();
   };
 
   const onPointerLeave = () => {
-    lastPointerRef.current = { x: -1, y: -1, time: 0 };
+    targetPointerRef.current.active = false;
+    currentPointerRef.current.x = -1;
+    currentPointerRef.current.y = -1;
   };
 
   useImperativeHandle(ref, () => ({
@@ -167,7 +142,38 @@ const LiquidHelmetCanvas = forwardRef(function LiquidHelmetCanvas(
       return;
     }
 
-    // 1. Decay trail points
+    // 1. Update spring-lerp pointer & spawn dynamic aerodynamic fluid droplets
+    const target = targetPointerRef.current;
+    const curr = currentPointerRef.current;
+
+    if (target.active && isHoveredRef.current && curr.x >= 0) {
+      const dx = target.x - curr.x;
+      const dy = target.y - curr.y;
+      const dist = Math.hypot(dx, dy);
+
+      // Silky spring inertia
+      curr.x += dx * 0.22;
+      curr.y += dy * 0.22;
+      curr.speed = dist;
+
+      // Dynamic teardrop radius: pools into wider 0.17 circle when still, tapers aerodynamically when fast
+      const dynamicRadius = Math.max(0.12, Math.min(0.175, 0.175 - Math.min(0.055, dist * 1.8)));
+
+      // Add trail point smoothly per animation frame
+      trailRef.current.unshift({
+        x: curr.x,
+        y: curr.y,
+        r: dynamicRadius,
+        life: 1.0,
+        decay: 0.024, // viscous dissipation (~42 frames / 700ms)
+      });
+
+      if (trailRef.current.length > MAX_TRAIL_POINTS) {
+        trailRef.current.length = MAX_TRAIL_POINTS;
+      }
+    }
+
+    // 2. Decay trail points
     const active = [];
     for (let i = 0; i < trailRef.current.length; i++) {
       const p = trailRef.current[i];
