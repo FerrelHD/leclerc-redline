@@ -120,21 +120,31 @@ export const FRAGMENT_SHADER_SOURCE = `
       faceColor.rgb = (faceColor.rgb - 0.5) * 1.04 + 0.5 + 0.02;
     }
 
-    // 6. Sample Helmet Texture (Reveal Layer - Official Monaco GP Helmet)
+    // High-performance early exit: skip all helmet sampling where mask is inactive
+    if (effectiveMask <= 0.001) {
+      gl_FragColor = faceColor;
+      return;
+    }
+
+    // 6. Sample Helmet Texture ONLY within the active fluid area
     vec2 helmetBaseUv = (screenUv - u_helmetBounds.xy) / u_helmetBounds.zw;
     vec4 helmetColor = vec4(0.0);
 
-    vec2 uvR = helmetBaseUv + refractVec * 1.08;
-    vec2 uvG = helmetBaseUv + refractVec * 1.00;
-    vec2 uvB = helmetBaseUv + refractVec * 0.92;
-
     if (helmetBaseUv.x >= 0.0 && helmetBaseUv.x <= 1.0 && helmetBaseUv.y >= 0.0 && helmetBaseUv.y <= 1.0) {
-      float r = texture2D(u_texHelmet, clamp(uvR, 0.0, 1.0)).r;
-      float g = texture2D(u_texHelmet, clamp(uvG, 0.0, 1.0)).g;
-      float b = texture2D(u_texHelmet, clamp(uvB, 0.0, 1.0)).b;
-      float a = texture2D(u_texHelmet, clamp(helmetBaseUv, 0.0, 1.0)).a;
-
-      helmetColor = vec4(r, g, b, a);
+      if (edgeZone > 0.005) {
+        // Chromatic split ONLY along the active fluid boundary
+        vec2 uvR = helmetBaseUv + refractVec * 1.08;
+        vec2 uvG = helmetBaseUv + refractVec * 1.00;
+        vec2 uvB = helmetBaseUv + refractVec * 0.92;
+        float r = texture2D(u_texHelmet, clamp(uvR, 0.0, 1.0)).r;
+        float g = texture2D(u_texHelmet, clamp(uvG, 0.0, 1.0)).g;
+        float b = texture2D(u_texHelmet, clamp(uvB, 0.0, 1.0)).b;
+        float a = texture2D(u_texHelmet, clamp(helmetBaseUv, 0.0, 1.0)).a;
+        helmetColor = vec4(r, g, b, a);
+      } else {
+        // Single unified texture read inside the fluid core
+        helmetColor = texture2D(u_texHelmet, helmetBaseUv);
+      }
       helmetColor.rgb = (helmetColor.rgb - 0.5) * 1.10 + 0.5 + 0.04;
     }
 
