@@ -250,19 +250,19 @@ const InteractiveNeuralVortex = forwardRef(function InteractiveNeuralVortex(
       pointer.current.x += (pointer.current.tX - pointer.current.x) * 0.15;
       pointer.current.y += (pointer.current.tY - pointer.current.y) * 0.15;
 
-      // Smooth velocity interpolation and friction decay
+      // Smooth velocity interpolation and calibrated friction decay matching liquid helmet trail
       const vel = velocityRef.current;
-      vel.x += (vel.tX - vel.x) * 0.12;
-      vel.y += (vel.tY - vel.y) * 0.12;
-      vel.tX *= 0.88;
-      vel.tY *= 0.88;
+      vel.x += (vel.tX - vel.x) * 0.15;
+      vel.y += (vel.tY - vel.y) * 0.15;
+      vel.tX *= 0.90;
+      vel.tY *= 0.90;
 
       const currentSpeed = Math.hypot(vel.x, vel.y);
-      vel.speed += (currentSpeed - vel.speed) * 0.15;
+      vel.speed += (currentSpeed - vel.speed) * 0.18;
 
-      // Wake intensity friction decay
-      wakeIntensityRef.current *= 0.94;
-      if (wakeIntensityRef.current < 0.005) {
+      // Wake intensity friction decay (~600ms sustained vortex wake)
+      wakeIntensityRef.current *= 0.96;
+      if (wakeIntensityRef.current < 0.003) {
         wakeIntensityRef.current = 0.0;
       }
 
