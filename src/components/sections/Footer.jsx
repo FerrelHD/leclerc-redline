@@ -229,7 +229,7 @@ export default function Footer() {
               {/* 🏎️ Live Handwritten SVG Signature in Glowing Modena Yellow (#FFE500) */}
               <div
                 ref={sigWrapperRef}
-                className="absolute -top-8 xs:-top-10 sm:-top-16 md:-top-22 -left-2 xs:-left-6 sm:-left-12 md:-left-14 w-36 xs:w-48 sm:w-64 md:w-80 pointer-events-none z-20 overflow-visible"
+                className="absolute -top-6 sm:-top-10 md:-top-14 lg:-top-18 -left-2 sm:-left-6 md:-left-10 lg:-left-14 w-[clamp(8.5rem,20vw,19rem)] pointer-events-none z-20 overflow-visible"
               >
                 <svg
                   viewBox="80 10 820 720"
@@ -257,22 +257,22 @@ export default function Footer() {
               </div>
 
               {/* ✨ Kinetic Editorial Mask Reveal Heading */}
-              <h2 className="relative z-10 font-racing font-black text-[2.2rem] xs:text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight uppercase leading-[0.92] text-white text-center overflow-visible">
-                <div className="overflow-hidden py-1">
+              <h2 className="relative z-10 font-racing font-black text-[clamp(1.75rem,6.8vw,5.5rem)] tracking-tight uppercase leading-[0.92] text-white text-center overflow-visible">
+                <div className="overflow-hidden py-2 sm:py-2.5">
                   <span
                     ref={headingLine1Ref}
-                    className="block tracking-[-0.03em] will-change-transform"
+                    className="block whitespace-nowrap tracking-[-0.03em] will-change-transform"
                   >
                     ALWAYS{' '}
-                    <span className="font-editorial italic font-normal text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-[#FFE500] tracking-normal lowercase">
+                    <span className="font-editorial italic font-normal text-[clamp(1.35rem,5.4vw,4.5rem)] text-[#FFE500] tracking-normal lowercase inline-block ml-1 sm:ml-2">
                       pushing
                     </span>
                   </span>
                 </div>
-                <div className="overflow-hidden py-1 mt-1 sm:mt-2">
+                <div className="overflow-hidden py-2 sm:py-2.5 mt-0.5 sm:mt-1">
                   <span
                     ref={headingLine2Ref}
-                    className="block tracking-[-0.03em] will-change-transform"
+                    className="block whitespace-nowrap tracking-[-0.03em] will-change-transform"
                   >
                     THE LIMIT.
                   </span>
