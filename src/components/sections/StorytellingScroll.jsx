@@ -194,7 +194,7 @@ export default function StorytellingScroll() {
           {/* Header Bar (Overlaid on Top Notch of Cutout Frame) */}
           <div className="flex justify-between items-center mb-4 sm:mb-6 w-[94%] sm:w-[90%] md:w-[86%] absolute lg:top-4 md:top-2.5 sm:top-2 top-1.5 left-2 sm:left-4 z-10">
             <div className="story-badge flex items-center gap-2">
-              <span className="text-[#E10600] animate-spin font-bold text-sm sm:text-base">✱</span>
+              <span className="text-[#E10600] font-mono-telemetry font-bold text-xs sm:text-sm tracking-wider">//</span>
               <span className="font-mono-telemetry text-[11px] sm:text-xs md:text-sm font-semibold tracking-[0.2em] text-neutral-200 uppercase">
                 WHO HE IS
               </span>
@@ -202,7 +202,7 @@ export default function StorytellingScroll() {
 
             {/* Right Telemetry Badge (Replaces Social Icons) */}
             <div className="story-badge flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 rounded-full bg-black/70 border border-white/10 backdrop-blur-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
               <span className="font-mono-telemetry text-[9px] sm:text-[11px] md:text-xs tracking-wider text-neutral-300 uppercase font-semibold">
                 #16 • SCUDERIA FERRARI
               </span>
