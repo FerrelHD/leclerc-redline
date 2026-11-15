@@ -283,14 +283,16 @@ export default function Footer() {
 
           {/* ========================================================================= */}
           {/* 3-COLUMN ASSET STACKING: PAGES | DRIVER HERO OVERLAP | FOLLOW ON          */}
+          {/* Mobile: PAGES (order-1) -> FOLLOW ON (order-2) -> DRIVER HERO (order-3)  */}
+          {/* Desktop: PAGES (col-1) -> DRIVER HERO (col-2) -> FOLLOW ON (col-3)       */}
           {/* ========================================================================= */}
-          <div className="relative w-full grid grid-cols-1 md:grid-cols-3 items-end justify-between min-h-[440px] sm:min-h-[500px] md:min-h-[580px]">
+          <div className="relative w-full grid grid-cols-1 md:grid-cols-3 items-end justify-between min-h-0 md:min-h-[580px] mt-6 sm:mt-10 md:mt-0">
 
             {/* LEFT COLUMN: PAGES NAVIGATION (Telemetry Focus + Sibling Dimming) */}
-            <div className="relative z-20 flex flex-col items-center md:items-start text-center md:text-left mb-12 sm:mb-16 md:mb-24">
+            <div className="order-1 md:order-1 relative z-20 flex flex-col items-center md:items-start text-center md:text-left mb-8 sm:mb-12 md:mb-24">
               <span
                 ref={pagesHeadingRef}
-                className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-5 block will-change-transform"
+                className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-4 sm:mb-5 block will-change-transform"
               >
                 PAGES
               </span>
@@ -303,7 +305,7 @@ export default function Footer() {
                   const isOtherHovered = hoveredPage !== null && !isHovered;
 
                   return (
-                    <li key={item.label} className="pages-nav-item overflow-visible py-0.5 pr-8">
+                    <li key={item.label} className="pages-nav-item overflow-visible py-0.5 pr-0 md:pr-8">
                       <a
                         href={item.href}
                         target={item.external ? '_blank' : undefined}
@@ -351,49 +353,11 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* CENTER COLUMN: FOREGROUND DRIVER HERO */}
-            <div className="relative w-full h-full flex flex-col items-center justify-end z-20 -mt-20 xs:-mt-28 sm:-mt-36 md:-mt-48 lg:-mt-60 pointer-events-none">
-              {/* Responsive: fluid on mobile to prevent overflow, bold prominent width on desktop */}
-              <div className="relative w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[480px] md:max-w-none md:w-[580px] lg:w-[680px] xl:w-[740px] flex flex-col items-center pointer-events-auto shrink-0">
-
-                {/* Authentic Cutout: Charles Leclerc with Monaco Helmet & Fleece Jacket extending to bottom */}
-                <div ref={driverHeroRef} className="w-full will-change-transform">
-                  <img
-                    src="/images/leclerc-footer.webp"
-                    alt="Charles Leclerc Monaco Helmet & Signature Jacket"
-                    width="740"
-                    height="677"
-                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_25px_60px_rgba(0,0,0,0.95)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-6 sm:-mb-8 md:-mb-10"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-
-                {/* Pill Button: BUSINESS ENQUIRIES across lower chest (z-30) with Sheen Sweep */}
-                <div
-                  ref={ctaRef}
-                  className="absolute bottom-6 sm:bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap will-change-transform"
-                >
-                  <MagneticEffect factor={0.25}>
-                    <a
-                      href="mailto:business@charlesleclerc.com"
-                      className="group relative inline-flex items-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-[#FFE500] hover:bg-[#fff04d] text-black font-racing font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_10px_30px_rgba(255,229,0,0.5)] transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
-                    >
-                      {/* Diagonal light sheen sweep on hover */}
-                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/45 to-transparent pointer-events-none" />
-                      <span className="relative z-10">BUSINESS ENQUIRIES</span>
-                      <ArrowUpRight className="relative z-10 w-4 h-4 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </a>
-                  </MagneticEffect>
-                </div>
-              </div>
-            </div>
-
             {/* RIGHT COLUMN: FOLLOW ON (Telemetry Focus + Sibling Dimming) */}
-            <div className="relative z-20 flex flex-col items-center md:items-end text-center md:text-right mb-12 sm:mb-16 md:mb-24">
+            <div className="order-2 md:order-3 relative z-20 flex flex-col items-center md:items-end text-center md:text-right mb-10 sm:mb-14 md:mb-24">
               <span
                 ref={followHeadingRef}
-                className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-5 block will-change-transform"
+                className="font-mono-telemetry text-xs sm:text-sm tracking-[0.35em] text-neutral-400 font-bold uppercase mb-4 sm:mb-5 block will-change-transform"
               >
                 FOLLOW ON
               </span>
@@ -406,7 +370,7 @@ export default function Footer() {
                   const isOtherHovered = hoveredFollow !== null && !isHovered;
 
                   return (
-                    <li key={item.label} className="follow-nav-item overflow-visible py-0.5 pl-8">
+                    <li key={item.label} className="follow-nav-item overflow-visible py-0.5 pl-0 md:pl-8">
                       <a
                         href={item.href}
                         target="_blank"
@@ -435,6 +399,44 @@ export default function Footer() {
                   );
                 })}
               </ul>
+            </div>
+
+            {/* CENTER COLUMN: FOREGROUND DRIVER HERO (Grounded at bottom on mobile, overlapping on desktop) */}
+            <div className="order-3 md:order-2 relative w-full h-full flex flex-col items-center justify-end z-20 mt-2 sm:mt-6 md:-mt-48 lg:-mt-60 pointer-events-none">
+              {/* Responsive: fluid on mobile to prevent overflow, bold prominent width on desktop */}
+              <div className="relative w-full max-w-[300px] sm:max-w-[420px] md:max-w-none md:w-[580px] lg:w-[680px] xl:w-[740px] flex flex-col items-center pointer-events-auto shrink-0">
+
+                {/* Authentic Cutout: Charles Leclerc with Monaco Helmet & Fleece Jacket extending to bottom */}
+                <div ref={driverHeroRef} className="w-full will-change-transform">
+                  <img
+                    src="/images/leclerc-footer.webp"
+                    alt="Charles Leclerc Monaco Helmet & Signature Jacket"
+                    width="740"
+                    height="677"
+                    className="w-full h-auto object-contain object-bottom drop-shadow-[0_25px_60px_rgba(0,0,0,0.95)] filter contrast-[1.04] relative z-20 transition-transform duration-500 hover:scale-[1.01] block -mb-4 sm:-mb-6 md:-mb-10"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+
+                {/* Pill Button: BUSINESS ENQUIRIES across lower chest (z-30) with Sheen Sweep */}
+                <div
+                  ref={ctaRef}
+                  className="absolute bottom-6 sm:bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap will-change-transform"
+                >
+                  <MagneticEffect factor={0.25}>
+                    <a
+                      href="mailto:business@charlesleclerc.com"
+                      className="group relative inline-flex items-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-[#FFE500] hover:bg-[#fff04d] text-black font-racing font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_10px_30px_rgba(255,229,0,0.5)] transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
+                    >
+                      {/* Diagonal light sheen sweep on hover */}
+                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/45 to-transparent pointer-events-none" />
+                      <span className="relative z-10">BUSINESS ENQUIRIES</span>
+                      <ArrowUpRight className="relative z-10 w-4 h-4 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </a>
+                  </MagneticEffect>
+                </div>
+              </div>
             </div>
 
           </div>
