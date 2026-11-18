@@ -104,7 +104,7 @@ export default function App() {
         <StorytellingScroll />
 
         {/* Section 3 & 4: Seamless Monaco White Zone (Podium Gallery & Dual Identity) */}
-        <div className="relative z-10 w-full bg-[#F8F9FA]">
+        <div className="relative z-10 -mt-[100vh] w-full bg-[#F8F9FA]">
           <PodiumGallery />
           <MonacoMaranelloSplit />
         </div>
