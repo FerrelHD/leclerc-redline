@@ -20,23 +20,48 @@ export default function PodiumGallery() {
         return window.innerWidth < 768 ? 0.52 : 0.65;
       };
 
-      // Native GSAP Horizontal Pin with brisk, responsive scrub ratio
-      gsap.to(trackRef.current, {
-        x: () => -getScrollDistance(),
+      let scrollDist = 0;
+      let curtainDist = 0;
+      let totalDist = 1;
+
+      const recalcMetrics = () => {
+        scrollDist = getScrollDistance();
+        curtainDist = window.innerHeight;
+        totalDist = curtainDist + Math.round(scrollDist * getScrubMultiplier());
+      };
+      recalcMetrics();
+
+      const proxy = { p: 0 };
+      const applyTrackPosition = (p) => {
+        if (!trackRef.current) return;
+        const curtainRatio = totalDist > 0 ? curtainDist / totalDist : 0;
+        const slideProgress =
+          p <= curtainRatio
+            ? 0
+            : (p - curtainRatio) / Math.max(0.0001, 1 - curtainRatio);
+        gsap.set(trackRef.current, { x: -slideProgress * scrollDist });
+      };
+
+      // Native GSAP Horizontal Pin with 100vh curtain-lift hold before horizontal slide
+      gsap.to(proxy, {
+        p: 1,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
-          // Pin aktif sejak awal di top, tapi beri jeda scroll agar About terangkat dulu
+          // Pin aktif sejak awal di top, beri jeda 100vh agar About terangkat dulu sebelum slide horizontal
           start: 'top top',
-          end: () => `+=${window.innerHeight + Math.round(getScrollDistance() * getScrubMultiplier())}`,
+          end: () => {
+            recalcMetrics();
+            return `+=${totalDist}`;
+          },
           pin: true,
           pinSpacing: true,
           scrub: 0.5,
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          onRefresh: () => applyTrackPosition(proxy.p),
           onEnter: () => {
             gsap.to(document.body, { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
-            document.body.classList.remove('nav-theme-dark');
           },
           onLeave: () => {
             gsap.to(document.body, { backgroundColor: '#F8F9FA', color: '#0A0A0B', duration: 0.3 });
@@ -51,6 +76,7 @@ export default function PodiumGallery() {
             document.body.classList.add('nav-theme-dark');
           },
         },
+        onUpdate: () => applyTrackPosition(proxy.p),
       });
     }, sectionRef);
 
