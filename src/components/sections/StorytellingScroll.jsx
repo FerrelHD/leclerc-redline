@@ -14,7 +14,7 @@ export default function StorytellingScroll() {
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top 50%',
-        end: 'bottom 50%',
+        end: 'bottom 80px',
         onEnter: () => document.body.classList.add('nav-theme-dark'),
         onLeaveBack: () => document.body.classList.remove('nav-theme-dark'),
         onEnterBack: () => document.body.classList.add('nav-theme-dark'),
